@@ -1,4 +1,4 @@
-package Software;
+package ProyectoMonoBoyas.Src.Sensores;
 
 public abstract class Sensor {
 
