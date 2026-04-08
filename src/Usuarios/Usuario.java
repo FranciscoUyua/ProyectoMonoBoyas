@@ -3,19 +3,19 @@ package Usuarios;
 import java.time.LocalDateTime;
 
 public abstract class Usuario {
-    protected String id;
+    protected int id;
     protected String nombre;
     protected boolean activo;
     protected LocalDateTime ultimoAcceso;
     
-    public Usuario(String id, String nombre){
+    public Usuario(int id, String nombre){
         this.id = id;
         this.nombre = nombre;
         this.activo = true;
         this.ultimoAcceso = LocalDateTime.now();
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
