@@ -5,9 +5,10 @@ import Sensores.Sensor;
 
 
 public class Monoboya {
-    private int id;
-    private Planta planta; // Asociación con Planta
-    private List<Sensor> sensores; // Lista de sensores asociados a la Monoboya
+    protected int id;
+    protected Planta planta; // Asociación con Planta
+    protected List<Sensor> sensores; // Lista de sensores asociados a la Monoboya
+    protected Manguera manguera; // Asociación con Manguera
 
     public Monoboya(int id, Planta planta) {
         this.id = id;
