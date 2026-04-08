@@ -1,18 +1,31 @@
-## Getting Started
+# Sistema de Monitoreo de Operaciones en Monoboya (SPM)
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+## Descripción
 
-## Folder Structure
+Sistema de software distribuido para el monitoreo y soporte a la toma de decisiones en operaciones de transferencia de hidrocarburos a través de una monoboya (Single Point Mooring).
 
-The workspace contains two folders by default, where:
+El sistema **no ejecuta acciones físicas**: su rol es recibir datos de sensores en tiempo real, detectar anomalías contra umbrales configurados y generar alertas para que los operadores humanos actúen.
 
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
+## Funcionalidades principales
 
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
+- Registro de entidades: monoboyas, buques, operadores y sensores
+- Gestión de operaciones de transferencia (carga y descarga)
+- Monitoreo en tiempo real de variables ambientales, mecánicas y operativas
+- Detección de anomalías y generación de alertas (verde / amarillo / rojo)
+- Historial de mediciones, eventos y auditoría de acciones sensibles
 
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
+## Actores
 
-## Dependency Management
+| Actor | Rol |
+|---|---|
+| Usuario de Planta | Administra el sistema y configura parámetros |
+| Personal de Buque | Participa en la operación y recibe alertas |
+| Operador de Lancha | Trabaja en proximidad a la monoboya y recibe alertas críticas |
 
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+## Tecnologías
+
+> A definir según avance del proyecto.
+
+## Estado
+
+Proyecto académico en desarrollo — Arquitectura y Diseño de Sistemas.
