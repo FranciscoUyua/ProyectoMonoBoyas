@@ -1,31 +1,37 @@
-'use client'; // Necesario para usar useState
+'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation'; // Importamos el router
 import { 
   Bars3Icon, 
-  XMarkIcon, 
   HomeIcon, 
   UsersIcon, 
   Cog6ToothIcon, 
   ChartBarIcon,
-  AnchorIcon, // Si no tienes estos, usa cualquier icono de Heroicons
-  ArrowLeftOnRectangleIcon
-} from '@heroicons/react/24/outline'; // Asegúrate de tener heroicons instalado
+  SignalIcon,
+  LifebuoyIcon,
+  ArrowLeftOnRectangleIcon 
+} from '@heroicons/react/24/outline';
 import { lusitana } from '@/app/ui/fonts';
 
 export default function AdminPage() {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false); // Estado para el modal
+  const router = useRouter();
+
+  const handleLogout = () => {
+    router.push('/'); // Redirige al inicio de sesión
+  };
 
   return (
-    <div className="flex h-screen bg-[#0f0f0f] text-white overflow-hidden">
+    <div className="relative flex h-screen bg-[#0f0f0f] text-white overflow-hidden">
       
-      {/* 1. SIDEBAR (La barra lateral) */}
+      {/* 1. SIDEBAR */}
       <aside 
         className={`bg-[#1a1a1a] transition-all duration-300 ease-in-out flex flex-col border-r border-gray-800 ${
           isCollapsed ? 'w-20' : 'w-64'
         }`}
       >
-        {/* Botón de colapso y Logo */}
         <div className="p-4 flex items-center justify-between h-16">
           {!isCollapsed && <span className={`${lusitana.className} text-xl font-bold text-blue-500`}>VIGÍA</span>}
           <button 
@@ -36,17 +42,19 @@ export default function AdminPage() {
           </button>
         </div>
 
-        {/* Links de navegación */}
         <nav className="flex-1 mt-4 px-3 space-y-2">
           <NavItem icon={<HomeIcon className="w-6 h-6" />} label="Inicio" isCollapsed={isCollapsed} active />
-          <NavItem icon={<ChartBarIcon className="w-6 h-6" />} label="Operaciones" isCollapsed={isCollapsed} />
+          <NavItem icon={<SignalIcon className="w-6 h-6" />} label="Monoboyas" isCollapsed={isCollapsed} />
+          <NavItem icon={<LifebuoyIcon className="w-6 h-6" />} label="Operaciones" isCollapsed={isCollapsed} />
           <NavItem icon={<UsersIcon className="w-6 h-6" />} label="Personal" isCollapsed={isCollapsed} />
           <NavItem icon={<Cog6ToothIcon className="w-6 h-6" />} label="Configuración" isCollapsed={isCollapsed} />
         </nav>
 
-        {/* Footer del Sidebar (Cerrar sesión) */}
         <div className="p-4 border-t border-gray-800">
-          <button className="flex items-center gap-4 w-full p-2 hover:bg-red-900/20 text-red-500 rounded-lg transition-colors">
+          <button 
+            onClick={() => setShowLogoutModal(true)} // Abre el modal
+            className="flex items-center gap-4 w-full p-2 hover:bg-red-900/20 text-red-500 rounded-lg transition-colors"
+          >
             <ArrowLeftOnRectangleIcon className="w-6 h-6" />
             {!isCollapsed && <span className="font-medium text-sm">Cerrar Sesión</span>}
           </button>
@@ -55,7 +63,6 @@ export default function AdminPage() {
 
       {/* 2. CONTENIDO PRINCIPAL */}
       <main className="flex-1 flex flex-col overflow-y-auto">
-        {/* Header superior opcional */}
         <header className="h-16 border-b border-gray-800 flex items-center px-8 justify-between bg-[#0f0f0f]">
           <h2 className="text-gray-400 text-sm font-medium uppercase tracking-widest">Dashboard de Control</h2>
           <div className="flex items-center gap-4">
@@ -64,15 +71,12 @@ export default function AdminPage() {
           </div>
         </header>
 
-        {/* Área de contenido */}
         <section className="p-10 max-w-7xl">
           <h1 className={`${lusitana.className} text-3xl font-bold mb-4`}>Panel de Administración</h1>
           <p className="text-gray-400 leading-relaxed max-w-2xl">
-            Bienvenido al centro de mando. Desde aquí puedes supervisar la telemetría de las monoboyas, 
-            gestionar los acoples de los buques y administrar los permisos del personal de operaciones.
+            Bienvenido al centro de mando. Desde aquí puedes supervisar la telemetría de las monoboyas.
           </p>
 
-          {/* Espacio para tus futuras tarjetas/gráficos */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
             <div className="h-32 bg-[#1a1a1a] border border-gray-800 rounded-xl p-6">
               <span className="text-gray-500 text-xs uppercase font-bold">Monoboyas Activas</span>
@@ -89,12 +93,37 @@ export default function AdminPage() {
           </div>
         </section>
       </main>
+
+      {/* 3. VENTANA DE CONFIRMACIÓN (MODAL) */}
+      {showLogoutModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-[#1a1a1a] border border-gray-800 w-full max-w-sm p-8 rounded-sm shadow-2xl">
+            <h3 className="text-xl font-bold mb-2">¿Cerrar sesión?</h3>
+            <p className="text-gray-400 text-sm mb-8">
+              Estás a punto de salir del sistema de control. ¿Confirmas que quieres finalizar la sesión actual?
+            </p>
+            
+            <div className="flex gap-4 justify-end">
+              <button 
+                onClick={() => setShowLogoutModal(false)}
+                className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white transition-colors"
+              >
+                Cancelar
+              </button>
+              <button 
+                onClick={handleLogout}
+                className="bg-red-600 hover:bg-red-700 px-6 py-2 text-sm font-bold rounded-sm transition-colors"
+              >
+                Salir
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-/** * Pequeño componente interno para los links del menú 
- */
 function NavItem({ icon, label, isCollapsed, active = false }: { 
   icon: React.ReactNode, 
   label: string, 
