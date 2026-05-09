@@ -1,3 +1,5 @@
+package Equipamiento;
+
 import Sensores.Caudalimetro;
 import Sensores.SensorDePresion;
 
@@ -7,6 +9,6 @@ public class Manguera {
     protected SensorDePresion  sensorPresion; // Sensor de presión
 
     protected Monoboya monoboya; // Asociación con Monoboya
-    protected Barco barco; // Asociación con Barco
+    protected Buque buque; // Asociación con Barco
 }
 

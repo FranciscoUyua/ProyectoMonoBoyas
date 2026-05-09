@@ -1,3 +1,4 @@
+package Equipamiento;
 
 import Sensores.Sensor;
 
