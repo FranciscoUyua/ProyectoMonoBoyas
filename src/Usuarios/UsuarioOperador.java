@@ -1,0 +1,16 @@
+package Usuarios;
+import Operaciones.*;
+
+public abstract class UsuarioOperador extends Usuario{
+    protected Operacion operacion;
+
+    public UsuarioOperador(int id, String nombre, String contrasena, int dni) {
+        super(id, nombre, contrasena, dni);
+        this.operacion = null; // Inicialmente sin operación asignada
+    }
+
+    public abstract void reconocerAlerta(); // Método abstracto para que cada operador lo implemente según su tipo
+
+    // Métodos específicos para UsuarioOperador
+    
+}
