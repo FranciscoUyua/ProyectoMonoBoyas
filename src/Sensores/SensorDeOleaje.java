@@ -7,13 +7,13 @@ public class SensorDeOleaje extends Sensor {
     }
 
     @Override
-    public String getUnidad() {
-        return "m"; // Metros
+    public double obtenerMedicion() {
+        // Simulación: Devuelve un oleaje aleatorio entre 0 y 5 metros
+        return Math.random() * 5; 
     }
 
     @Override
-    public double obtenerMedicion() {
-        // Implementación de ejemplo, devolver un valor simulado
-        return 0.0;
+    public String getUnidad() {
+        return "m";
     }
 }

@@ -7,13 +7,11 @@ public class Anemometro extends Sensor {
     }
 
     @Override
-    public String getUnidad() {
-        return "km/h"; // Kilómetros por hora (también podría ser m/s o nudos)
+    public double obtenerMedicion() {
+        // Futura conexión HTTP a Open-Meteo
+        return Math.random() * 80; // Viento entre 0 y 80 km/h
     }
 
     @Override
-    public double obtenerMedicion() {
-        // Implementación básica, devolver un valor simulado
-        return 10.0; // Ejemplo: 10 km/h
-    }
+    public String getUnidad() { return "km/h"; }
 }

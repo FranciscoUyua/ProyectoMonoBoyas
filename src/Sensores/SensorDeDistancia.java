@@ -3,11 +3,11 @@ package Sensores;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public class Giroscopio extends Sensor {
+public class SensorDeDistancia extends Sensor {
     
-    private final String RUTA_ARCHIVO = "giroscopio.txt";
+    private final String RUTA_ARCHIVO = "distancia.txt";
 
-    public Giroscopio(String id) {
+    public SensorDeDistancia(String id) {
         super(id, "mecanica");
     }
 
@@ -21,9 +21,9 @@ public class Giroscopio extends Sensor {
         } catch (Exception e) {
             System.err.println("[Aviso] No se pudo leer " + RUTA_ARCHIVO + ". Pasando a simulación...");
         }
-        return -5 + Math.random() * 10; // Ángulo simulado entre -5 y +5 grados
+        return 15 + Math.random() * 5; // Distancia simulada entre 15 y 20 metros
     }
 
     @Override
-    public String getUnidad() { return "grados"; }
+    public String getUnidad() { return "m"; }
 }

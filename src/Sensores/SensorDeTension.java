@@ -1,19 +1,29 @@
 package Sensores;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 public class SensorDeTension extends Sensor {
     
+    private final String RUTA_ARCHIVO = "tension.txt";
+
     public SensorDeTension(String id) {
         super(id, "mecanica");
     }
 
     @Override
-    public String getUnidad() {
-        return "t"; // Toneladas (Fuerza ejercida por el buque sobre la boya)
+    public double obtenerMedicion() {
+        try {
+            if (Files.exists(Paths.get(RUTA_ARCHIVO))) {
+                String contenido = new String(Files.readAllBytes(Paths.get(RUTA_ARCHIVO)));
+                return Double.parseDouble(contenido.trim());
+            }
+        } catch (Exception e) {
+            System.err.println("[Aviso] No se pudo leer " + RUTA_ARCHIVO + ". Pasando a simulación...");
+        }
+        return 50 + Math.random() * 20; // Tensión simulada entre 50 y 70 toneladas
     }
 
     @Override
-    public double obtenerMedicion() {
-        // Implementación de ejemplo, devolver un valor simulado
-        return 0.0;
-    }
+    public String getUnidad() { return "t"; }
 }
