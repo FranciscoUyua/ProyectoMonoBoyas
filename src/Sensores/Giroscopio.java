@@ -1,14 +1,14 @@
 package Sensores;
 
-public class SensorDeOleaje extends Sensor {
+public class Giroscopio extends Sensor {
     
-    public SensorDeOleaje(String id) {
-        super(id, "ambiental");
+    public Giroscopio(String id) {
+        super(id, "mecanica");
     }
 
     @Override
     public String getUnidad() {
-        return "m"; // Metros
+        return "grados"; // Ángulo de inclinación o rotación
     }
 
     @Override

@@ -1,14 +1,14 @@
 package Sensores;
 
-public class SensorDeOleaje extends Sensor {
+public class SensorDeTension extends Sensor {
     
-    public SensorDeOleaje(String id) {
-        super(id, "ambiental");
+    public SensorDeTension(String id) {
+        super(id, "mecanica");
     }
 
     @Override
     public String getUnidad() {
-        return "m"; // Metros
+        return "t"; // Toneladas (Fuerza ejercida por el buque sobre la boya)
     }
 
     @Override

@@ -15,10 +15,10 @@ public abstract class Sensor {
         this.activo = true;
     }
 
-    // Cada sensor sabe cómo capturar su valor
+    // El sensor vuelve a ser responsable de obtener su propio dato (Actuando como Driver/Wrapper)
     public abstract double obtenerMedicion();
 
-    // Produce una Medicion con timestamp y origen — esto es lo que viaja
+    // Produce una Medicion con timestamp y origen invocando su propia recolección
     public Medicion generarMedicion() {
         double valor = obtenerMedicion();
         this.ultimaMedicion = LocalDateTime.now();

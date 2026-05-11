@@ -1,14 +1,14 @@
 package Sensores;
 
-public class SensorDeOleaje extends Sensor {
+public class SensorDeAmarre extends Sensor {
     
-    public SensorDeOleaje(String id) {
-        super(id, "ambiental");
+    public SensorDeAmarre(String id) {
+        super(id, "mecanica");
     }
 
     @Override
     public String getUnidad() {
-        return "m"; // Metros
+        return "m"; // Metros (Distancia entre el barco y la boya)
     }
 
     @Override
