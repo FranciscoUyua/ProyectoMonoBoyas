@@ -1,6 +1,7 @@
 package Main;
 
 import Equipamiento.Monoboya;
+import Equipamiento.Planta;
 import Operaciones.Operacion;
 import Sensores.SensorDeOleaje;
 import Sensores.SensorDePresion;
@@ -11,8 +12,8 @@ public class TestFlujoSensores {
     public static void main(String[] args) throws InterruptedException {
         
         CentralDatos centralEnPlanta = new CentralDatos();
-        Monoboya monoboya = new Monoboya(101, null, 8, null);
-        
+        Planta miPlanta = new Planta("Planta de Prueba", 1);
+        Monoboya monoboya = new Monoboya(101, miPlanta, 8, null, centralEnPlanta);        
         // Creamos la operación (Nace con estado activa = true)
         Operacion opTransferencia = new Operacion(5001, monoboya, 2000); 
         monoboya.asignarOperacion(opTransferencia);
@@ -34,7 +35,7 @@ public class TestFlujoSensores {
             System.out.println("\n--- Segundo " + (segundosTranscurridos + 1) + " ---");
             
             // 1. La monoboya toma la "foto" del momento y la envía a la Central
-            monoboya.recolectarYTransmitirDatos(centralEnPlanta);
+            monoboya.recolectarYTransmitirDatos();
 
             // 2. Esperamos 1 segundo exacto en la vida real antes de la siguiente captura
             Thread.sleep(1000); 
