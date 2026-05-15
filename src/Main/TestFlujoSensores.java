@@ -1,7 +1,6 @@
 package Main;
 
 import Equipamiento.Monoboya;
-import Equipamiento.Planta;
 import Operaciones.Operacion;
 import Sensores.SensorDeOleaje;
 import Sensores.SensorDePresion;
@@ -12,8 +11,7 @@ public class TestFlujoSensores {
     public static void main(String[] args) throws InterruptedException {
         
         CentralDatos centralEnPlanta = new CentralDatos();
-        Planta miPlanta = new Planta("Planta de Prueba", 1);
-        Monoboya monoboya = new Monoboya(101, miPlanta, 8, null, centralEnPlanta);        
+        Monoboya monoboya = new Monoboya(101, 8, null, centralEnPlanta);        
         // Creamos la operación (Nace con estado activa = true)
         Operacion opTransferencia = new Operacion(5001, monoboya, 2000); 
         monoboya.asignarOperacion(opTransferencia);

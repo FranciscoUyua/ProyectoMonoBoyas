@@ -6,19 +6,17 @@ import Sensores.*;
 
 public class Monoboya {
     protected int id;
-    protected Planta planta; // Asociacion con Planta
     protected Sensor[] sensores; // Arreglo de sensores con tamanio fijo
     protected int contadorSensores; // Para llevar el control de cuantos se han agregado
     protected Operacion operacion; 
     protected CentralDatos centralDatos; //La Monoboya conoce y se asocia directamente a la CentralDatos 
     
-    public Monoboya(int id, Planta planta, int capacidadMaxima, Operacion operacion, CentralDatos centralDatos) {
+    public Monoboya(int id, int capacidadMaxima, Operacion operacion, CentralDatos centralDatos) {
         this.id = id;
-        this.planta = planta;
         this.sensores = new Sensor[capacidadMaxima]; 
         this.contadorSensores = 0;
         this.operacion = operacion; 
-        this.centralDatos = centralDatos; // Asignación del nuevo atributo
+        this.centralDatos = centralDatos; // Asignación del nuevo atributo q
     }
 
     public void asignarOperacion(Operacion operacion){
@@ -72,10 +70,6 @@ public class Monoboya {
         return id;
     }
 
-    public Planta getPlanta() {
-        return planta;
-    }
-
     public Sensor[] getSensores() {
         return sensores;
     }
@@ -91,4 +85,5 @@ public class Monoboya {
     public CentralDatos getCentralDatos() {
         return centralDatos;
     }
+
 }
