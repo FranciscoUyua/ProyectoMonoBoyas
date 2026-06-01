@@ -11,12 +11,12 @@ public class SensorDeDistancia extends Sensor {
         super(id, "mecanica");
     }
 
-    @Override
     public double obtenerMedicion() {
         try {
             if (Files.exists(Paths.get(RUTA_ARCHIVO))) {
                 String contenido = new String(Files.readAllBytes(Paths.get(RUTA_ARCHIVO)));
                 return Double.parseDouble(contenido.trim());
+                
             }
         } catch (Exception e) {
             System.err.println("[Aviso] No se pudo leer " + RUTA_ARCHIVO + ". Pasando a simulación...");

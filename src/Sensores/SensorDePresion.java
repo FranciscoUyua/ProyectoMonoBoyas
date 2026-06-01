@@ -12,7 +12,6 @@ public class SensorDePresion extends Sensor {
         super(id, "operativo");
     }
 
-    @Override
     public double obtenerMedicion() {
         // Intenta leer el archivo presion.txt que creaste en la raíz
         try {

@@ -6,7 +6,6 @@ public class Anemometro extends Sensor {
         super(id, "ambiental");
     }
 
-    @Override
     public double obtenerMedicion() {
         // Futura conexión HTTP a Open-Meteo
         return Math.random() * 80; // Viento entre 0 y 80 km/h

@@ -11,7 +11,6 @@ public class Caudalimetro extends Sensor {
         super(id, "operativo");
     }
 
-    @Override
     public double obtenerMedicion() {
         try {
             if (Files.exists(Paths.get(RUTA_ARCHIVO))) {

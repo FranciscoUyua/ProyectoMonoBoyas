@@ -5,6 +5,9 @@ import Operaciones.Operacion;
 import Sensores.SensorDeOleaje;
 import Sensores.SensorDePresion;
 import Central.CentralDatos;
+import Usuarios.OperadorLancha;
+import Usuarios.OperadorBuque;
+import Usuarios.OperadorPlanta;
 
 public class TestFlujoSensores {
 
@@ -12,9 +15,19 @@ public class TestFlujoSensores {
         
         CentralDatos centralEnPlanta = new CentralDatos();
         Monoboya monoboya = new Monoboya(101, 8, null, centralEnPlanta);        
+        
         // Creamos la operación (Nace con estado activa = true)
         Operacion opTransferencia = new Operacion(5001, monoboya, 2000); 
         monoboya.asignarOperacion(opTransferencia);
+        centralEnPlanta.setOperacionActiva(opTransferencia);
+
+        // Creamos el equipo humano que está de guardia en esta operación
+        OperadorLancha juanLancha = new OperadorLancha(1, "Juan (Lancha)", "123", 1111);
+        OperadorBuque capitanBuque = new OperadorBuque(2, "Capitán Smith (Buque)", "456", 2222);
+        OperadorPlanta pedroPlanta = new OperadorPlanta(3, "Pedro (Sala Control)", "789", 3333);
+        
+        // Vinculamos a los operadores a la operación activa
+        opTransferencia.asignarEquipoHumano(juanLancha, capitanBuque, pedroPlanta);
 
         SensorDePresion presion = new SensorDePresion("PRES-01");
         SensorDeOleaje oleaje = new SensorDeOleaje("OLEA-01");
@@ -24,26 +37,20 @@ public class TestFlujoSensores {
         System.out.println("--- INICIANDO DESCARGA DE PETRÓLEO ---");
 
         int segundosTranscurridos = 0;
-        int tiempoSimuladoDescarga = 10; // Supongamos que dura 10 segundos
+        int tiempoSimuladoDescarga = 10; 
 
-        // BUCLE DE POLLING (Muestreo continuo)
-        // Mientras la operación siga activa, la monoboya no dejará de pedir datos
-        while (opTransferencia.isActiva()) {
-            
+        while (opTransferencia.isActiva() && segundosTranscurridos < tiempoSimuladoDescarga) {
             System.out.println("\n--- Segundo " + (segundosTranscurridos + 1) + " ---");
-            
-            // 1. La monoboya toma la "foto" del momento y la envía a la Central
             monoboya.recolectarYTransmitirDatos();
-
-            // 2. Esperamos 1 segundo exacto en la vida real antes de la siguiente captura
             Thread.sleep(1000); 
             segundosTranscurridos++;
-
-            // 3. Condición de corte: Simulamos que el operador finaliza la descarga a los 10 segundos
-            // (En la vida real, el operador apretaría un botón en el sistema para llamar a este método)
-            if (segundosTranscurridos == tiempoSimuladoDescarga) {
-                opTransferencia.finalizarOperacion();
-            }
+        }
+        
+        if (opTransferencia.isActiva()) {
+            System.out.println("\n[OPERADOR] Tiempo de descarga completado sin incidentes críticos. Finalizando manualmente.");
+            opTransferencia.finalizarOperacion();
+        } else {
+            System.out.println("\n[SISTEMA] El ciclo de muestreo se detuvo de forma anticipada debido a protocolos de seguridad.");
         }
         
         System.out.println("--- EL BARCO SE HA DESCONECTADO ---");

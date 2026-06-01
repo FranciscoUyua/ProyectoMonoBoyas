@@ -1,4 +1,5 @@
 package Usuarios;
+import Alertas.Alerta;
 import Operaciones.*;
 
 public abstract class UsuarioOperador extends Usuario{
@@ -9,7 +10,7 @@ public abstract class UsuarioOperador extends Usuario{
         this.operacion = null; // Inicialmente sin operación asignada
     }
 
-    public abstract void reconocerAlerta(); // Método abstracto para que cada operador lo implemente según su tipo
+    public abstract void reconocerAlerta(Alerta alerta); // Método abstracto para que cada operador lo implemente según su tipo
 
     // Métodos específicos para UsuarioOperador
     

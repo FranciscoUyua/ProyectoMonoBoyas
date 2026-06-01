@@ -6,7 +6,6 @@ public class SensorDeOleaje extends Sensor {
         super(id, "ambiental");
     }
 
-    @Override
     public double obtenerMedicion() {
         // Simulación: Devuelve un oleaje aleatorio entre 0 y 5 metros
         return Math.random() * 5; 

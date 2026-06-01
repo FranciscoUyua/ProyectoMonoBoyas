@@ -1,5 +1,7 @@
 package Usuarios;
 
+import Alertas.Alerta;
+
 public abstract class Usuario {
     protected int id;
     protected String nombre;
@@ -11,50 +13,25 @@ public abstract class Usuario {
         this.nombre = nombre;
         this.contrasena = contrasena;
         this.dni = dni;
-
     }
 
-    public int getId() {
-        return id;
+    // NUEVO MÉTODO: Simula la recepción de la alerta en la interfaz gráfica del usuario
+    public void mostrarAlertaEnPantalla(Alerta alerta) {
+        System.out.println("  [INTERFAZ DE " + this.getClass().getSimpleName().toUpperCase() + ": " + this.nombre + "]");
+        System.out.println("  ┌──────────────────────────────────────────────────────────┐");
+        System.out.println("  │ ¡¡¡ ALERTA EN TIEMPO REAL DETECTADA EN TU PANEL !!!      │");
+        System.out.println("  │ > GRAVEDAD: " + alerta.getTipoAlerta());
+        System.out.println("  │ > MENSAJE : " + alerta.getMensaje());
+        System.out.println("  └──────────────────────────────────────────────────────────┘");
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public String getContrasena() {
-        return contrasena;
-    }
-
-    public void setContrasena(String contrasena) {
-        this.contrasena = contrasena;
-    }
-
-    public int getDni() {
-        return dni;
-    }
-
-    public void setDni(int dni) {
-        this.dni = dni;
-    }
-
-
-    //Metodos que dependen del tipo de usuario (abstractos)
-    
-
-    
-
-
-
-
-
-
+    // Getters y Setters existentes...
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
+    public String getContrasena() { return contrasena; }
+    public void setContrasena(String contrasena) { this.contrasena = contrasena; }
+    public int getDni() { return dni; }
+    public void setDni(int dni) { this.dni = dni; }
 }

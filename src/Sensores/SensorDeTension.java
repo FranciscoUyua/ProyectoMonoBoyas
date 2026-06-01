@@ -11,7 +11,6 @@ public class SensorDeTension extends Sensor {
         super(id, "mecanica");
     }
 
-    @Override
     public double obtenerMedicion() {
         try {
             if (Files.exists(Paths.get(RUTA_ARCHIVO))) {
