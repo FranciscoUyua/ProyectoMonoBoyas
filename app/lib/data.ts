@@ -1,218 +1,134 @@
-import postgres from 'postgres';
-import {
-  CustomerField,
-  CustomersTableType,
-  InvoiceForm,
-  InvoicesTable,
-  LatestInvoiceRaw,
-  Revenue,
+// app/lib/data.ts
+import { apiFetch } from './api-client';
+import type {
+  Monoboya, Buque, Sensor, Operacion,
+  Medicion, Alerta, Umbral, Planta,
+  Paginated
 } from './definitions';
-import { formatCurrency } from './utils';
 
-const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
-
-export async function fetchRevenue() {
-  try {
-    // Artificially delay a response for demo purposes.
-    // Don't do this in production :)
-
-    // console.log('Fetching revenue data...');
-    // await new Promise((resolve) => setTimeout(resolve, 3000));
-
-    const data = await sql<Revenue[]>`SELECT * FROM revenue`;
-
-    // console.log('Data fetch completed after 3 seconds.');
-
-    return data;
-  } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch revenue data.');
-  }
+// ─── PLANTAS ──────────────────────────────────────────────
+export async function fetchPlantas(): Promise<Planta[]> {
+  return apiFetch<Planta[]>('/plantas');
 }
 
-export async function fetchLatestInvoices() {
-  try {
-    const data = await sql<LatestInvoiceRaw[]>`
-      SELECT invoices.amount, customers.name, customers.image_url, customers.email, invoices.id
-      FROM invoices
-      JOIN customers ON invoices.customer_id = customers.id
-      ORDER BY invoices.date DESC
-      LIMIT 5`;
-
-    const latestInvoices = data.map((invoice) => ({
-      ...invoice,
-      amount: formatCurrency(invoice.amount),
-    }));
-    return latestInvoices;
-  } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch the latest invoices.');
-  }
+export async function fetchPlanta(id: number): Promise<Planta> {
+  return apiFetch<Planta>(`/plantas/${id}`);
 }
 
-export async function fetchCardData() {
-  try {
-    // You can probably combine these into a single SQL query
-    // However, we are intentionally splitting them to demonstrate
-    // how to initialize multiple queries in parallel with JS.
-    const invoiceCountPromise = sql`SELECT COUNT(*) FROM invoices`;
-    const customerCountPromise = sql`SELECT COUNT(*) FROM customers`;
-    const invoiceStatusPromise = sql`SELECT
-         SUM(CASE WHEN status = 'paid' THEN amount ELSE 0 END) AS "paid",
-         SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END) AS "pending"
-         FROM invoices`;
-
-    const data = await Promise.all([
-      invoiceCountPromise,
-      customerCountPromise,
-      invoiceStatusPromise,
-    ]);
-
-    const numberOfInvoices = Number(data[0][0].count ?? '0');
-    const numberOfCustomers = Number(data[1][0].count ?? '0');
-    const totalPaidInvoices = formatCurrency(data[2][0].paid ?? '0');
-    const totalPendingInvoices = formatCurrency(data[2][0].pending ?? '0');
-
-    return {
-      numberOfCustomers,
-      numberOfInvoices,
-      totalPaidInvoices,
-      totalPendingInvoices,
-    };
-  } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch card data.');
-  }
+// ─── MONOBOYAS ────────────────────────────────────────────
+export async function fetchMonoboyas(filtros?: {
+  plantaId?: number;
+  estado?: string;
+}): Promise<Monoboya[]> {
+  const params = new URLSearchParams();
+  if (filtros?.plantaId) params.set('plantaId', String(filtros.plantaId));
+  if (filtros?.estado)   params.set('estado', filtros.estado);
+  const qs = params.size > 0 ? `?${params}` : '';
+  return apiFetch<Monoboya[]>(`/monoboyas${qs}`);
 }
 
-const ITEMS_PER_PAGE = 6;
-export async function fetchFilteredInvoices(
-  query: string,
-  currentPage: number,
-) {
-  const offset = (currentPage - 1) * ITEMS_PER_PAGE;
-
-  try {
-    const invoices = await sql<InvoicesTable[]>`
-      SELECT
-        invoices.id,
-        invoices.amount,
-        invoices.date,
-        invoices.status,
-        customers.name,
-        customers.email,
-        customers.image_url
-      FROM invoices
-      JOIN customers ON invoices.customer_id = customers.id
-      WHERE
-        customers.name ILIKE ${`%${query}%`} OR
-        customers.email ILIKE ${`%${query}%`} OR
-        invoices.amount::text ILIKE ${`%${query}%`} OR
-        invoices.date::text ILIKE ${`%${query}%`} OR
-        invoices.status ILIKE ${`%${query}%`}
-      ORDER BY invoices.date DESC
-      LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
-    `;
-
-    return invoices;
-  } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch invoices.');
-  }
+export async function fetchMonoboya(id: number): Promise<Monoboya> {
+  return apiFetch<Monoboya>(`/monoboyas/${id}`);
 }
 
-export async function fetchInvoicesPages(query: string) {
-  try {
-    const data = await sql`SELECT COUNT(*)
-    FROM invoices
-    JOIN customers ON invoices.customer_id = customers.id
-    WHERE
-      customers.name ILIKE ${`%${query}%`} OR
-      customers.email ILIKE ${`%${query}%`} OR
-      invoices.amount::text ILIKE ${`%${query}%`} OR
-      invoices.date::text ILIKE ${`%${query}%`} OR
-      invoices.status ILIKE ${`%${query}%`}
-  `;
-
-    const totalPages = Math.ceil(Number(data[0].count) / ITEMS_PER_PAGE);
-    return totalPages;
-  } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch total number of invoices.');
-  }
+// ─── BUQUES ───────────────────────────────────────────────
+export async function fetchBuques(): Promise<Buque[]> {
+  return apiFetch<Buque[]>('/buques');
 }
 
-export async function fetchInvoiceById(id: string) {
-  try {
-    const data = await sql<InvoiceForm[]>`
-      SELECT
-        invoices.id,
-        invoices.customer_id,
-        invoices.amount,
-        invoices.status
-      FROM invoices
-      WHERE invoices.id = ${id};
-    `;
-
-    const invoice = data.map((invoice) => ({
-      ...invoice,
-      // Convert amount from cents to dollars
-      amount: invoice.amount / 100,
-    }));
-
-    return invoice[0];
-  } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch invoice.');
-  }
+export async function fetchBuque(nroIMO: number): Promise<Buque> {
+  return apiFetch<Buque>(`/buques/${nroIMO}`);
 }
 
-export async function fetchCustomers() {
-  try {
-    const customers = await sql<CustomerField[]>`
-      SELECT
-        id,
-        name
-      FROM customers
-      ORDER BY name ASC
-    `;
-
-    return customers;
-  } catch (err) {
-    console.error('Database Error:', err);
-    throw new Error('Failed to fetch all customers.');
-  }
+// ─── SENSORES ─────────────────────────────────────────────
+export async function fetchSensores(filtros?: {
+  monoboyaId?: number;
+  activo?: boolean;
+}): Promise<Sensor[]> {
+  const params = new URLSearchParams();
+  if (filtros?.monoboyaId !== undefined) params.set('monoboyaId', String(filtros.monoboyaId));
+  if (filtros?.activo !== undefined)     params.set('activo', String(filtros.activo));
+  const qs = params.size > 0 ? `?${params}` : '';
+  return apiFetch<Sensor[]>(`/sensores${qs}`);
 }
 
-export async function fetchFilteredCustomers(query: string) {
-  try {
-    const data = await sql<CustomersTableType[]>`
-		SELECT
-		  customers.id,
-		  customers.name,
-		  customers.email,
-		  customers.image_url,
-		  COUNT(invoices.id) AS total_invoices,
-		  SUM(CASE WHEN invoices.status = 'pending' THEN invoices.amount ELSE 0 END) AS total_pending,
-		  SUM(CASE WHEN invoices.status = 'paid' THEN invoices.amount ELSE 0 END) AS total_paid
-		FROM customers
-		LEFT JOIN invoices ON customers.id = invoices.customer_id
-		WHERE
-		  customers.name ILIKE ${`%${query}%`} OR
-        customers.email ILIKE ${`%${query}%`}
-		GROUP BY customers.id, customers.name, customers.email, customers.image_url
-		ORDER BY customers.name ASC
-	  `;
+// ─── OPERACIONES ──────────────────────────────────────────
+export async function fetchOperaciones(filtros?: {
+  estado?: string;
+  monoboyaId?: number;
+  page?: number;
+}): Promise<Paginated<Operacion>> {
+  const params = new URLSearchParams();
+  if (filtros?.estado)     params.set('estado', filtros.estado);
+  if (filtros?.monoboyaId) params.set('monoboyaId', String(filtros.monoboyaId));
+  if (filtros?.page)       params.set('page', String(filtros.page));
+  const qs = params.size > 0 ? `?${params}` : '';
+  return apiFetch<Paginated<Operacion>>(`/operaciones${qs}`);
+}
 
-    const customers = data.map((customer) => ({
-      ...customer,
-      total_pending: formatCurrency(customer.total_pending),
-      total_paid: formatCurrency(customer.total_paid),
-    }));
+export async function fetchOperacion(id: number): Promise<Operacion> {
+  return apiFetch<Operacion>(`/operaciones/${id}`);
+}
 
-    return customers;
-  } catch (err) {
-    console.error('Database Error:', err);
-    throw new Error('Failed to fetch customer table.');
-  }
+export async function fetchMedicionesDeOperacion(
+  operacionId: number,
+  filtros?: { sensorId?: string; desde?: string; hasta?: string; page?: number }
+): Promise<Paginated<Medicion>> {
+  const params = new URLSearchParams();
+  if (filtros?.sensorId) params.set('sensorId', filtros.sensorId);
+  if (filtros?.desde)    params.set('desde', filtros.desde);
+  if (filtros?.hasta)    params.set('hasta', filtros.hasta);
+  if (filtros?.page)     params.set('page', String(filtros.page));
+  const qs = params.size > 0 ? `?${params}` : '';
+  return apiFetch<Paginated<Medicion>>(`/operaciones/${operacionId}/mediciones${qs}`);
+}
+
+export async function fetchAlertasDeOperacion(
+  operacionId: number
+): Promise<Alerta[]> {
+  return apiFetch<Alerta[]>(`/operaciones/${operacionId}/alertas`);
+}
+
+// ─── MEDICIONES ───────────────────────────────────────────
+export async function fetchMediciones(filtros?: {
+  sensorId?: string;
+  operacionId?: number;
+  desde?: string;
+  hasta?: string;
+  page?: number;
+}): Promise<Paginated<Medicion>> {
+  const params = new URLSearchParams();
+  if (filtros?.sensorId)    params.set('sensorId', filtros.sensorId);
+  if (filtros?.operacionId) params.set('operacionId', String(filtros.operacionId));
+  if (filtros?.desde)       params.set('desde', filtros.desde);
+  if (filtros?.hasta)       params.set('hasta', filtros.hasta);
+  if (filtros?.page)        params.set('page', String(filtros.page));
+  const qs = params.size > 0 ? `?${params}` : '';
+  return apiFetch<Paginated<Medicion>>(`/mediciones${qs}`);
+}
+
+// ─── ALERTAS ──────────────────────────────────────────────
+export async function fetchAlertas(filtros?: {
+  tipo?: string;
+  estado?: string;
+  operacionId?: number;
+  page?: number;
+}): Promise<Paginated<Alerta>> {
+  const params = new URLSearchParams();
+  if (filtros?.tipo)        params.set('tipo', filtros.tipo);
+  if (filtros?.estado)      params.set('estado', filtros.estado);
+  if (filtros?.operacionId) params.set('operacionId', String(filtros.operacionId));
+  if (filtros?.page)        params.set('page', String(filtros.page));
+  const qs = params.size > 0 ? `?${params}` : '';
+  return apiFetch<Paginated<Alerta>>(`/alertas${qs}`);
+}
+
+export async function fetchAlerta(id: number): Promise<Alerta> {
+  return apiFetch<Alerta>(`/alertas/${id}`);
+}
+
+// ─── UMBRALES ─────────────────────────────────────────────
+export async function fetchUmbrales(tipoSensor?: string): Promise<Umbral[]> {
+  const qs = tipoSensor ? `?tipoSensor=${tipoSensor}` : '';
+  return apiFetch<Umbral[]>(`/configuracion/umbrales${qs}`);
 }

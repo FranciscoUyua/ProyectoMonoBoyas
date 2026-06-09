@@ -1,88 +1,108 @@
-// This file contains type definitions for your data.
-// It describes the shape of the data, and what data type each property should accept.
-// For simplicity of teaching, we're manually defining these types.
-// However, these types are generated automatically if you're using an ORM such as Prisma.
-export type User = {
+export type Usuario = {
+  dni: number;
+  nombre: string;
+  rol: 'ADMIN' | 'OPERADOR_PLANTA' | 'OPERADOR_BUQUE' | 'OPERADOR_LANCHA';
+  plantaId: number | null;
+  buqueNroIMO: number | null;
+  operacionId: number | null;
+  creadoEn: string;
+};
+
+export type Monoboya = {
+  id: number;
+  estado: 'DISPONIBLE' | 'EN_OPERACION' | 'MANTENIMIENTO' | 'FUERA_DE_SERVICIO';
+  plantaId: number;
+  capacidadMaximaSensores: number;
+  cantidadSensoresInstalados: number;
+};
+
+export type Buque = {
+  nroIMO: number;
+  nombre: string;
+  capacidad: number;
+};
+
+export type Sensor = {
   id: string;
-  name: string;
-  email: string;
-  password: string;
+  tipo: 'ANEMOMETRO' | 'CAUDALIMETRO' | 'CORRENTOMETRO' | 'GIROSCOPIO'
+      | 'SENSOR_DISTANCIA' | 'SENSOR_OLEAJE' | 'SENSOR_PRESION' | 'SENSOR_TENSION';
+  categoria: 'AMBIENTAL' | 'MECANICA' | 'OPERATIVO';
+  unidad: string;
+  activo: boolean;
+  monoboyaId: number | null;
+  buqueNroIMO: number | null;
 };
 
-export type Customer = {
-  id: string;
-  name: string;
-  email: string;
-  image_url: string;
+export type Operacion = {
+  id: number;
+  estado: 'ACTIVA' | 'FINALIZADA' | 'CANCELADA';
+  tipo: 'CARGA' | 'DESCARGA';
+  monoboyaId: number;
+  buqueNroIMO: number;
+  operadorLanchaDni: number;
+  operadorBuqueDni: number;
+  operadorPlantaDni: number;
+  iniciadaEn: string;
+  finalizadaEn: string | null;
 };
 
-export type Invoice = {
-  id: string;
-  customer_id: string;
-  amount: number;
-  date: string;
-  // In TypeScript, this is called a string union type.
-  // It means that the "status" property can only be one of the two strings: 'pending' or 'paid'.
-  status: 'pending' | 'paid';
+export type Medicion = {
+  id: number;
+  sensorId: string;
+  valor: number;
+  unidad: string;
+  timestamp: string;
+  operacionId: number | null;
 };
 
-export type Revenue = {
-  month: string;
-  revenue: number;
+export type Alerta = {
+  id: number;
+  tipo: 'INFORMATIVA' | 'ADVERTENCIA' | 'CRITICA';
+  mensaje: string;
+  operacionId: number;
+  sensorId: string | null;
+  valorMedicion: number | null;
+  estado: 'PENDIENTE' | 'RECONOCIDA' | 'RESUELTA';
+  generadaEn: string;
+  reconocidaPorDni: number | null;
+  reconocidaEn: string | null;
 };
 
-export type LatestInvoice = {
-  id: string;
-  name: string;
-  image_url: string;
-  email: string;
-  amount: string;
+export type Umbral = {
+  id: number;
+  tipoSensor: 'ANEMOMETRO' | 'CAUDALIMETRO' | 'CORRENTOMETRO' | 'GIROSCOPIO'
+            | 'SENSOR_DISTANCIA' | 'SENSOR_OLEAJE' | 'SENSOR_PRESION' | 'SENSOR_TENSION';
+  valorMinAdvertencia: number;
+  valorMaxAdvertencia: number;
+  valorMinCritico: number;
+  valorMaxCritico: number;
+  unidad: string;
+  actualizadoEn: string;
+  actualizadoPorDni: number;
 };
 
-// The database returns a number for amount, but we later format it to a string with the formatCurrency function
-export type LatestInvoiceRaw = Omit<LatestInvoice, 'amount'> & {
-  amount: number;
+export type Planta = {
+  id: number;
+  nombrePlanta: string;
 };
 
-export type InvoicesTable = {
-  id: string;
-  customer_id: string;
-  name: string;
-  email: string;
-  image_url: string;
-  date: string;
-  amount: number;
-  status: 'pending' | 'paid';
+// ─── Tipos auxiliares ─────────────────────────────────────────────
+export type Pagination = {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
 };
 
-export type CustomersTableType = {
-  id: string;
-  name: string;
-  email: string;
-  image_url: string;
-  total_invoices: number;
-  total_pending: number;
-  total_paid: number;
+export type Paginated<T> = {
+  data: T[];
+  pagination: Pagination;
 };
 
-export type FormattedCustomersTable = {
-  id: string;
-  name: string;
-  email: string;
-  image_url: string;
-  total_invoices: number;
-  total_pending: string;
-  total_paid: string;
-};
-
-export type CustomerField = {
-  id: string;
-  name: string;
-};
-
-export type InvoiceForm = {
-  id: string;
-  customer_id: string;
-  amount: number;
-  status: 'pending' | 'paid';
+export type ApiError = {
+  error: {
+    code: string;
+    message: string;
+    details?: string;
+  };
 };
