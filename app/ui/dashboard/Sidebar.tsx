@@ -22,7 +22,7 @@ function LogoutButton() {
     <button
       type="submit"
       disabled={pending}
-      className="flex items-center gap-4 w-full p-2 hover:bg-red-900/20 text-red-500 rounded-lg transition-colors disabled:opacity-50"
+      className="flex items-center gap-4 w-full p-2 hover:bg-[var(--color-danger-soft)] text-[var(--color-alerta-rojo)] rounded-lg transition-colors disabled:opacity-50"
     >
       <ArrowLeftOnRectangleIcon className="w-6 h-6" />
       <span className="font-medium text-sm">
@@ -49,8 +49,8 @@ function NavItem({
       href="#"
       className={`flex items-center gap-4 p-2 rounded-lg transition-all ${
         active
-          ? 'bg-blue-600 text-white'
-          : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+          ? 'bg-[var(--color-primary)] text-[var(--color-text)]'
+          : 'text-[var(--color-text-muted)] hover:bg-[var(--color-border)] hover:text-[var(--color-text)]'
       }`}
     >
       <div className="min-w-[24px]">{icon}</div>
@@ -69,22 +69,22 @@ export default function Sidebar({ usuario }: { usuario: Usuario | null }) {
   return (
     <>
       <aside
-        className={`bg-[#1a1a1a] transition-all duration-300 ease-in-out flex flex-col border-r border-gray-800 ${
+        className={`bg-[var(--color-surface)] transition-all duration-300 ease-in-out flex flex-col border-r border-[var(--color-border)] ${
           isCollapsed ? 'w-20' : 'w-64'
         }`}
       >
         {/* Logo + toggle */}
         <div className="p-4 flex items-center justify-between h-16">
           {!isCollapsed && (
-            <span className={`${lusitana.className} text-xl font-bold text-blue-500`}>
+            <span className={`${lusitana.className} text-xl font-bold text-[var(--color-primary-soft)]`}>
               VIGÍA
             </span>
           )}
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
+            className="p-2 hover:bg-[var(--color-border)] rounded-lg transition-colors"
           >
-            <Bars3Icon className="w-6 h-6 text-gray-400" />
+            <Bars3Icon className="w-6 h-6 text-[var(--color-text-muted)]" />
           </button>
         </div>
 
@@ -98,18 +98,18 @@ export default function Sidebar({ usuario }: { usuario: Usuario | null }) {
         </nav>
 
         {/* Cerrar sesión */}
-        <div className="p-4 border-t border-gray-800">
+        <div className="p-4 border-t border-[var(--color-border)]">
           {isCollapsed ? (
             <button
               onClick={() => setShowLogoutModal(true)}
-              className="flex justify-center w-full p-2 hover:bg-red-900/20 text-red-500 rounded-lg transition-colors"
+              className="flex justify-center w-full p-2 hover:bg-[var(--color-danger-soft)] text-[var(--color-alerta-rojo)] rounded-lg transition-colors"
             >
               <ArrowLeftOnRectangleIcon className="w-6 h-6" />
             </button>
           ) : (
             <button
               onClick={() => setShowLogoutModal(true)}
-              className="flex items-center gap-4 w-full p-2 hover:bg-red-900/20 text-red-500 rounded-lg transition-colors"
+              className="flex items-center gap-4 w-full p-2 hover:bg-[var(--color-danger-soft)] text-[var(--color-alerta-rojo)] rounded-lg transition-colors"
             >
               <ArrowLeftOnRectangleIcon className="w-6 h-6" />
               <span className="font-medium text-sm">Cerrar Sesión</span>
@@ -121,16 +121,16 @@ export default function Sidebar({ usuario }: { usuario: Usuario | null }) {
       {/* Modal de confirmación de logout */}
       {showLogoutModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="bg-[#1a1a1a] border border-gray-800 w-full max-w-sm p-8 rounded-sm shadow-2xl">
-            <h3 className="text-xl font-bold mb-2 text-white">¿Cerrar sesión?</h3>
-            <p className="text-gray-400 text-sm mb-8">
+          <div className="bg-[var(--color-surface)] border border-[var(--color-border)] w-full max-w-sm p-8 rounded-sm shadow-2xl">
+            <h3 className="text-xl font-bold mb-2 text-[var(--color-text)]">¿Cerrar sesión?</h3>
+            <p className="text-[var(--color-text-muted)] text-sm mb-8">
               Estás a punto de salir del sistema de control. ¿Confirmás que querés
               finalizar la sesión actual?
             </p>
             <div className="flex gap-4 justify-end">
               <button
                 onClick={() => setShowLogoutModal(false)}
-                className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white transition-colors"
+                className="px-4 py-2 text-sm font-medium text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors"
               >
                 Cancelar
               </button>
