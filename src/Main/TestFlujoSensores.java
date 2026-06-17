@@ -4,6 +4,7 @@ import Equipamiento.Monoboya;
 import Operaciones.Operacion;
 import Sensores.SensorDeOleaje;
 import Sensores.SensorDePresion;
+import Sensores.MockSensorDataProvider;
 import Central.CentralDatos;
 import Usuarios.OperadorLancha;
 import Usuarios.OperadorBuque;
@@ -29,8 +30,8 @@ public class TestFlujoSensores {
         // Vinculamos a los operadores a la operación activa
         opTransferencia.asignarEquipoHumano(juanLancha, capitanBuque, pedroPlanta);
 
-        SensorDePresion presion = new SensorDePresion("PRES-01");
-        SensorDeOleaje oleaje = new SensorDeOleaje("OLEA-01");
+        SensorDePresion presion = new SensorDePresion(1, new MockSensorDataProvider());
+        SensorDeOleaje oleaje = new SensorDeOleaje(2, new MockSensorDataProvider());
         monoboya.agregarSensor(presion);
         monoboya.agregarSensor(oleaje);
 

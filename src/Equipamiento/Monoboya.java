@@ -1,6 +1,6 @@
 package Equipamiento;
 
-import Central.CentralDatos;
+import Central.*;
 import Operaciones.*;
 import Sensores.*;
 
@@ -10,13 +10,15 @@ public class Monoboya {
     protected int contadorSensores; // Para llevar el control de cuantos se han agregado
     protected Operacion operacion; 
     protected CentralDatos centralDatos; //La Monoboya conoce y se asocia directamente a la CentralDatos 
+    //central de datos se va
+    protected Publisher publisher; // La Monoboya tiene un Publisher para enviar datos a la CentralDatos
     
-    public Monoboya(int id, int capacidadMaxima, Operacion operacion, CentralDatos centralDatos) {
+    public Monoboya(int id, int capacidadMaxima, Operacion operacion, Publisher publisher) {
         this.id = id;
         this.sensores = new Sensor[capacidadMaxima]; 
         this.contadorSensores = 0;
         this.operacion = operacion; 
-        this.centralDatos = centralDatos; // Asignación del nuevo atributo q
+        this.publisher = publisher;
     }
 
     public void asignarOperacion(Operacion operacion){
@@ -37,13 +39,19 @@ public class Monoboya {
     // RECOLECCIÓN Y TRANSMISIÓN DE TELEMETRÍA (Sin parámetros)
     // ----------------------------------------------------------------------
     
-    public void recolectarYTransmitirDatos() {
-        // Recolectar datos de cada sensor
-        for (int i = 0; i < contadorSensores; i++) {
-            Sensor sensor = sensores[i];
-            if (sensor != null && sensor.isActivo()) {
-                Medicion medicion = new Medicion(sensor.getId(), sensor.getValor(), sensor.getUnidad());
+
+     public void recolectarDatos() {
+    // Agregamos "Sensor" (con mayúscula si es tu clase) antes de la variable
+        for (Sensor sensor : sensores) { 
+            if (sensor != null) {
+                Medicion nuevaMedicion = new Medicion(sensor.getId(), sensor.getValor(), sensor.getUnidad());
+
+            publisher.publicar(nuevaMedicion);
+        }
     }
+}
+
+
 
     // Getters
     public int getId() {
