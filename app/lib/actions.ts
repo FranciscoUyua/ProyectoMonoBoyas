@@ -58,7 +58,7 @@ export async function authenticate(
   redirect('/dashboard');
 }
 
-// ← ESTA es la que usa el Sidebar
+
 export async function logout() {
   const cookieStore = await cookies();
   cookieStore.delete('auth_token');
@@ -66,7 +66,6 @@ export async function logout() {
   redirect('/');
 }
 
-// ← ESTA es la que usa el Dashboard
 export async function getUsuarioActual(): Promise<Usuario | null> {
   const cookieStore = await cookies();
   const raw = cookieStore.get('user_data')?.value;

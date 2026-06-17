@@ -8,6 +8,7 @@ export type Usuario = {
   creadoEn: string;
 };
 
+
 export type Monoboya = {
   id: number;
   estado: 'DISPONIBLE' | 'EN_OPERACION' | 'MANTENIMIENTO' | 'FUERA_DE_SERVICIO';
@@ -106,3 +107,4 @@ export type ApiError = {
     details?: string;
   };
 };
+export type Rol = Usuario['rol'];
