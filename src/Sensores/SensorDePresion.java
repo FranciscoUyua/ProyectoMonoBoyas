@@ -1,34 +1,40 @@
 package Sensores;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.io.IOException;
+import java.time.LocalDateTime;
 
 public class SensorDePresion extends Sensor {
-    
-    private final String RUTA_ARCHIVO = "presion.txt";
-
-    public SensorDePresion(String id) {
-        super(id, "operativo");
+    public SensorDePresion(int id, ISensorDataProvider provider) {
+        super(id, "operativo", "Pa", provider);
     }
 
-    public double obtenerMedicion() {
-        // Intenta leer el archivo presion.txt que creaste en la raíz
-        try {
-            if (Files.exists(Paths.get(RUTA_ARCHIVO))) {
-                String contenido = new String(Files.readAllBytes(Paths.get(RUTA_ARCHIVO)));
-                return Double.parseDouble(contenido.trim());
-            }
-        } catch (IOException | NumberFormatException e) {
-            System.err.println("[Aviso] No se pudo leer presion.txt. Pasando a simulación...");
-        }
+    // GETTERS
+    @Override
+    public int getId() {
+        return id;
+    }
 
-        // Si falla, devuelve un valor aleatorio
-        return 100000 + Math.random() * 50000; 
+    @Override
+    public String getTipo() {
+        return tipo;
     }
 
     @Override
     public String getUnidad() {
-        return "Pa";
+        return unidad;
+    }
+
+    @Override
+    public boolean isActivo() {
+        return activo;
+    }
+
+    @Override
+    public double getValor() {
+        return valor;
+    }
+
+    @Override
+    public LocalDateTime getUltimaMedicion() {
+        return ultimaMedicion;
     }
 }

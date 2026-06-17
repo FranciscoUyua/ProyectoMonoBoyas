@@ -1,16 +1,40 @@
 package Sensores;
 
+import java.time.LocalDateTime;
+
 public class Anemometro extends Sensor {
-    
-    public Anemometro(String id) {
-        super(id, "ambiental");
+    public Anemometro(int id, ISensorDataProvider provider) {
+        super(id, "ambiental", "km/h", provider);
     }
 
-    public double obtenerMedicion() {
-        // Futura conexión HTTP a Open-Meteo
-        return Math.random() * 80; // Viento entre 0 y 80 km/h
+    // GETTERS
+    @Override
+    public int getId() {
+        return id;
     }
 
     @Override
-    public String getUnidad() { return "km/h"; }
+    public String getTipo() {
+        return tipo;
+    }
+
+    @Override
+    public String getUnidad() {
+        return unidad;
+    }
+
+    @Override
+    public boolean isActivo() {
+        return activo;
+    }
+
+    @Override
+    public double getValor() {
+        return valor;
+    }
+
+    @Override
+    public LocalDateTime getUltimaMedicion() {
+        return ultimaMedicion;
+    }
 }

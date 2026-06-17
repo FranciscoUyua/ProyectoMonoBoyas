@@ -1,18 +1,40 @@
 package Sensores;
 
+import java.time.LocalDateTime;
+
 public class SensorDeOleaje extends Sensor {
-    
-    public SensorDeOleaje(String id) {
-        super(id, "ambiental");
+    public SensorDeOleaje(int id, ISensorDataProvider provider) {
+        super(id, "ambiental", "m", provider);
     }
 
-    public double obtenerMedicion() {
-        // Simulación: Devuelve un oleaje aleatorio entre 0 y 5 metros
-        return Math.random() * 5; 
+    // GETTERS
+    @Override
+    public int getId() {
+        return id;
+    }
+
+    @Override
+    public String getTipo() {
+        return tipo;
     }
 
     @Override
     public String getUnidad() {
-        return "m";
+        return unidad;
+    }
+
+    @Override
+    public boolean isActivo() {
+        return activo;
+    }
+
+    @Override
+    public double getValor() {
+        return valor;
+    }
+
+    @Override
+    public LocalDateTime getUltimaMedicion() {
+        return ultimaMedicion;
     }
 }

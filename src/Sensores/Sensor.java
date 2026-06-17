@@ -3,41 +3,45 @@ package Sensores;
 import java.time.LocalDateTime;
 
 public abstract class Sensor {
-    protected String id;
+    protected int id;
     protected String tipo;
+    protected String unidad;
     protected boolean activo;
     protected LocalDateTime ultimaMedicion;
-    protected ISensorDataProvider dataProvider; // La nueva dependencia
+    
+    protected double valor; 
+    protected ISensorDataProvider dataProvider; 
 
-    // Constructor que permite inyectar el proveedor (para pruebas/mocking)
-    public Sensor(String id, String tipo, ISensorDataProvider dataProvider) {
+    // Constructor actualizado
+    public Sensor(int id, String tipo, String unidad, ISensorDataProvider dataProvider) {
         this.id = id;
         this.tipo = tipo;
+        this.unidad = unidad;
         this.dataProvider = dataProvider;
         this.activo = true;
+        this.valor = 0.0; // Valor por defecto al inicializar
     }
 
-    // Constructor para compatibilidad con las clases hijas actuales (usa Mock por defecto)
-    public Sensor(String id, String tipo) {
-        this(id, tipo, new MockSensorDataProvider());
-    }
-
-    public Medicion generarMedicion() {
-        try {
-            double valor = dataProvider.obtenerDato();
-            this.ultimaMedicion = LocalDateTime.now();
-            return new Medicion(this.id, valor, getUnidad());
-        } catch (Exception e) {
-            // El error ocurre aquí, capturamos y retornamos null para que la Central decida
-            System.err.println("Sensor " + id + " error: " + e.getMessage());
-            return null; 
+    //En lugar de generar un objeto, simplemente actualiza su estado interno
+    public void actualizarDato() {
+        if (this.activo && this.dataProvider != null) {
+            try {
+                this.valor = dataProvider.obtenerDato();
+                this.ultimaMedicion = LocalDateTime.now();
+            } catch (Exception e) {
+                System.err.println("Sensor ID " + id + " error al leer dato: " + e.getMessage());
+                // Mantenemos el último valor conocido o manejamos el error según el negocio
+            }
         }
     }
 
-    public abstract String getUnidad();
-
-    // Getters
-    public String getId() { return id; }
+    // --------------------------------------------------------
+    // GETTERS IMPLEMENTADOS
+    // --------------------------------------------------------
+    public int getId() { return id; }
     public String getTipo() { return tipo; }
+    public String getUnidad() { return unidad; }
     public boolean isActivo() { return activo; }
+    public double getValor() { return valor; }
+    public LocalDateTime getUltimaMedicion() { return ultimaMedicion; }
 }

@@ -1,16 +1,40 @@
 package Sensores;
 
+import java.time.LocalDateTime;
+
 public class Correntometro extends Sensor {
-    
-    public Correntometro(String id) {
-        super(id, "ambiental");
+    public Correntometro(int id, ISensorDataProvider provider) {
+        super(id, "ambiental", "m/s", provider);
     }
 
-    public double obtenerMedicion() {
-        // Futura conexión HTTP a API marina
-        return Math.random() * 3; // Velocidad del agua entre 0 y 3 m/s
+    // GETTERS
+    @Override
+    public int getId() {
+        return id;
     }
 
     @Override
-    public String getUnidad() { return "m/s"; }
+    public String getTipo() {
+        return tipo;
+    }
+
+    @Override
+    public String getUnidad() {
+        return unidad;
+    }
+
+    @Override
+    public boolean isActivo() {
+        return activo;
+    }
+
+    @Override
+    public double getValor() {
+        return valor;
+    }
+
+    @Override
+    public LocalDateTime getUltimaMedicion() {
+        return ultimaMedicion;
+    }
 }
