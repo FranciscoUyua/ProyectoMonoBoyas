@@ -1,16 +1,13 @@
 package Sensores;
 
 public class Anemometro extends Sensor {
-    
-    public Anemometro(String id) {
-        super(id, "ambiental");
-    }
-
-    public double obtenerMedicion() {
-        // Futura conexión HTTP a Open-Meteo
-        return Math.random() * 80; // Viento entre 0 y 80 km/h
+    // El constructor recibe el ID numérico y el proveedor de datos
+    public Anemometro(int id, ISensorDataProvider provider) {
+        super(id, "ambiental", provider);
     }
 
     @Override
-    public String getUnidad() { return "km/h"; }
+    public String getUnidad() { 
+        return "km/h"; 
+    }
 }
