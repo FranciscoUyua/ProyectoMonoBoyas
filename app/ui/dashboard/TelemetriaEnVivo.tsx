@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine,
 } from 'recharts';
+import { useAlertas } from '@/app/ui/alertas/AlertasProvider';
 
 // ─── Tipos ────────────────────────────────────────────────────
 type Nivel = 'verde' | 'amarillo' | 'rojo';
@@ -39,6 +40,7 @@ const SENSORES_INIT: Sensor[] = [
 
 const HIST_LEN = 40;
 const LOOKBACK = 12;
+const ORDEN: Record<Nivel, number> = { verde: 0, amarillo: 1, rojo: 2 };
 
 function nivel(s: Sensor): Nivel {
   if (s.valor >= s.rojo) return 'rojo';
@@ -240,6 +242,14 @@ export default function TelemetriaEnVivo() {
   const [seleccion, setSeleccion] = useState('presion');
   const [hora, setHora] = useState<string | null>(null);
 
+  // Alertas — disparamos toast (amarillo) / modal (rojo) al cruzar umbral
+  const { notificar } = useAlertas();
+  const notificarRef = useRef(notificar);
+  notificarRef.current = notificar;
+  const nivelesPrev = useRef<Record<string, Nivel>>(
+    Object.fromEntries(SENSORES_INIT.map((s) => [s.id, nivel(s)]))
+  );
+
   // Simulación — reemplazar por backend (polling / WebSocket / MQTT)
   useEffect(() => {
     const tick = () => {
@@ -268,6 +278,22 @@ export default function TelemetriaEnVivo() {
     const t = setInterval(tick, 1500);
     return () => clearInterval(t);
   }, []);
+
+  // Detección: dispara una alerta solo cuando un sensor SUBE de nivel
+  useEffect(() => {
+    sensores.forEach((s) => {
+      const nuevo = nivel(s);
+      const previo = nivelesPrev.current[s.id];
+      if (ORDEN[nuevo] > ORDEN[previo]) {
+        if (nuevo === 'amarillo') {
+          notificarRef.current({ nivel: 'amarillo', sensorLabel: s.label, valor: s.valor.toFixed(s.dec), unidad: s.unidad, mensaje: 'Nivel de precaución' });
+        } else if (nuevo === 'rojo') {
+          notificarRef.current({ nivel: 'rojo', sensorLabel: s.label, valor: s.valor.toFixed(s.dec), unidad: s.unidad, mensaje: 'Superó el umbral crítico' });
+        }
+      }
+      nivelesPrev.current[s.id] = nuevo;
+    });
+  }, [sensores]);
 
   const criticos = sensores.filter((s) => nivel(s) === 'rojo');
 

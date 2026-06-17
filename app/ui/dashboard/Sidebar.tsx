@@ -4,11 +4,7 @@ import { useState } from 'react';
 import { useFormStatus } from 'react-dom';
 import {
   Bars3Icon,
-  HomeIcon,
-  UsersIcon,
-  Cog6ToothIcon,
-  SignalIcon,
-  LifebuoyIcon,
+  BellAlertIcon, // Ícono nuevo para las alertas
   ArrowLeftOnRectangleIcon,
 } from '@heroicons/react/24/outline';
 import { lusitana } from '@/app/ui/fonts';
@@ -38,15 +34,17 @@ function NavItem({
   label,
   isCollapsed,
   active = false,
+  href = "#",
 }: {
   icon: React.ReactNode;
   label: string;
   isCollapsed: boolean;
   active?: boolean;
+  href?: string;
 }) {
   return (
     <a
-      href="#"
+      href={href}
       className={`flex items-center gap-4 p-2 rounded-lg transition-all ${
         active
           ? 'bg-[var(--color-primary)] text-[var(--color-text)]'
@@ -88,13 +86,15 @@ export default function Sidebar({ usuario }: { usuario: Usuario | null }) {
           </button>
         </div>
 
-        {/* Navegación */}
+        {/* Navegación (Solo Alertas) */}
         <nav className="flex-1 mt-4 px-3 space-y-2">
-          <NavItem icon={<HomeIcon className="w-6 h-6" />}        label="Inicio"         isCollapsed={isCollapsed} active />
-          <NavItem icon={<SignalIcon className="w-6 h-6" />}      label="Monoboyas"      isCollapsed={isCollapsed} />
-          <NavItem icon={<LifebuoyIcon className="w-6 h-6" />}    label="Operaciones"    isCollapsed={isCollapsed} />
-          <NavItem icon={<UsersIcon className="w-6 h-6" />}       label="Personal"       isCollapsed={isCollapsed} />
-          <NavItem icon={<Cog6ToothIcon className="w-6 h-6" />}   label="Configuración"  isCollapsed={isCollapsed} />
+          <NavItem 
+            icon={<BellAlertIcon className="w-6 h-6" />} 
+            label="Historial Alertas" 
+            href="/dashboard/alertas" // Ajustá esta ruta según tu estructura
+            isCollapsed={isCollapsed} 
+            active={true} 
+          />
         </nav>
 
         {/* Cerrar sesión */}

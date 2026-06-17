@@ -1,5 +1,6 @@
 import { getUsuarioActual } from '@/app/lib/actions';
 import Sidebar from '@/app/ui/dashboard/Sidebar';
+import AlertasProvider from '@/app/ui/alertas/AlertasProvider';
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const usuario = await getUsuarioActual();
@@ -22,8 +23,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
             </div>
           </div>
         </header>
-
-        {children}
+        <AlertasProvider>
+          {children}
+        </AlertasProvider>
       </main>
     </div>
   );
