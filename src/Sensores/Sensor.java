@@ -4,39 +4,44 @@ import java.time.LocalDateTime;
 
 public abstract class Sensor {
     protected int id;
-    protected int monoboya_id; // NUEVO: ID de la monoboya a la que pertenece
     protected String tipo;
-    protected String unidad;   // NUEVO: La unidad ahora es un atributo
+    protected String unidad;
     protected boolean activo;
     protected LocalDateTime ultimaMedicion;
+    
+    protected double valor; 
     protected ISensorDataProvider dataProvider; 
 
     // Constructor actualizado
-    public Sensor(int id, int monoboya_id, String tipo, String unidad, ISensorDataProvider dataProvider) {
+    public Sensor(int id, String tipo, String unidad, ISensorDataProvider dataProvider) {
         this.id = id;
-        this.monoboya_id = monoboya_id;
         this.tipo = tipo;
         this.unidad = unidad;
         this.dataProvider = dataProvider;
         this.activo = true;
+        this.valor = 0.0; // Valor por defecto al inicializar
     }
 
-    public Medicion generarMedicion() {
-        try {
-            double valor = dataProvider.obtenerDato();
-            this.ultimaMedicion = LocalDateTime.now();
-            return new Medicion(this.id, valor, this.unidad); // Usa el atributo unidad
-        } catch (Exception e) {
-            System.err.println("Sensor ID " + id + " error: " + e.getMessage());
-            // Si el archivo falla, podemos retornar null o disparar una alerta de "Sensor Desconectado"
-            return null; 
+    //En lugar de generar un objeto, simplemente actualiza su estado interno
+    public void actualizarDato() {
+        if (this.activo && this.dataProvider != null) {
+            try {
+                this.valor = dataProvider.obtenerDato();
+                this.ultimaMedicion = LocalDateTime.now();
+            } catch (Exception e) {
+                System.err.println("Sensor ID " + id + " error al leer dato: " + e.getMessage());
+                // Mantenemos el último valor conocido o manejamos el error según el negocio
+            }
         }
     }
 
-    // Getters
+    // --------------------------------------------------------
+    // GETTERS IMPLEMENTADOS
+    // --------------------------------------------------------
     public int getId() { return id; }
-    public int getMonoboyaId() { return monoboya_id; }
     public String getTipo() { return tipo; }
     public String getUnidad() { return unidad; }
     public boolean isActivo() { return activo; }
+    public double getValor() { return valor; }
+    public LocalDateTime getUltimaMedicion() { return ultimaMedicion; }
 }

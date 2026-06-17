@@ -1,24 +1,40 @@
-package Sensores.Providers;
+package Sensores;
 
-import Sensores.ISensorDataProvider;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.LocalDateTime;
 
-public class ApiOleajeProvider implements ISensorDataProvider {
-    private final String URL = "https://api.open-meteo.com/v1/marine?latitude=-38.71&longitude=-62.28&current=wave_height";
+public class SensorDeOleaje extends Sensor {
+    public SensorDeOleaje(int id, ISensorDataProvider provider) {
+        super(id, "ambiental", "m", provider);
+    }
+
+    // GETTERS
+    @Override
+    public int getId() {
+        return id;
+    }
 
     @Override
-    public double obtenerDato() throws Exception {
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(URL)).GET().build();
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+    public String getTipo() {
+        return tipo;
+    }
 
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode rootNode = mapper.readTree(response.body());
-        return rootNode.path("current").path("wave_height").asDouble();
+    @Override
+    public String getUnidad() {
+        return unidad;
+    }
+
+    @Override
+    public boolean isActivo() {
+        return activo;
+    }
+
+    @Override
+    public double getValor() {
+        return valor;
+    }
+
+    @Override
+    public LocalDateTime getUltimaMedicion() {
+        return ultimaMedicion;
     }
 }
