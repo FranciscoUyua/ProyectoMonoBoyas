@@ -12,6 +12,7 @@ public class Buque {
     protected String nombre;
     protected Sensor transmisorPresion;
     private Publisher publisher;
+    protected CentralDatos centralDatos;
     protected Operacion operacion;
 
     public Buque(int nroIMO, int capacidad, String nombre,Publisher publisher,Operacion operacion) {
@@ -20,6 +21,7 @@ public class Buque {
         this.nombre = nombre;
         this.publisher = publisher;
         this.operacion = operacion;
+        this.centralDatos = centralDatos;
     }
 
     public void recolectarDatos() {
@@ -74,6 +76,10 @@ public class Buque {
         }
 
         return -1;
+    }
+
+    public CentralDatos getCentralDatos() {
+        return centralDatos;
     }
 
     

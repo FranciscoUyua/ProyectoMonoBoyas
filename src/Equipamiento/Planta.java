@@ -9,6 +9,7 @@ public class Planta {
     protected int capacidadMaximaMonoboyas;
     protected int cantidadActualMonoboyas;
     protected OperadorPlanta[] operadorPlanta; 
+    protected CentralDatos centralDatos; 
     private Monoboya[] monoboyas;
 
     public Planta(String nombre, int idPlanta) {
@@ -35,6 +36,10 @@ public class Planta {
             //terminar
             }
    
+    }
+
+    public CentralDatos getCentralDatos() {
+        return centralDatos;
     }
 
 }
