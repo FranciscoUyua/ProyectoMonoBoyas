@@ -1,5 +1,6 @@
 package Main;
 
+import Equipamiento.Buque;
 import Equipamiento.Monoboya;
 import Operaciones.Operacion;
 import Sensores.SensorDeOleaje;
@@ -21,17 +22,20 @@ public class TestFlujoSensores {
         broker.suscribir(new CentralDatosSubscriber(centralEnPlanta));
         Monoboya monoboya = new Monoboya(101, 8, null, broker);
 
-        // Creamos la operación (Nace con estado activa = true)
-        Operacion opTransferencia = new Operacion(5001, monoboya, 2000);
-        monoboya.asignarOperacion(opTransferencia);
-
-        // Creamos el equipo humano que está de guardia en esta operación
+        // Crear operadores ANTES de la operación (el constructor los necesita)
         OperadorLancha juanLancha = new OperadorLancha(1, "Juan (Lancha)", "123", 1111);
         OperadorBuque capitanBuque = new OperadorBuque(2, "Capitán Smith (Buque)", "456", 2222);
         OperadorPlanta pedroPlanta = new OperadorPlanta(3, "Pedro (Sala Control)", "789", 3333);
-        
-        // Vinculamos a los operadores a la operación activa
-        opTransferencia.asignarEquipoHumano(juanLancha, capitanBuque, pedroPlanta);
+
+        // Crear buque
+        Buque buque = new Buque(9876543, 50000, "MT Concordia", null);
+
+        // Crear la operación con el nuevo constructor
+        Operacion opTransferencia = new Operacion(5001, buque, capitanBuque);
+        opTransferencia.asignarMonoboya(monoboya);
+        monoboya.asignarOperacion(opTransferencia);
+        opTransferencia.asignarOperadorLancha(juanLancha);
+        opTransferencia.asignarOperadorPlanta(pedroPlanta);
 
         SensorDePresion presion = new SensorDePresion(1, new MockSensorDataProvider());
         SensorDeOleaje oleaje = new SensorDeOleaje(2, new MockSensorDataProvider());

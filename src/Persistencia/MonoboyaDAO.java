@@ -18,22 +18,22 @@ public class MonoboyaDAO {
     // Guarda desde el objeto de dominio (sin operacion_activa_id ni planta_id)
     public void guardar(Monoboya m) {
         jdbc.update(
-            "INSERT INTO monoboyas (id, capacidad_maxima) VALUES (?, ?) ON CONFLICT (id) DO NOTHING",
-            m.getId(), m.getSensores().length
+            "INSERT INTO monoboyas (id) VALUES (?) ON CONFLICT (id) DO NOTHING",
+            m.getId()
         );
     }
 
-    // Overload sin operacionActivaId (usado en TestPersistencia y casos donde aún no hay operación)
-    public void guardar(int id, int capacidadMaxima, Integer plantaId) {
-        guardar(id, capacidadMaxima, plantaId, null);
+    // Overload sin operacionActivaId
+    public void guardar(int id, Integer plantaId) {
+        guardar(id, plantaId, null);
     }
 
     // Guarda con todos los campos conocidos en el momento de la inserción
-    public void guardar(int id, int capacidadMaxima, Integer plantaId, Integer operacionActivaId) {
+    public void guardar(int id, Integer plantaId, Integer operacionActivaId) {
         jdbc.update(
-            "INSERT INTO monoboyas (id, capacidad_maxima, planta_id, operacion_activa_id) " +
-            "VALUES (?, ?, ?, ?) ON CONFLICT (id) DO NOTHING",
-            id, capacidadMaxima, plantaId, operacionActivaId
+            "INSERT INTO monoboyas (id, planta_id, operacion_activa_id) " +
+            "VALUES (?, ?, ?) ON CONFLICT (id) DO NOTHING",
+            id, plantaId, operacionActivaId
         );
     }
 
@@ -56,7 +56,7 @@ public class MonoboyaDAO {
             "SELECT * FROM monoboyas WHERE id = ?",
             (rs, rowNum) -> new Monoboya(
                 rs.getInt("id"),
-                rs.getInt("capacidad_maxima"),
+                0,    // capacidad no se persiste; sensores se cargan aparte si se necesitan
                 null, // operacion — se carga aparte si se necesita
                 null  // publisher — se asigna en runtime, no se persiste
             ),
@@ -79,22 +79,14 @@ public class MonoboyaDAO {
     public List<Monoboya> listarTodas() {
         return jdbc.query(
             "SELECT * FROM monoboyas",
-            (rs, rowNum) -> new Monoboya(
-                rs.getInt("id"),
-                rs.getInt("capacidad_maxima"),
-                null, null
-            )
+            (rs, rowNum) -> new Monoboya(rs.getInt("id"), 0, null, null)
         );
     }
 
     public List<Monoboya> listarPorPlanta(int plantaId) {
         return jdbc.query(
             "SELECT * FROM monoboyas WHERE planta_id = ?",
-            (rs, rowNum) -> new Monoboya(
-                rs.getInt("id"),
-                rs.getInt("capacidad_maxima"),
-                null, null
-            ),
+            (rs, rowNum) -> new Monoboya(rs.getInt("id"), 0, null, null),
             plantaId
         );
     }
@@ -102,4 +94,48 @@ public class MonoboyaDAO {
     public void eliminar(int id) {
         jdbc.update("DELETE FROM monoboyas WHERE id = ?", id);
     }
+
+    public List<MonoboyaInfo> listarTodasInfo() {
+            return jdbc.query(
+                "SELECT id, estado, planta_id, operacion_activa_id FROM monoboyas",
+                (rs, rowNum) -> new MonoboyaInfo(
+                    rs.getInt("id"),
+                    rs.getString("estado"),
+                    rs.getObject("planta_id", Integer.class),
+                    rs.getObject("operacion_activa_id", Integer.class)
+                )
+            );
+    }
+
+        public MonoboyaInfo buscarInfoPorId(int id) {
+            return jdbc.queryForObject(
+                "SELECT id, estado, planta_id, operacion_activa_id FROM monoboyas WHERE id = ?",
+                (rs, rowNum) -> new MonoboyaInfo(
+                    rs.getInt("id"),
+                    rs.getString("estado"),
+                    rs.getObject("planta_id", Integer.class),
+                    rs.getObject("operacion_activa_id", Integer.class)
+                ),
+                id
+            );
+    }
+
+        public static class MonoboyaInfo {
+            private final int id;
+            private final String estado;
+            private final Integer plantaId;
+            private final Integer operacionActivaId;
+
+            public MonoboyaInfo(int id, String estado, Integer plantaId, Integer operacionActivaId) {
+                this.id = id;
+                this.estado = estado;
+                this.plantaId = plantaId;
+                this.operacionActivaId = operacionActivaId;
+            }
+
+            public int getId() { return id; }
+            public String getEstado() { return estado; }
+            public Integer getPlantaId() { return plantaId; }
+            public Integer getOperacionActivaId() { return operacionActivaId; }
+        }
 }

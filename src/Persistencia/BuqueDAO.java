@@ -28,7 +28,8 @@ public class BuqueDAO {
             (rs, rowNum) -> new Buque(
                 rs.getInt("nro_imo"),
                 rs.getInt("capacidad"),
-                rs.getString("nombre")
+                rs.getString("nombre"),
+                null
             ),
             nroIMO
         );
@@ -40,7 +41,8 @@ public class BuqueDAO {
             (rs, rowNum) -> new Buque(
                 rs.getInt("nro_imo"),
                 rs.getInt("capacidad"),
-                rs.getString("nombre")
+                rs.getString("nombre"),
+                null
             )
         );
     }
