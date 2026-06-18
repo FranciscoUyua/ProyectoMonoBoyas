@@ -8,8 +8,8 @@ import Sensores.Medicion.OrigenMedicion;
 public class Monoboya {
     protected int id;
     protected Sensor[] sensores; // Arreglo de sensores con tamanio fijo
-    protected int contadorSensores; // Para llevar el control de cuantos se han agregado
-    protected Operacion operacion; 
+    protected Operacion operacion;
+    protected int contadorSensores; // Para llevar el control de cuantos se han agregado 
     protected CentralDatos centralDatos; //La Monoboya conoce y se asocia directamente a la CentralDatos 
     //central de datos se va
     protected Publisher publisher; // La Monoboya tiene un Publisher para enviar datos a la CentralDatos
@@ -18,6 +18,8 @@ public class Monoboya {
         DISPONIBLE,
         DESHABILITADA
     }
+    
+
     protected EstadoMonoboya estado;
     
     public Monoboya(int id, int capacidadMaxima, Operacion operacion, Publisher publisher) {
@@ -28,20 +30,8 @@ public class Monoboya {
         this.publisher = publisher;
     }
 
-
-
     public void asignarOperacion(Operacion operacion){
         this.operacion = operacion; 
-    }
-
-    // Metodo para agregar un sensor al arreglo
-    public void agregarSensor(Sensor sensor) {
-        if (contadorSensores < sensores.length) {
-            sensores[contadorSensores] = sensor;
-            contadorSensores++;
-        } else {
-            System.err.println("Error: No hay más espacio para sensores en la monoboya " + this.id);
-        }
     }
 
     // ----------------------------------------------------------------------
@@ -58,6 +48,15 @@ public class Monoboya {
             }
         }
     }
+    public void agregarSensor(Sensor sensor) {
+        if (contadorSensores < sensores.length) {
+            sensores[contadorSensores] = sensor;
+            contadorSensores++;
+        } else {
+            System.err.println("Error: No hay más espacio para sensores en la monoboya " + this.id);
+        }
+    }
+
 
     // Getters
     public int getId() {

@@ -18,7 +18,7 @@ public class TestPublisherSubscriber {
         monoboya.agregarSensor(new SensorDePresion(1, new MockSensorDataProvider())); 
         monoboya.agregarSensor(new SensorDeOleaje(2, new MockSensorDataProvider()));
 
-        monoboya.recolectarDatos();
+        monoboya.recolectarYTransmitirDatos();
         //lo testie y funciono flama
     }
 }

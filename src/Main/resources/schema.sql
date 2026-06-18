@@ -18,7 +18,6 @@ ALTER TABLE plantas ADD COLUMN IF NOT EXISTS geoLng DOUBLE PRECISION;
 -- ── MONOBOYAS ───────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS monoboyas (
     id                   SERIAL PRIMARY KEY,
-    capacidad_maxima     INT NOT NULL,
     planta_id            INT REFERENCES plantas(id),
     -- FK a operaciones se agrega con ALTER TABLE más abajo (dependencia circular)
     operacion_activa_id  INT,
@@ -47,14 +46,12 @@ CREATE TABLE IF NOT EXISTS operaciones (
     id                      SERIAL PRIMARY KEY,
     monoboya_id             INT REFERENCES monoboyas(id),
     buque_nro_imo           INT REFERENCES buques(nro_imo),
-    pasaje_monoboya_barco   INT,
     operador_lancha_id      INT REFERENCES usuarios(id),
     operador_buque_id       INT REFERENCES usuarios(id),
     operador_planta_id      INT REFERENCES usuarios(id),
-    esta_activa             BOOLEAN DEFAULT TRUE,
     estado                  VARCHAR(20) NOT NULL DEFAULT 'PLANIFICADA',
     tipo                    VARCHAR(30),
-    planta_id               INT REFERENCES plantas(id_planta)
+    planta_id               INT REFERENCES plantas(id)
 );
 -- Columnas agregadas en iteraciones posteriores (idempotente)
 ALTER TABLE operaciones ADD COLUMN IF NOT EXISTS estado   VARCHAR(20) NOT NULL DEFAULT 'PLANIFICADA';
@@ -108,3 +105,6 @@ CREATE TABLE IF NOT EXISTS usuario_alerta (
     fecha_reconocimiento TIMESTAMP,
     PRIMARY KEY (alerta_id, usuario_id)
 );
+-- Limpieza de columnas eliminadas del modelo
+ALTER TABLE operaciones DROP COLUMN IF EXISTS pasaje_monoboya_barco;
+ALTER TABLE operaciones DROP COLUMN IF EXISTS esta_activa;
