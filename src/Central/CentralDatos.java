@@ -1,5 +1,8 @@
 package Central;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import Alertas.Alerta;
 import Operaciones.Operacion;
 import Sensores.Medicion;
@@ -12,6 +15,12 @@ public class CentralDatos {
         AMARILLA,
         ROJA
     }
+
+    private Map<Integer, Operacion> operacionesActivas = new HashMap<>();
+    private Double ultimaPresionMonoboya;
+    private Double ultimaPresionBuque;
+
+
 
     // --- 1.1 Amarre (kN) ---
     private static final double AMARRE_AMARILLA = 600.0;
@@ -61,8 +70,13 @@ public class CentralDatos {
         }
     }
 
-    private Double ultimaPresionMonoboya;
-    private Double ultimaPresionBuque;
+    public void iniciarOperacion(Operacion operacion) {
+        operacionesActivas.put(operacion.getId(), operacion);
+    }
+
+    public void finalizarOperacion(int idOperacion) {
+        operacionesActivas.remove(idOperacion);
+    }
 
     private void verificarUmbralPresion(Medicion medicion) {
         double valor = medicion.getValor();
@@ -103,7 +117,6 @@ public class CentralDatos {
     private void verificarUmbralTension(double valor) {
         reportar(clasificarAlerta(valor, TENSION_AMARILLA, TENSION_ROJA), "Tensión de manguera", valor, "tf");
     }
-
 
     private void verificarUmbralCaudal(double valor) {
         NivelAlerta nivel;

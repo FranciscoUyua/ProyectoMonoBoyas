@@ -12,16 +12,19 @@ public class Medicion {
     MONOBOYA,
     BUQUE
 }
+
     private OrigenMedicion origen;
+    private int idOperacion;
 
-
-    public Medicion(int idSensor, double valor, String unidad, Sensor.TipoSensor tipoSensor,OrigenMedicion origen) {
+    public Medicion(int idSensor, double valor, String unidad, Sensor.TipoSensor tipoSensor,OrigenMedicion origen,int idOperacion) {
         this.idSensor = idSensor;
         this.valor = valor;
         this.unidad = unidad;
         this.tipoSensor = tipoSensor;
         this.origen = origen;
+        this.idOperacion = idOperacion;
         this.timestamp = LocalDateTime.now();
+        
     }
 
     public int getIdSensor() { return idSensor; }
@@ -30,4 +33,5 @@ public class Medicion {
     public LocalDateTime getTimestamp() { return timestamp; }
     public Sensor.TipoSensor getTipo() { return tipoSensor; }
     public OrigenMedicion getOrigen() { return origen; }
+    public int getIdOperacion() { return idOperacion; }
 }

@@ -39,11 +39,11 @@ public class Monoboya {
     // ----------------------------------------------------------------------
     
 
-     public void recolectarYTransmitirDatos() {
+    public void recolectarYTransmitirDatos() {
     // Agregamos "Sensor" (con mayúscula si es tu clase) antes de la variable
         for (Sensor sensor : sensores) { 
             if (sensor != null) {
-                Medicion nuevaMedicion = new Medicion(sensor.getId(), sensor.getValor(), sensor.getUnidad(), sensor.getTipo(),OrigenMedicion.MONOBOYA);
+                Medicion nuevaMedicion = new Medicion(sensor.getId(), sensor.getValor(), sensor.getUnidad(), sensor.getTipo(),OrigenMedicion.MONOBOYA,operacion.getId());
                 publisher.publicar(nuevaMedicion);
             }
         }
