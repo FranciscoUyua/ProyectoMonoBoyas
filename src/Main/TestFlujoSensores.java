@@ -5,7 +5,9 @@ import Operaciones.Operacion;
 import Sensores.SensorDeOleaje;
 import Sensores.SensorDePresion;
 import Sensores.MockSensorDataProvider;
+import Central.BrokerMQTT;
 import Central.CentralDatos;
+import Central.CentralDatosSubscriber;
 import Usuarios.OperadorLancha;
 import Usuarios.OperadorBuque;
 import Usuarios.OperadorPlanta;
@@ -15,12 +17,13 @@ public class TestFlujoSensores {
     public static void main(String[] args) throws InterruptedException {
         
         CentralDatos centralEnPlanta = new CentralDatos();
-        Monoboya monoboya = new Monoboya(101, 8, null, centralEnPlanta);        
-        
+        BrokerMQTT broker = new BrokerMQTT();
+        broker.suscribir(new CentralDatosSubscriber(centralEnPlanta));
+        Monoboya monoboya = new Monoboya(101, 8, null, broker);
+
         // Creamos la operación (Nace con estado activa = true)
-        Operacion opTransferencia = new Operacion(5001, monoboya, 2000); 
+        Operacion opTransferencia = new Operacion(5001, monoboya, 2000);
         monoboya.asignarOperacion(opTransferencia);
-        centralEnPlanta.setOperacionActiva(opTransferencia);
 
         // Creamos el equipo humano que está de guardia en esta operación
         OperadorLancha juanLancha = new OperadorLancha(1, "Juan (Lancha)", "123", 1111);

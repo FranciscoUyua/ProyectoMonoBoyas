@@ -40,7 +40,7 @@ public class Monoboya {
     // ----------------------------------------------------------------------
     
 
-     public void recolectarDatos() {
+     public void recolectarYTransmitirDatos() {
     // Agregamos "Sensor" (con mayúscula si es tu clase) antes de la variable
         for (Sensor sensor : sensores) { 
             if (sensor != null) {
