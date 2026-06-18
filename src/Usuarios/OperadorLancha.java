@@ -1,17 +1,27 @@
 package Usuarios;
 
 import Alertas.Alerta;
+import Alertas.EstadoAlerta;
 
-// Corregido: Ahora hereda de UsuarioOperador para aprovechar el atributo 'operacion' heredado
 public class OperadorLancha extends UsuarioOperador {
-    
+
     public OperadorLancha(int id, String nombre, String contrasena, int dni) {
         super(id, nombre, contrasena, dni);
     }
 
+    // Específico de la lancha: dispara el inicio. La lógica real vive en Operacion (compa).
+    public void iniciarOperacion() {
+        if (operacion == null) {
+            System.out.println("  OperadorLancha (" + nombre + "): sin operación asignada.");
+            return;
+        }
+        operacion.iniciarOperacion();
+        System.out.println(" OperadorLancha (" + nombre + ") inició la operación " + operacion.getId() + ".");
+    }
+
     @Override
     public void reconocerAlerta(Alerta alerta) {
-        // Acción desde la tablet o dispositivo móvil en la lancha
-        System.out.println("  [✔] OperadorLancha (" + this.nombre + ") ha RECONOCIDO la alerta ID: " + alerta.getId() + " desde el mar.");
+        alerta.cambiarEstado(EstadoAlerta.RECONOCIDA);
+        System.out.println("  OperadorLancha (" + nombre + ") RECONOCIÓ la alerta ID " + alerta.getId() + " desde el mar.");
     }
 }

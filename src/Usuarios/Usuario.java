@@ -7,12 +7,14 @@ public abstract class Usuario {
     protected String nombre;
     protected String contrasena;
     protected int dni;
-    
+    protected List<Alerta> alertasRecibidas; // Lista para almacenar las alertas recibidas por el usuario
+
     public Usuario(int id, String nombre, String contrasena, int dni){
         this.id = id;
         this.nombre = nombre;
         this.contrasena = contrasena;
         this.dni = dni;
+        this.alertasRecibidas = new ArrayList<>();
     }
 
     // NUEVO MÉTODO: Simula la recepción de la alerta en la interfaz gráfica del usuario

@@ -1,4 +1,5 @@
 package Alertas;
+
 public class Alerta {
 
     protected int id;
@@ -7,6 +8,7 @@ public class Alerta {
     protected int id_operacion;
     protected int int_medicion;
     protected String string_medicion;
+    protected EstadoAlerta estado;
 
     public Alerta(int id, String tipoAlerta, String mensaje, int id_operacion, int int_medicion, String string_medicion) {
         this.id = id;
@@ -15,6 +17,7 @@ public class Alerta {
         this.id_operacion = id_operacion;
         this.int_medicion = int_medicion;
         this.string_medicion = string_medicion;
+        this.estado = EstadoAlerta.NO_RECONOCIDA;
     }
 
     public int getId() {
@@ -65,12 +68,15 @@ public class Alerta {
         this.string_medicion = string_medicion;
     }
 
-    
+    public EstadoAlerta getEstado() {
+        return estado;
+    }
 
+    public void setEstado(EstadoAlerta estado) {
+        this.estado = estado;
+    }
+    public void cambiarEstado(){
+        this.estado = EstadoAlerta.RECONOCIDA;
 
-    
-
-
-
-    
+    }
 }

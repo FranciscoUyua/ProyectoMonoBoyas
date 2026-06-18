@@ -85,4 +85,25 @@ public class Operacion {
         this.estaActiva = false;
         System.out.println("\n[SISTEMA] >>> OPERACIÓN " + this.id + " FINALIZADA. Deteniendo recolección de datos.");
     }
+
+    public void iniciarOperacion() {
+    // 1. Verifica que esté en PREPARADA
+    if (tipoOperacion != TipoOperacion.PREPARADA) {
+        System.out.println("[OPERACIÓN " + id + "] No se puede iniciar: estado actual = " + tipoOperacion + " (se requiere PREPARADA).");
+        return;
+    }
+    if (barco == null || monoboya == null) {
+        System.out.println("[OPERACIÓN " + id + "] No se puede iniciar: falta buque o monoboya.");
+        return;
+    }
+
+    // 2. Pasa a ENCURSO
+    this.tipoOperacion = TipoOperacion.ENCURSO;
+    this.estaActiva = true;
+
+    // 3. Pasa la cantidad del buque a la monoboya (después la monoboya → planta)
+    monoboya.establecerObjetivoTransferencia(barco.getCapacidad());
+
+    System.out.println("[OPERACIÓN " + id + "] >>> INICIADA. Objetivo: " + barco.getCapacidad() + " hacia monoboya " + monoboya.getId() + ".");
+}
 }

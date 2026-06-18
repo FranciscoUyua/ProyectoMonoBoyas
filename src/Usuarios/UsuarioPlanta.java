@@ -10,6 +10,7 @@ public abstract class UsuarioPlanta extends Usuario{
   public UsuarioPlanta(int id, String nombre, String contrasena, int dni) {
     super(id, nombre, contrasena, dni);
     this.operacion = null; // Inicialmente sin operación asignada
+    this.alertasRecibidas = new ArrayList<>();
   }
   
 }

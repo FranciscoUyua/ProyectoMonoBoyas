@@ -6,6 +6,7 @@ public class OperadorPlanta extends UsuarioOperador {
 
     public OperadorPlanta(int id, String nombre, String contrasena, int dni) {
         super(id, nombre, contrasena, dni);
+        this.alertasRecibidas = new ArrayList<>();
     }
 
     public void reconocerAlerta(Alerta alerta) {
