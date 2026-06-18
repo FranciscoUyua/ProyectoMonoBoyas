@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 public class SensorDePresion extends Sensor {
     public SensorDePresion(int id, ISensorDataProvider provider) {
-        super(id, "operativo", "Pa", provider);
+        super(id, TipoSensor.PRESION, "Pa", provider);
     }
 
     // GETTERS
@@ -14,7 +14,7 @@ public class SensorDePresion extends Sensor {
     }
 
     @Override
-    public String getTipo() {
+    public TipoSensor getTipo() {
         return tipo;
     }
 

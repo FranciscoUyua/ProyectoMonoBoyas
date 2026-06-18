@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 public class Caudalimetro extends Sensor {
     public Caudalimetro(int id, ISensorDataProvider provider) {
-        super(id, "operativo", "l/s", provider);
+        super(id, TipoSensor.CAUDAL, "l/s", provider);
     }
 
     // GETTERS
@@ -14,7 +14,7 @@ public class Caudalimetro extends Sensor {
     }
 
     @Override
-    public String getTipo() {
+    public TipoSensor getTipo() {
         return tipo;
     }
 

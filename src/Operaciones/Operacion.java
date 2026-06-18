@@ -7,28 +7,48 @@ import Equipamiento.*;
 public class Operacion {
     protected int id;
     protected Monoboya monoboya; 
-    protected int pasajeMonoboyaBarco;
     protected Buque barco; 
-    protected int pasajeBarcoMonoboya;
-    
-    // Agregamos los 3 operadores que monitorean activamente esta operación
     protected OperadorLancha operadorLancha; 
-    protected OperadorBuque operadorBuque;   // Añadido para el flujo
-    protected OperadorPlanta operadorPlanta; // Añadido para el flujo
+    protected OperadorBuque operadorBuque;   
+    protected OperadorPlanta operadorPlanta;
     protected boolean estaActiva;
+    protected enum TipoOperacion {
+        PREPARADA,
+        ENCURSO,
+        DETENIDA,
+        FINALIZADA
+    }
+    protected TipoOperacion tipoOperacion;
 
-    public Operacion(int id, Monoboya monoboya, int pasajeMonoboyaBarco) {
+    public Operacion(int id, Buque b, OperadorBuque operadorBuque) {
         this.id = id;
-        this.monoboya = monoboya;
-        this.pasajeMonoboyaBarco = pasajeMonoboyaBarco;
-        this.estaActiva = true; 
+        barco = b;
+        this.estaActiva = false;
+        this.tipoOperacion = TipoOperacion.PREPARADA;
+        this.operadorBuque = operadorBuque;
     }
 
-    // NUEVO MÉTODO SETTER: Para vincular al equipo humano de la operación
-    public void asignarEquipoHumano(OperadorLancha lancha, OperadorBuque buque, OperadorPlanta planta) {
-        this.operadorLancha = lancha;
-        this.operadorBuque = buque;
-        this.operadorPlanta = planta;
+    public TipoOperacion getTipoOperacion() {
+        return tipoOperacion;
+    }
+
+    public void asignarMonoboya(Monoboya monoboya) {
+        this.monoboya = monoboya;
+    }
+
+    public void asignarOperadorLancha(OperadorLancha operador) {
+        this.operadorLancha = operador;
+    }
+
+    public void asignarOperadorPlanta(OperadorPlanta operador) {
+        this.operadorPlanta = operador;
+    }
+
+    public void asignarOperadorBuque(OperadorBuque operador) {
+        this.operadorBuque = operador;
+    }
+    public void asignarBuque(Buque barco) {
+        this.barco = barco;
     }
 
     public void recibirAlerta(Alerta alerta) {

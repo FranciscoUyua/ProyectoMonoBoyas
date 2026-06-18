@@ -4,22 +4,36 @@ import java.time.LocalDateTime;
 
 public abstract class Sensor {
     protected int id;
-    protected String tipo;
+    protected TipoSensor tipo;
     protected String unidad;
     protected boolean activo;
     protected LocalDateTime ultimaMedicion;
-    
-    protected double valor; 
-    protected ISensorDataProvider dataProvider; 
 
-    // Constructor actualizado
-    public Sensor(int id, String tipo, String unidad, ISensorDataProvider dataProvider) {
+    protected double valor;
+    protected ISensorDataProvider dataProvider;
+
+    public enum TipoSensor {
+        TENSION,        // SensorDeTension - tf
+        PRESION,        // SensorDePresion - Pa
+        OLEAJE,         // SensorDeOleaje - m
+        ORIENTACION,    // Giroscopio - grados
+        CORRIENTE,      // Correntometro - m/s
+        CAUDAL,         // Caudalimetro - l/s
+        VIENTO,         // Anemometro - km/h
+        AMARRE          // SensorDeAmarre - kN
+    }
+
+    public Sensor(int id, TipoSensor tipo, String unidad, ISensorDataProvider dataProvider) {
         this.id = id;
         this.tipo = tipo;
         this.unidad = unidad;
         this.dataProvider = dataProvider;
         this.activo = true;
-        this.valor = 0.0; // Valor por defecto al inicializar
+        this.valor = 0.0;
+    }
+
+    public TipoSensor getTipo() {
+        return tipo;
     }
 
     //En lugar de generar un objeto, simplemente actualiza su estado interno
@@ -39,7 +53,6 @@ public abstract class Sensor {
     // GETTERS IMPLEMENTADOS
     // --------------------------------------------------------
     public int getId() { return id; }
-    public String getTipo() { return tipo; }
     public String getUnidad() { return unidad; }
     public boolean isActivo() { return activo; }
     public double getValor() { return valor; }

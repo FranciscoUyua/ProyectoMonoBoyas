@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 public class Giroscopio extends Sensor {
     public Giroscopio(int id, ISensorDataProvider provider) {
-        super(id, "mecanica", "grados", provider);
+        super(id, TipoSensor.ORIENTACION, "grados", provider);
     }
 
     // GETTERS
@@ -14,7 +14,7 @@ public class Giroscopio extends Sensor {
     }
 
     @Override
-    public String getTipo() {
+    public TipoSensor getTipo() {
         return tipo;
     }
 

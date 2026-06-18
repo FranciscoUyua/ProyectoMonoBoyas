@@ -2,10 +2,11 @@ package Sensores;
 
 import java.time.LocalDateTime;
 
-public class SensorDeTension extends Sensor {
-    public SensorDeTension(int id, ISensorDataProvider provider) {
-        super(id, "mecanica", "t", provider);
-    }
+    public class SensorDeTension extends Sensor {
+        public SensorDeTension(int id, ISensorDataProvider provider) {
+            super(id, Sensor.TipoSensor.TENSION, "tf", provider);
+        }
+    
 
     // GETTERS
     @Override
@@ -14,7 +15,7 @@ public class SensorDeTension extends Sensor {
     }
 
     @Override
-    public String getTipo() {
+    public TipoSensor getTipo() {
         return tipo;
     }
 

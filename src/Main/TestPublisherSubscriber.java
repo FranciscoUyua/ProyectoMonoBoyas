@@ -15,9 +15,10 @@ public class TestPublisherSubscriber {
         broker.suscribir(new CentralDatosSubscriber(central));
 
         Monoboya monoboya = new Monoboya(101, 2, null, broker);
-        monoboya.agregarSensor(new SensorDePresion(1, new MockSensorDataProvider()));
+        monoboya.agregarSensor(new SensorDePresion(1, new MockSensorDataProvider())); 
         monoboya.agregarSensor(new SensorDeOleaje(2, new MockSensorDataProvider()));
 
-        monoboya.recolectarYTransmitirDatos();
+        monoboya.recolectarDatos();
+        //lo testie y funciono flama
     }
 }

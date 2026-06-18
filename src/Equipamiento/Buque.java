@@ -1,6 +1,8 @@
 package Equipamiento;
 
-import Sensores.Sensor;
+import Central.*;
+import Sensores.Medicion.OrigenMedicion;
+import Sensores.*;
 
 public class Buque {
 
@@ -8,12 +10,20 @@ public class Buque {
     protected int capacidad; 
     protected String nombre;
     protected Sensor transmisorPresion;
+    private Publisher publisher;
 
-    public Buque(int nroIMO, int capacidad, String nombre) {
+    public Buque(int nroIMO, int capacidad, String nombre,Publisher publisher) {
         this.nroIMO = nroIMO;
         this.capacidad = capacidad;
         this.nombre = nombre;
+        this.publisher = publisher;
     }
+
+    public void recolectarDatos() {
+        Medicion nuevaMedicion = new Medicion(transmisorPresion.getId(),transmisorPresion.getValor(),transmisorPresion.getUnidad(),transmisorPresion.getTipo(),OrigenMedicion.BUQUE);
+        publisher.publicar(nuevaMedicion);
+    }
+            
 
     public int getNroIMO() {
         return nroIMO;

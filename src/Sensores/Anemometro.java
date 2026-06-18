@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 public class Anemometro extends Sensor {
     public Anemometro(int id, ISensorDataProvider provider) {
-        super(id, "ambiental", "km/h", provider);
+        super(id, TipoSensor.VIENTO, "km/h", provider);
     }
 
     // GETTERS
@@ -14,7 +14,7 @@ public class Anemometro extends Sensor {
     }
 
     @Override
-    public String getTipo() {
+    public TipoSensor getTipo() {
         return tipo;
     }
 

@@ -1,43 +1,40 @@
 package Equipamiento;
 
-import java.util.Map;
-import java.util.HashMap;
-import java.util.ArrayList;
+import Usuarios.*;
+import Operaciones.*;
 
 public class Planta {
     protected String nombre;
     protected int idPlanta;
-    
-   
-    private Map<Integer, Monoboya> monoboyas;
+    protected int capacidadMaximaMonoboyas;
+    protected int cantidadActualMonoboyas;
+    protected OperadorPlanta[] operadorPlanta; 
+    private Monoboya[] monoboyas;
 
     public Planta(String nombre, int idPlanta) {
         this.nombre = nombre;
         this.idPlanta = idPlanta;
-        this.monoboyas = new HashMap<>();
+        cantidadActualMonoboyas = 0;
+        this.monoboyas = new Monoboya[capacidadMaximaMonoboyas];
     }
 
     /**
      * Registra la monoboya usando su ID entero como clave.
      */
     public void agregarMonoboya(Monoboya m) {
-        if (m != null) {
-            // Suponiendo que m.getId() devuelve un int
-            monoboyas.put(m.getId(), m);
+        if (m != null && cantidadActualMonoboyas < capacidadMaximaMonoboyas) {
+            monoboyas[cantidadActualMonoboyas] = m;
+            cantidadActualMonoboyas++;
         }
     }
 
-    /**
-     * Búsqueda directa por ID entero.
-     */
-    public Monoboya obtenerMonoboya(int id) {
-        return monoboyas.get(id);
+    public void iniciarOperacion(Monoboya m , Operacion operacion) {
+            if(m.getEstadoEnum() == Monoboya.EstadoMonoboya.DISPONIBLE && operacion != null) {
+                m.estado = Monoboya.EstadoMonoboya.DESHABILITADA; 
+                m.asignarOperacion(operacion);
+            //terminar
+            }
+   
     }
 
-    /**
-     * Para el monitoreo general de la planta.
-     */
-    public ArrayList<Monoboya> obtenerTodasLasMonoboyas() {
-        return new ArrayList<>(monoboyas.values());
-    }
 }

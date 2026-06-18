@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 public class Correntometro extends Sensor {
     public Correntometro(int id, ISensorDataProvider provider) {
-        super(id, "ambiental", "m/s", provider);
+        super(id, TipoSensor.CORRIENTE, "m/s", provider);
     }
 
     // GETTERS
@@ -14,7 +14,7 @@ public class Correntometro extends Sensor {
     }
 
     @Override
-    public String getTipo() {
+    public TipoSensor getTipo() {
         return tipo;
     }
 
