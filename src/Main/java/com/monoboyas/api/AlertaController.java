@@ -1,10 +1,15 @@
-package com.monoboyas.api;
+package Main.java.com.monoboyas.api;
 
-import Persistencia.AlertaDAO;
-import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import Persistencia.AlertaDAO;
 
 @RestController
 @RequestMapping("/v1/alertas")
