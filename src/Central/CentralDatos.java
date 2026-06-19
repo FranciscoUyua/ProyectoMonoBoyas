@@ -3,7 +3,7 @@ package Central;
 import java.util.HashMap;
 import java.util.Map;
 
-import Alertas.Alerta;
+import Alertas.*;
 import Operaciones.Operacion;
 import Sensores.Medicion;
 import Sensores.Medicion.OrigenMedicion;
@@ -63,8 +63,8 @@ public class CentralDatos {
             case ORIENTACION -> verificarUmbralOrientacion(medicion.getValor());
             case CORRIENTE -> verificarUmbralCorriente(medicion.getValor());
             case CAUDAL -> verificarUmbralCaudal(medicion.getValor());
-            case VIENTO -> verificarUmbralViento(medicion.getValor());
-            case AMARRE -> verificarUmbralAmarre(medicion.getValor());
+            case VIENTO -> verificarUmbralViento(medicion.getValor(), medicion.getIdOperacion());//sin terminar
+            case AMARRE -> verificarUmbralAmarre(medicion.getValor(), medicion.getIdOperacion());
         }
     }
 
@@ -76,11 +76,14 @@ public class CentralDatos {
         operacionesActivas.remove(idOperacion);
     }
 
-    private void verificarUmbralAmarre(double valor) {
+    private void verificarUmbralAmarre(double valor,int idoperacion) {
         NivelAlerta nivel;
         if (valor > AMARRE_ROJA) {
             nivel = NivelAlerta.ROJA;
-            System.out.println("SOY LA CENTRAL [ALERTA CRITICA] Amarre: " + valor + " kN (riesgo de ruptura)");
+            System.out.println("SOY LA CENTRAL estoy por crear una Alerta critica de amarre");
+            Operacion op = operacionesActivas.get(idoperacion);
+            //aca creo la alerta , deberia agarrar la op , y vincularla
+            Alerta alerta = new Alerta(1, Alerta.TipoAlerta.ROJA, "Amarre en riesgo de ruptura", op, 1, "kN");
         } else if (valor > AMARRE_AMARILLA) {
             nivel = NivelAlerta.AMARILLA;
             System.out.println("SOY LA CENTRAL [ALERTA AMARILLA] Amarre: " + valor + " kN");
@@ -140,7 +143,7 @@ public class CentralDatos {
         reportar(nivel, "Corriente", valor, "m/s");
     }
 
-    private void verificarUmbralViento(double valor) {
+    private void verificarUmbralViento(double valor,int idoperacion) {
         NivelAlerta nivel;
         if (valor > VIENTO_ROJA) {
             nivel = NivelAlerta.ROJA;
