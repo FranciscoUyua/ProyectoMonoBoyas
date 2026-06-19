@@ -38,9 +38,11 @@ public class OperadorLancha extends UsuarioOperador {
         System.out.println(" OperadorLancha (" + nombre + ") inició la operación " + operacion.getId() + ".");
     }
 
-    @Override
-    public void reconocerAlerta(Alerta alerta) {
-        alerta.cambiarEstado();
-        System.out.println("  OperadorLancha (" + nombre + ") RECONOCIÓ la alerta ID " + alerta.getId() + " desde el mar.");
+    public void reconocerAlerta( ) {
+        System.out.println("\n[OPERADOR DE LANCHA] >>> ALERTA RECONOCIDA. Tomando medidas de seguridad.");
+    }
+    public void recibirAlerta(Alerta alerta) {
+        alertasRecibidas.add(alerta);
+        System.out.println("\n[OPERADOR DE LANCHA] >>> ALERTA RECIBIDA: " + alerta.getMensaje() + " (Tipo: " + alerta.getTipo_Alerta() + ")");
     }
 }

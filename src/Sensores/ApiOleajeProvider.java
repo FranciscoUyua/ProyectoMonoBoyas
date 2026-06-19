@@ -1,4 +1,4 @@
-package Sensores.Providers;
+package Sensores;
 
 import Sensores.ISensorDataProvider;
 import java.net.URI;

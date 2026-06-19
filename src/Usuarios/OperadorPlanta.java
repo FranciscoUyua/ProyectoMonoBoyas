@@ -28,8 +28,11 @@ public class OperadorPlanta extends UsuarioOperador {
     return rol;
     }
 
-    public void reconocerAlerta(Alerta alerta) {
-        // Acción desde la sala de control principal en tierra
-        System.out.println("  [✔] OperadorPlanta (" + this.nombre + ") ha RECONOCIDO la alerta ID: " + alerta.getId() + " en la base de datos central.");
+    public void reconocerAlerta() {
+        System.out.println("\n[OPERADOR DE PLANTA] >>> ALERTA RECONOCIDA. Tomando medidas de seguridad.");
+    }
+    public void recibirAlerta(Alerta alerta) {
+        alertasRecibidas.add(alerta);
+        System.out.println("\n[OPERADOR DE PLANTA] >>> ALERTA RECIBIDA: " + alerta.getMensaje() + " (Tipo: " + alerta.getTipo_Alerta() + ")");
     }
 }

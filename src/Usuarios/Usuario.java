@@ -20,16 +20,6 @@ public abstract class Usuario {
         this.alertasRecibidas = new ArrayList<>();
     }
 
-    // NUEVO MÉTODO: Simula la recepción de la alerta en la interfaz gráfica del usuario
-    public void mostrarAlertaEnPantalla(Alerta alerta) {
-        System.out.println("  [INTERFAZ DE " + this.getClass().getSimpleName().toUpperCase() + ": " + this.nombre + "]");
-        System.out.println("  ┌──────────────────────────────────────────────────────────┐");
-        System.out.println("  │ ¡¡¡ ALERTA EN TIEMPO REAL DETECTADA EN TU PANEL !!!      │");
-        System.out.println("  │ > GRAVEDAD: " + alerta.getTipoAlerta());
-        System.out.println("  │ > MENSAJE : " + alerta.getMensaje());
-        System.out.println("  └──────────────────────────────────────────────────────────┘");
-    }
-
     // Getters y Setters existentes...
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }

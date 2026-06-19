@@ -1,5 +1,4 @@
-package Sensores.Providers;
-
+package Sensores;
 import Sensores.ISensorDataProvider;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;

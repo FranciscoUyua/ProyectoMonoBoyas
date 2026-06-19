@@ -25,7 +25,7 @@ public class OperadorBuque extends UsuarioOperador {
     }
 
     @Override
-    public void reconocerAlerta(Alerta alerta) {
+    public void reconocerAlerta( ) {
         System.out.println("\n[OPERADOR DE BUQUE] >>> ALERTA RECONOCIDA. Tomando medidas de seguridad.");
     }
     public void recibirAlerta(Alerta alerta) {

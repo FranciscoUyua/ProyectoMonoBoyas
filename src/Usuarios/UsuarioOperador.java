@@ -16,7 +16,8 @@ public abstract class UsuarioOperador extends Usuario{
     return rol;
     }
 
-    public abstract void reconocerAlerta(Alerta alerta); // Método abstracto para que cada operador lo implemente según su tipo
+    public abstract void reconocerAlerta(); // Método abstracto para que cada operador lo implemente según su tipo
+    public abstract void recibirAlerta(Alerta alerta); // Método abstracto para que cada operador lo implemente según su tipo
 
     // Métodos específicos para UsuarioOperador
     
