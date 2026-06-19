@@ -39,11 +39,13 @@ public abstract class Sensor {
     //En lugar de generar un objeto, simplemente actualiza su estado interno
     public void actualizarDato() {
         if (this.activo && this.dataProvider != null) {
+            System.out.println("[SENSOR] " + tipo + " (ID=" + id + ") solicitando dato al proveedor " + dataProvider.getClass().getSimpleName());
             try {
                 this.valor = dataProvider.obtenerDato();
                 this.ultimaMedicion = LocalDateTime.now();
+                System.out.println("[SENSOR] " + tipo + " (ID=" + id + ") obtuvo valor=" + valor + " " + unidad + " a las " + ultimaMedicion);
             } catch (Exception e) {
-                System.err.println("Sensor ID " + id + " error al leer dato: " + e.getMessage());
+                System.err.println("[SENSOR] " + tipo + " (ID=" + id + ") error al leer dato: " + e.getMessage());
                 // Mantenemos el último valor conocido o manejamos el error según el negocio
             }
         }

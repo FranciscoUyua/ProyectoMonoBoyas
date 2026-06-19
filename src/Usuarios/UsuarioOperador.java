@@ -1,6 +1,7 @@
 package Usuarios;
 import Alertas.Alerta;
 import Operaciones.*;
+import java.util.ArrayList;
 
 public abstract class UsuarioOperador extends Usuario{
     protected Operacion operacion;

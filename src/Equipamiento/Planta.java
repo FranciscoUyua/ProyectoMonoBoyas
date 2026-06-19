@@ -2,6 +2,7 @@ package Equipamiento;
 
 import Usuarios.*;
 import Operaciones.*;
+import Central.CentralDatos;
 
 public class Planta {
     protected String nombre;

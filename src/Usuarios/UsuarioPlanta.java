@@ -1,5 +1,6 @@
 package Usuarios;
 import Operaciones.*;
+import java.util.ArrayList;
 
 public abstract class UsuarioPlanta extends Usuario{
     protected Operacion operacion;

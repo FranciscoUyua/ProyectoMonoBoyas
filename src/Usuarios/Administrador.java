@@ -2,6 +2,7 @@ package Usuarios;
 
 import Operaciones.*;
 import Equipamiento.*;
+import java.util.ArrayList;
 
 
 public class Administrador extends Usuario {

@@ -1,7 +1,6 @@
 package Usuarios;
 
 import Alertas.Alerta;
-import Alertas.EstadoAlerta;
 
 public class OperadorLancha extends UsuarioOperador {
 
@@ -21,7 +20,7 @@ public class OperadorLancha extends UsuarioOperador {
 
     @Override
     public void reconocerAlerta(Alerta alerta) {
-        alerta.cambiarEstado(EstadoAlerta.RECONOCIDA);
+        alerta.cambiarEstado();
         System.out.println("  OperadorLancha (" + nombre + ") RECONOCIÓ la alerta ID " + alerta.getId() + " desde el mar.");
     }
 }

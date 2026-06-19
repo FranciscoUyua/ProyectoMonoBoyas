@@ -63,7 +63,7 @@ public class TestPersistencia implements CommandLineRunner {
 
     private void testBuque() {
         System.out.println("── Test: Buque ──────────────────────────────────────");
-        Buque buque = new Buque(9876543, 50000, "MT Concordia", null);
+        Buque buque = new Buque(9876543, 50000, "MT Concordia", null, null);
         buqueDAO.guardar(buque);
 
         Buque leido = buqueDAO.buscarPorNroIMO(9876543);
@@ -105,11 +105,11 @@ public class TestPersistencia implements CommandLineRunner {
         sensorDAO.guardar(sensor, 101);
 
         List<Medicion> lote = List.of(
-            new Medicion(1, 100.5, "Pa", null, Medicion.OrigenMedicion.MONOBOYA),
-            new Medicion(1, 101.2, "Pa", null, Medicion.OrigenMedicion.MONOBOYA),
-            new Medicion(1, 99.8,  "Pa", null, Medicion.OrigenMedicion.MONOBOYA),
-            new Medicion(1, 102.0, "Pa", null, Medicion.OrigenMedicion.MONOBOYA),
-            new Medicion(1, 98.5,  "Pa", null, Medicion.OrigenMedicion.MONOBOYA)
+            new Medicion(1, 100.5, "Pa", Sensor.TipoSensor.PRESION, Medicion.OrigenMedicion.MONOBOYA, 0),
+            new Medicion(1, 101.2, "Pa", Sensor.TipoSensor.PRESION, Medicion.OrigenMedicion.MONOBOYA, 0),
+            new Medicion(1, 99.8,  "Pa", Sensor.TipoSensor.PRESION, Medicion.OrigenMedicion.MONOBOYA, 0),
+            new Medicion(1, 102.0, "Pa", Sensor.TipoSensor.PRESION, Medicion.OrigenMedicion.MONOBOYA, 0),
+            new Medicion(1, 98.5,  "Pa", Sensor.TipoSensor.PRESION, Medicion.OrigenMedicion.MONOBOYA, 0)
         );
 
         medicionDAO.guardarLote(lote);

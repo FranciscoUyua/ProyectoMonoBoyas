@@ -1,6 +1,8 @@
 package Usuarios;
 
 import Alertas.Alerta;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class Usuario {
     protected int id;

@@ -43,11 +43,17 @@ public class Monoboya {
     // Agregamos "Sensor" (con mayúscula si es tu clase) antes de la variable
         for (Sensor sensor : sensores) { 
             if (sensor != null) {
+                sensor.actualizarDato();
                 Medicion nuevaMedicion = new Medicion(sensor.getId(), sensor.getValor(), sensor.getUnidad(), sensor.getTipo(),OrigenMedicion.MONOBOYA,operacion.getId());
                 publisher.publicar(nuevaMedicion);
             }
         }
     }
+
+    public void establecerObjetivoTransferencia(int objetivo) {
+        System.out.println("[MONOBOYA] Objetivo de transferencia establecido: " + objetivo + " unidades.");
+    }
+
     public void agregarSensor(Sensor sensor) {
         if (contadorSensores < sensores.length) {
             sensores[contadorSensores] = sensor;

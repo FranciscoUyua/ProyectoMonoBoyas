@@ -13,7 +13,7 @@ public class BrokerMQTT implements Publisher {
 
     @Override
     public void publicar(Medicion medicion) {
-        System.out.println("📡 [Broker MQTT] Publicando medición del sensor " + medicion.getIdSensor());
+        System.out.println("? [Broker MQTT] Publicando medición del sensor " + medicion.getIdSensor());
         for (Subscriber subscriber : subscribers) {
             subscriber.recibirMensaje(medicion);
         }

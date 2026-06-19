@@ -24,6 +24,10 @@ public class Buque {
         this.centralDatos = centralDatos;
     }
 
+    public Buque(int nroIMO, int capacidad, String nombre, Publisher publisher) {
+        this(nroIMO, capacidad, nombre, publisher, null);
+    }
+
     public void recolectarDatos() {
         Medicion nuevaMedicion = new Medicion(transmisorPresion.getId(),transmisorPresion.getValor(),transmisorPresion.getUnidad(),transmisorPresion.getTipo(),OrigenMedicion.BUQUE,operacion.getId());
         publisher.publicar(nuevaMedicion);
