@@ -20,8 +20,6 @@ public class CentralDatos {
     private Double ultimaPresionMonoboya;
     private Double ultimaPresionBuque;
 
-
-
     // --- 1.1 Amarre (kN) ---
     private static final double AMARRE_AMARILLA = 600.0;
     private static final double AMARRE_ROJA = 900.0;
@@ -78,6 +76,94 @@ public class CentralDatos {
         operacionesActivas.remove(idOperacion);
     }
 
+    private void verificarUmbralAmarre(double valor) {
+        NivelAlerta nivel;
+        if (valor > AMARRE_ROJA) {
+            nivel = NivelAlerta.ROJA;
+            System.out.println("SOY LA CENTRAL [ALERTA CRITICA] Amarre: " + valor + " kN (riesgo de ruptura)");
+        } else if (valor > AMARRE_AMARILLA) {
+            nivel = NivelAlerta.AMARILLA;
+            System.out.println("SOY LA CENTRAL [ALERTA AMARILLA] Amarre: " + valor + " kN");
+        } else {
+            nivel = NivelAlerta.VERDE;
+        }
+        reportar(nivel, "Amarre", valor, "kN");
+    }
+
+    private void verificarUmbralTension(double valor) {
+        NivelAlerta nivel;
+        if (valor > TENSION_ROJA) {
+            nivel = NivelAlerta.ROJA;
+        } else if (valor > TENSION_AMARILLA) {
+            nivel = NivelAlerta.AMARILLA;
+        } else {
+            nivel = NivelAlerta.VERDE;
+        }
+        reportar(nivel, "Tensión de manguera", valor, "tf");
+    }
+
+    private void verificarUmbralOleaje(double valor) {
+        NivelAlerta nivel;
+        if (valor > OLEAJE_ROJA) {
+            nivel = NivelAlerta.ROJA;
+        } else if (valor > OLEAJE_AMARILLA) {
+            nivel = NivelAlerta.AMARILLA;
+        } else {
+            nivel = NivelAlerta.VERDE;
+        }
+        reportar(nivel, "Oleaje", valor, "m");
+    }
+
+    private void verificarUmbralOrientacion(double valor) {
+        double valorAbsoluto = Math.abs(valor);
+
+        NivelAlerta nivel;
+        if (valorAbsoluto > ORIENTACION_ROJA) {
+            nivel = NivelAlerta.ROJA;
+        } else if (valorAbsoluto > ORIENTACION_AMARILLA) {
+            nivel = NivelAlerta.AMARILLA;
+        } else {
+            nivel = NivelAlerta.VERDE;
+        }
+        reportar(nivel, "Orientación", valor, "°");
+    }
+
+    private void verificarUmbralCorriente(double valor) {
+        NivelAlerta nivel;
+        if (valor > CORRIENTE_ROJA) {
+            nivel = NivelAlerta.ROJA;
+        } else if (valor > CORRIENTE_AMARILLA) {
+            nivel = NivelAlerta.AMARILLA;
+        } else {
+            nivel = NivelAlerta.VERDE;
+        }
+        reportar(nivel, "Corriente", valor, "m/s");
+    }
+
+    private void verificarUmbralViento(double valor) {
+        NivelAlerta nivel;
+        if (valor > VIENTO_ROJA) {
+            nivel = NivelAlerta.ROJA;
+        } else if (valor > VIENTO_AMARILLA) {
+            nivel = NivelAlerta.AMARILLA;
+        } else {
+            nivel = NivelAlerta.VERDE;
+        }
+        reportar(nivel, "Viento", valor, "km/h");
+    }
+
+    private void verificarUmbralCaudal(double valor) {
+        NivelAlerta nivel;
+        if (valor <= 0.0) {
+            nivel = NivelAlerta.ROJA;
+        } else if (valor > CAUDAL_AMARILLA) {
+            nivel = NivelAlerta.AMARILLA;
+        } else {
+            nivel = NivelAlerta.VERDE;
+        }
+        reportar(nivel, "Caudal", valor, "l/s");
+    }
+
     private void verificarUmbralPresion(Medicion medicion) {
         double valor = medicion.getValor();
 
@@ -110,52 +196,6 @@ public class CentralDatos {
         }
     }
 
-    private void verificarUmbralAmarre(double valor) {
-        reportar(clasificarAlerta(valor, AMARRE_AMARILLA, AMARRE_ROJA), "Amarre", valor, "kN");
-    }
-
-    private void verificarUmbralTension(double valor) {
-        reportar(clasificarAlerta(valor, TENSION_AMARILLA, TENSION_ROJA), "Tensión de manguera", valor, "tf");
-    }
-
-    private void verificarUmbralCaudal(double valor) {
-        NivelAlerta nivel;
-        if (valor <= 0.0) {
-            nivel = NivelAlerta.ROJA;
-        } else if (valor > CAUDAL_AMARILLA) {
-            nivel = NivelAlerta.AMARILLA;
-        } else {
-            nivel = NivelAlerta.VERDE;
-        }
-        reportar(nivel, "Caudal", valor, "l/s");
-    }
-
-    private void verificarUmbralOleaje(double valor) {
-        reportar(clasificarAlerta(valor, OLEAJE_AMARILLA, OLEAJE_ROJA), "Oleaje", valor, "m");
-    }
-
-    private void verificarUmbralOrientacion(double valor) {
-        double valorAbsoluto = Math.abs(valor);
-        reportar(clasificarAlerta(valorAbsoluto, ORIENTACION_AMARILLA, ORIENTACION_ROJA), "Orientación", valor, "°");
-    }
-
-    private void verificarUmbralCorriente(double valor) {
-        reportar(clasificarAlerta(valor, CORRIENTE_AMARILLA, CORRIENTE_ROJA), "Corriente", valor, "m/s");
-    }
-
-    private void verificarUmbralViento(double valor) {
-        reportar(clasificarAlerta(valor, VIENTO_AMARILLA, VIENTO_ROJA), "Viento", valor, "km/h");
-    }
-
-    private NivelAlerta clasificarAlerta(double valor, double umbralAmarilla, double umbralCritica) {
-        if (valor > umbralCritica) {
-            return NivelAlerta.ROJA;
-        }
-        if (valor > umbralAmarilla) {
-            return NivelAlerta.AMARILLA;
-        }
-        return NivelAlerta.VERDE;
-    }
 
     private void reportar(NivelAlerta nivel, String nombreSensor, double valor, String unidad) {
         switch (nivel) {

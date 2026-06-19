@@ -1,5 +1,7 @@
 package Alertas;
 
+
+
 public class Alerta {
 
     protected int id;
@@ -8,6 +10,9 @@ public class Alerta {
     protected int id_operacion;
     protected int int_medicion;
     protected String string_medicion;
+    public enum EstadoAlerta {
+    NO_RECONOCIDA,
+    RECONOCIDA}
     protected EstadoAlerta estado;
 
     public Alerta(int id, String tipoAlerta, String mensaje, int id_operacion, int int_medicion, String string_medicion) {
