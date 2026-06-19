@@ -1,9 +1,21 @@
 package Usuarios;
 
 import Alertas.Alerta;
+import Equipamiento.Planta;
+
 import java.util.ArrayList;
+import java.util.List;
 
 public class OperadorPlanta extends UsuarioOperador {
+
+    protected int id;
+    protected String nombre;
+    protected String contrasena;
+    protected int dni;
+    protected List<Alerta> alertasRecibidas; // Lista para almacenar las alertas recibidas por el usuario
+    protected String rol;
+    protected Planta planta; // Referencia a la planta que opera
+    protected Operacion operacion; // Referencia a la operación que el operador está manejando
 
     public OperadorPlanta(int id, String nombre, String contrasena, int dni) {
         super(id, nombre, contrasena, dni);

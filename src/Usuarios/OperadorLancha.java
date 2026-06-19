@@ -1,8 +1,22 @@
 package Usuarios;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import Alertas.Alerta;
+import Equipamiento.Planta;
+import Operaciones.Operacion;
 
 public class OperadorLancha extends UsuarioOperador {
+
+    protected int id;
+    protected String nombre;
+    protected String contrasena;
+    protected int dni;
+    protected List<Alerta> alertasRecibidas; // Lista para almacenar las alertas recibidas por el usuario
+    protected String rol;
+    protected Operacion operacion; // Referencia a la operación que el operador está manejando
+
 
     public OperadorLancha(int id, String nombre, String contrasena, int dni) {
         super(id, nombre, contrasena, dni);
