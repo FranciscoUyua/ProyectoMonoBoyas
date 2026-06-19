@@ -12,6 +12,11 @@ public abstract class UsuarioPlanta extends Usuario{
     super(id, nombre, contrasena, dni);
     this.operacion = null; // Inicialmente sin operación asignada
     this.alertasRecibidas = new ArrayList<>();
+    rol = "PLANTA";
+  }
+  
+  public String getRol() {
+    return rol;
   }
   
 }

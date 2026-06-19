@@ -10,6 +10,10 @@ public abstract class UsuarioOperador extends Usuario{
         super(id, nombre, contrasena, dni);
         this.operacion = null; // Inicialmente sin operación asignada
         this.alertasRecibidas = new ArrayList<>();
+        rol = "OPERADOR";
+    }
+    public String getRol() {
+    return rol;
     }
 
     public abstract void reconocerAlerta(Alerta alerta); // Método abstracto para que cada operador lo implemente según su tipo

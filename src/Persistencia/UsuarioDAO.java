@@ -17,13 +17,15 @@ public class UsuarioDAO {
 
     /**
      * Guarda cualquier subclase de Usuario.
-     * El rol se determina automáticamente por el tipo de objeto.
      */
     public void guardar(Usuario usuario) {
-        String rol = determinarRol(usuario);
         jdbc.update(
             "INSERT INTO usuarios (id, nombre, contrasena, dni, rol) VALUES (?, ?, ?, ?, ?) ON CONFLICT (id) DO NOTHING",
-            usuario.getId(), usuario.getNombre(), usuario.getContrasena(), usuario.getDni(), rol
+            usuario.getId(),
+            usuario.getNombre(),
+            usuario.getContrasena(),
+            usuario.getDni(),
+            usuario.getRol()
         );
     }
 
@@ -85,44 +87,39 @@ public class UsuarioDAO {
     public void actualizar(Usuario usuario) {
         jdbc.update(
             "UPDATE usuarios SET nombre = ?, contrasena = ? WHERE id = ?",
-            usuario.getNombre(), usuario.getContrasena(), usuario.getId()
+            usuario.getNombre(),
+            usuario.getContrasena(),
+            usuario.getId()
         );
     }
 
     public void eliminar(int id) {
-        jdbc.update("DELETE FROM usuarios WHERE id = ?", id);
-    }
-
-    // ── Helpers privados ────────────────────────────────────────────
-
-    /**
-     * Determina el rol (discriminador) según el tipo concreto de Usuario.
-     */
-    private String determinarRol(Usuario usuario) {
-        if (usuario instanceof Administrador) return "ADMIN";
-        if (usuario instanceof OperadorLancha) return "OP_LANCHA";
-        if (usuario instanceof OperadorBuque) return "OP_BUQUE";
-        if (usuario instanceof OperadorPlanta) return "OP_PLANTA";
-        return "USUARIO";
+        jdbc.update(
+            "DELETE FROM usuarios WHERE id = ?",
+            id
+        );
     }
 
     /**
-     * Reconstruye la subclase correcta de Usuario según el rol almacenado en BD.
+     * Reconstruye la subclase correspondiente según el rol almacenado en la BD.
      */
     private Usuario instanciarUsuario(int id, String nombre, String contrasena, int dni, String rol) {
-        switch (rol) {
-            case "ADMIN":
-                return new Administrador(id, nombre, contrasena, dni);
-            case "OP_LANCHA":
-                return new OperadorLancha(id, nombre, contrasena, dni);
-            case "OP_BUQUE":
-                return new OperadorBuque(id, nombre, contrasena, dni);
-            case "OP_PLANTA":
-                return new OperadorPlanta(id, nombre, contrasena, dni);
-            default:
-                // Fallback: no se puede instanciar Usuario directamente (es abstract),
-                // así que usamos Administrador como default
-                return new Administrador(id, nombre, contrasena, dni);
-        }
+
+        return switch (rol) {
+            case "ADMIN" ->
+                new Administrador(id, nombre, contrasena, dni);
+
+            case "OPERADOR_LANCHA" ->
+                new OperadorLancha(id, nombre, contrasena, dni);
+
+            case "OPERADOR_BUQUE" ->
+                new OperadorBuque(id, nombre, contrasena, dni);
+
+            case "OPERADOR_PLANTA" ->
+                new OperadorPlanta(id, nombre, contrasena, dni);
+
+            default ->
+                throw new IllegalArgumentException("Rol desconocido: " + rol);
+        };
     }
 }

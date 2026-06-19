@@ -8,6 +8,11 @@ public class OperadorPlanta extends UsuarioOperador {
     public OperadorPlanta(int id, String nombre, String contrasena, int dni) {
         super(id, nombre, contrasena, dni);
         this.alertasRecibidas = new ArrayList<>();
+        rol = "OPERADOR_PLANTA";
+    }
+
+    public String getRol() {
+    return rol;
     }
 
     public void reconocerAlerta(Alerta alerta) {

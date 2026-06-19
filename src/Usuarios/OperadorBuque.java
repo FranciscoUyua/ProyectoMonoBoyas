@@ -8,6 +8,11 @@ public class OperadorBuque extends UsuarioOperador {
     public OperadorBuque(int id, String nombre, String contrasena, int dni) {
         super(id, nombre, contrasena, dni);
         this.alertasRecibidas = new ArrayList<>();
+        rol = "OPERADOR_BUQUE";
+    }
+
+    public String getRol() {
+    return rol;
     }
 
     @Override

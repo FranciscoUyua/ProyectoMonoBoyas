@@ -6,6 +6,12 @@ public class OperadorLancha extends UsuarioOperador {
 
     public OperadorLancha(int id, String nombre, String contrasena, int dni) {
         super(id, nombre, contrasena, dni);
+        this.alertasRecibidas = new ArrayList<>();
+        rol = "OPERADOR_LANCHA";
+    }
+
+    public String getRol() {
+    return rol;
     }
 
     // Específico de la lancha: dispara el inicio. La lógica real vive en Operacion (compa).

@@ -10,6 +10,7 @@ public abstract class Usuario {
     protected String contrasena;
     protected int dni;
     protected List<Alerta> alertasRecibidas; // Lista para almacenar las alertas recibidas por el usuario
+    protected String rol;
 
     public Usuario(int id, String nombre, String contrasena, int dni){
         this.id = id;
@@ -38,4 +39,5 @@ public abstract class Usuario {
     public void setContrasena(String contrasena) { this.contrasena = contrasena; }
     public int getDni() { return dni; }
     public void setDni(int dni) { this.dni = dni; }
+    public abstract String getRol(); // Método abstracto para obtener el rol del usuario
 }

@@ -10,6 +10,11 @@ public class Administrador extends Usuario {
     public Administrador(int id, String nombre, String contrasena, int dni) {
         super(id, nombre, contrasena, dni);
         this.alertasRecibidas = new ArrayList<>();
+        rol = "ADMIN";
+    }
+
+    public String getRol() {
+    return rol;
     }
 
     // Métodos específicos para Administrador
