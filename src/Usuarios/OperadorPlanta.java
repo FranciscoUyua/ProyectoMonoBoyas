@@ -1,10 +1,11 @@
 package Usuarios;
 
-import Alertas.Alerta;
-import Equipamiento.Planta;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import Alertas.Alerta;
+import Equipamiento.Planta;
+import Operaciones.Operacion;
 
 public class OperadorPlanta extends UsuarioOperador {
 
