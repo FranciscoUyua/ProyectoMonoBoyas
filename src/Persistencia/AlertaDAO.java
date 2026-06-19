@@ -32,7 +32,7 @@ public class AlertaDAO {
                 "VALUES (?, ?, ?, ?)",
                 new String[]{"id"}
             );
-            ps.setString(1, alerta.getTipoAlerta());
+            ps.setString(1, alerta.getTipoAlerta().toString());
             ps.setString(2, alerta.getMensaje());
             ps.setInt(3, operacionId);
             ps.setInt(4, medicionId);

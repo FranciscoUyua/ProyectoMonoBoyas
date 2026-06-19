@@ -21,11 +21,11 @@ public class Alerta {
         AMARILLA,
         ROJA
     }
-    protected TipoAlerta tipo_Alerta;
+    protected TipoAlerta tipoAlerta;
 
-    public Alerta(int id, TipoAlerta tipo_Alerta, String mensaje, Operacion operacion, double valor_medicion, String string_medicion) {
+    public Alerta(int id, TipoAlerta tipoAlerta, String mensaje, Operacion operacion, double valor_medicion, String string_medicion) {
         this.id = id;
-        this.tipo_Alerta = tipo_Alerta;
+        this.tipoAlerta = tipoAlerta;
         this.operacion = operacion;
         this.double_medicion = valor_medicion;
         this.string_medicion = string_medicion;
@@ -40,12 +40,12 @@ public class Alerta {
         this.id = id;
     }
 
-    public TipoAlerta getTipo_Alerta() {
-        return tipo_Alerta;
+    public TipoAlerta getTipoAlerta() {
+        return tipoAlerta;
     }
 
-    public void setTipo_Alerta(TipoAlerta tipo_Alerta) {
-        this.tipo_Alerta = tipo_Alerta;
+    public void setTipoAlerta(TipoAlerta tipoAlerta) {
+        this.tipoAlerta = tipoAlerta;
     }
 
     public EstadoAlerta getEstadoAlerta() {

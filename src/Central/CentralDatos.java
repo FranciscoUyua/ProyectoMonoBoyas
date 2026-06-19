@@ -2,8 +2,9 @@ package Central;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
-import Alertas.*;
+import Alertas.Alerta;
 import Operaciones.Operacion;
 import Sensores.Medicion;
 import Sensores.Medicion.OrigenMedicion;
@@ -55,8 +56,8 @@ public class CentralDatos {
     private static final double VIENTO_AMARILLA = 55.0;
     private static final double VIENTO_ROJA = 75.0;
 
-    public void procesarTelemetria(Medicion medicion) {
-        switch (medicion.getTipo()) {
+    public Optional<Alerta> procesarTelemetria(Medicion medicion) {
+        return switch (medicion.getTipo()) {
             case TENSION -> verificarUmbralTension(medicion.getValor());
             case PRESION -> verificarUmbralPresion(medicion);
             case OLEAJE -> verificarUmbralOleaje(medicion.getValor());
@@ -65,7 +66,7 @@ public class CentralDatos {
             case CAUDAL -> verificarUmbralCaudal(medicion.getValor());
             case VIENTO -> verificarUmbralViento(medicion.getValor(), medicion.getIdOperacion());//sin terminar
             case AMARRE -> verificarUmbralAmarre(medicion.getValor(), medicion.getIdOperacion());
-        }
+        };
     }
 
     public void iniciarOperacion(Operacion operacion) {
@@ -76,109 +77,124 @@ public class CentralDatos {
         operacionesActivas.remove(idOperacion);
     }
 
-    private void verificarUmbralAmarre(double valor,int idoperacion) {
-        NivelAlerta nivel;
+    private Optional<Alerta> verificarUmbralAmarre(double valor,int idoperacion) {
+
         if (valor > AMARRE_ROJA) {
-            nivel = NivelAlerta.ROJA;
+            //aca creo la alerta , todo lo demas sera asi
             System.out.println("SOY LA CENTRAL estoy por crear una Alerta critica de amarre");
-            Operacion op = operacionesActivas.get(idoperacion);
-            //aca creo la alerta , deberia agarrar la op , y vincularla
+            Operacion op = operacionesActivas.get(idoperacion);    
             Alerta alerta = new Alerta(1, Alerta.TipoAlerta.ROJA, "Amarre en riesgo de ruptura", op, 1, "kN");
+            //alerta.operacion.viajarOperadorX()
+            return Optional.of(alerta);
+
         } else if (valor > AMARRE_AMARILLA) {
-            nivel = NivelAlerta.AMARILLA;
             System.out.println("SOY LA CENTRAL [ALERTA AMARILLA] Amarre: " + valor + " kN");
+            return Optional.of(alerta);
+
         } else {
-            nivel = NivelAlerta.VERDE;
+            return Optional.empty(); // VERDE — no se genera alerta
         }
-        reportar(nivel, "Amarre", valor, "kN");
+        //reportar(nivel, "Amarre", valor, "kN");
     }
 
-    private void verificarUmbralTension(double valor) {
-        NivelAlerta nivel;
+    private Optional<Alerta> verificarUmbralTension(double valor) {
         if (valor > TENSION_ROJA) {
             nivel = NivelAlerta.ROJA;
+            return Optional.of(alerta);
         } else if (valor > TENSION_AMARILLA) {
             nivel = NivelAlerta.AMARILLA;
+            return Optional.of(alerta);
         } else {
             nivel = NivelAlerta.VERDE;
+            return Optional.empty();
         }
-        reportar(nivel, "Tensión de manguera", valor, "tf");
     }
 
-    private void verificarUmbralOleaje(double valor) {
-        NivelAlerta nivel;
+    private Optional<Alerta> verificarUmbralOleaje(double valor) {
         if (valor > OLEAJE_ROJA) {
             nivel = NivelAlerta.ROJA;
+            return Optional.of(alerta);
         } else if (valor > OLEAJE_AMARILLA) {
             nivel = NivelAlerta.AMARILLA;
+            return Optional.of(alerta);
         } else {
             nivel = NivelAlerta.VERDE;
+            return Optional.empty();
         }
-        reportar(nivel, "Oleaje", valor, "m");
     }
 
-    private void verificarUmbralOrientacion(double valor) {
+    private Optional<Alerta>verificarUmbralOrientacion(double valor) {
         double valorAbsoluto = Math.abs(valor);
 
-        NivelAlerta nivel;
         if (valorAbsoluto > ORIENTACION_ROJA) {
             nivel = NivelAlerta.ROJA;
+            return Optional.of(alerta);
         } else if (valorAbsoluto > ORIENTACION_AMARILLA) {
             nivel = NivelAlerta.AMARILLA;
+            return Optional.of(alerta);
         } else {
             nivel = NivelAlerta.VERDE;
+            return Optional.empty();
         }
-        reportar(nivel, "Orientación", valor, "°");
+
     }
 
-    private void verificarUmbralCorriente(double valor) {
-        NivelAlerta nivel;
+    private Optional<Alerta> verificarUmbralCorriente(double valor) {
+
         if (valor > CORRIENTE_ROJA) {
             nivel = NivelAlerta.ROJA;
+            return Optional.of(alerta);
         } else if (valor > CORRIENTE_AMARILLA) {
             nivel = NivelAlerta.AMARILLA;
+            return Optional.of(alerta);
         } else {
             nivel = NivelAlerta.VERDE;
+            return Optional.empty();
         }
-        reportar(nivel, "Corriente", valor, "m/s");
     }
 
-    private void verificarUmbralViento(double valor,int idoperacion) {
-        NivelAlerta nivel;
+    private Optional<Alerta> verificarUmbralViento(double valor,int idoperacion) {
+        
         if (valor > VIENTO_ROJA) {
             nivel = NivelAlerta.ROJA;
+            return Optional.of(alerta);
         } else if (valor > VIENTO_AMARILLA) {
             nivel = NivelAlerta.AMARILLA;
+            return Optional.of(alerta);
         } else {
             nivel = NivelAlerta.VERDE;
+            return Optional.empty();
         }
-        reportar(nivel, "Viento", valor, "km/h");
+
     }
 
-    private void verificarUmbralCaudal(double valor) {
-        NivelAlerta nivel;
+    private Optional<Alerta> verificarUmbralCaudal(double valor) {
+        
         if (valor <= 0.0) {
             nivel = NivelAlerta.ROJA;
+            return Optional.of(alerta);
         } else if (valor > CAUDAL_AMARILLA) {
             nivel = NivelAlerta.AMARILLA;
+            return Optional.of(alerta);
         } else {
             nivel = NivelAlerta.VERDE;
+            return Optional.empty();
         }
-        reportar(nivel, "Caudal", valor, "l/s");
     }
 
-    private void verificarUmbralPresion(Medicion medicion) {
+    private Optional<Alerta> verificarUmbralPresion(Medicion medicion) {
         double valor = medicion.getValor();
 
-        NivelAlerta nivel;
         if (valor > PRESION_ROJA_ALTA || valor < PRESION_ROJA_BAJA) {
             nivel = NivelAlerta.ROJA;
+            return Optional.of(alerta);
         } else if (valor > PRESION_AMARILLA_ALTA) {
             nivel = NivelAlerta.AMARILLA;
+            return Optional.of(alerta);
         } else {
             nivel = NivelAlerta.VERDE;
+            return Optional.empty();
         }
-        reportar(nivel, "Presión (" + medicion.getOrigen() + ")", valor, "Pa");
 
         actualizarPresionYVerificarDiscrepancia(medicion);
     }
