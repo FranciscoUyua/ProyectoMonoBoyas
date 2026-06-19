@@ -1,16 +1,17 @@
 package Persistencia;
 
-import Sensores.Medicion;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.List;
+
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.util.List;
+import Sensores.Medicion;
 
 @Repository
 public class MedicionDAO {
@@ -28,13 +29,15 @@ public class MedicionDAO {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement(
-                "INSERT INTO mediciones (sensor_id, valor, unidad, timestamp) VALUES (?, ?, ?, ?)",
+                // A2: Se agregó operacion_id al INSERT
+                "INSERT INTO mediciones (sensor_id, operacion_id, valor, unidad, timestamp) VALUES (?, ?, ?, ?, ?)",
                 new String[]{"id"}
             );
             ps.setInt(1, medicion.getIdSensor());
-            ps.setDouble(2, medicion.getValor());
-            ps.setString(3, medicion.getUnidad());
-            ps.setTimestamp(4, Timestamp.valueOf(medicion.getTimestamp()));
+            ps.setInt(2, medicion.getIdOperacion()); // A2: Se mapea el ID de la operación
+            ps.setDouble(3, medicion.getValor());
+            ps.setString(4, medicion.getUnidad());
+            ps.setTimestamp(5, Timestamp.valueOf(medicion.getTimestamp()));
             return ps;
         }, keyHolder);
         return keyHolder.getKey().intValue();
@@ -45,16 +48,18 @@ public class MedicionDAO {
      * Ideal para el carril rápido de telemetría (8 mediciones/segundo).
      */
     public void guardarLote(List<Medicion> lote) {
-        String sql = "INSERT INTO mediciones (sensor_id, valor, unidad, timestamp) VALUES (?, ?, ?, ?)";
+        // A2: Se agregó operacion_id al INSERT del lote
+        String sql = "INSERT INTO mediciones (sensor_id, operacion_id, valor, unidad, timestamp) VALUES (?, ?, ?, ?, ?)";
 
         jdbc.batchUpdate(sql, new BatchPreparedStatementSetter() {
             @Override
             public void setValues(PreparedStatement ps, int i) throws SQLException {
                 Medicion m = lote.get(i);
                 ps.setInt(1, m.getIdSensor());
-                ps.setDouble(2, m.getValor());
-                ps.setString(3, m.getUnidad());
-                ps.setTimestamp(4, Timestamp.valueOf(m.getTimestamp()));
+                ps.setInt(2, m.getIdOperacion()); // A2: Se mapea el ID de la operación
+                ps.setDouble(3, m.getValor());
+                ps.setString(4, m.getUnidad());
+                ps.setTimestamp(5, Timestamp.valueOf(m.getTimestamp()));
             }
 
             @Override
@@ -62,6 +67,24 @@ public class MedicionDAO {
                 return lote.size();
             }
         });
+    }
+
+    /**
+     * Esto te permite buscar todas las mediciones de una operación específica para el gráfico.
+     */
+    public List<MedicionInfo> listarPorOperacion(int operacionId) {
+        return jdbc.query(
+            "SELECT * FROM mediciones WHERE operacion_id = ? ORDER BY timestamp ASC",
+            (rs, rowNum) -> new MedicionInfo(
+                rs.getInt("id"),
+                rs.getInt("sensor_id"),
+                rs.getInt("operacion_id"), 
+                rs.getDouble("valor"),
+                rs.getString("unidad"),
+                rs.getTimestamp("timestamp").toLocalDateTime()
+            ),
+            operacionId
+        );
     }
 
     /**
@@ -73,6 +96,7 @@ public class MedicionDAO {
             (rs, rowNum) -> new MedicionInfo(
                 rs.getInt("id"),
                 rs.getInt("sensor_id"),
+                rs.getInt("operacion_id"), // A2: Leemos la nueva columna
                 rs.getDouble("valor"),
                 rs.getString("unidad"),
                 rs.getTimestamp("timestamp").toLocalDateTime()
@@ -90,6 +114,7 @@ public class MedicionDAO {
             (rs, rowNum) -> new MedicionInfo(
                 rs.getInt("id"),
                 rs.getInt("sensor_id"),
+                rs.getInt("operacion_id"), // A2: Leemos la nueva columna
                 rs.getDouble("valor"),
                 rs.getString("unidad"),
                 rs.getTimestamp("timestamp").toLocalDateTime()
@@ -100,18 +125,19 @@ public class MedicionDAO {
 
     /**
      * Clase auxiliar para mediciones leídas de la BD.
-     * Agrega el campo 'id' (generado por SERIAL) que la clase Medicion original no tiene.
      */
     public static class MedicionInfo {
         private final int id;
         private final int sensorId;
+        private final int operacionId; // A2: Nuevo atributo
         private final double valor;
         private final String unidad;
         private final java.time.LocalDateTime timestamp;
 
-        public MedicionInfo(int id, int sensorId, double valor, String unidad, java.time.LocalDateTime timestamp) {
+        public MedicionInfo(int id, int sensorId, int operacionId, double valor, String unidad, java.time.LocalDateTime timestamp) {
             this.id = id;
             this.sensorId = sensorId;
+            this.operacionId = operacionId; // A2: Asignación
             this.valor = valor;
             this.unidad = unidad;
             this.timestamp = timestamp;
@@ -119,6 +145,7 @@ public class MedicionDAO {
 
         public int getId() { return id; }
         public int getSensorId() { return sensorId; }
+        public int getOperacionId() { return operacionId; } // A2: Getter
         public double getValor() { return valor; }
         public String getUnidad() { return unidad; }
         public java.time.LocalDateTime getTimestamp() { return timestamp; }

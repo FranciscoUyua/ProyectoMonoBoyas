@@ -1,17 +1,32 @@
 package Main;
 
-import Persistencia.*;
-import Equipamiento.*;
-import Usuarios.*;
-import Sensores.*;
+import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
+import Equipamiento.Buque;
+import Equipamiento.Monoboya;
+import Persistencia.AlertaDAO;
+import Persistencia.BuqueDAO;
+import Persistencia.MedicionDAO;
+import Persistencia.MonoboyaDAO;
+import Persistencia.OperacionDAO;
+import Persistencia.PlantaDAO;
+import Persistencia.SensorDAO;
+import Persistencia.UsuarioDAO;
+import Sensores.Medicion;
+import Sensores.MockSensorDataProvider;
+import Sensores.Sensor;
+import Sensores.SensorDePresion;
+import Usuarios.Administrador;
+import Usuarios.OperadorBuque;
+import Usuarios.OperadorLancha;
+import Usuarios.OperadorPlanta;
+import Usuarios.Usuario;
 
 @SpringBootApplication
 @ComponentScan({"Main", "Persistencia"})
@@ -24,6 +39,7 @@ public class TestPersistencia implements CommandLineRunner {
     @Autowired private SensorDAO sensorDAO;
     @Autowired private MedicionDAO medicionDAO;
     @Autowired private AlertaDAO alertaDAO;
+    @Autowired private OperacionDAO operacionDAO;
 
     public static void main(String[] args) {
         SpringApplication.run(TestPersistencia.class, args);
@@ -99,26 +115,31 @@ public class TestPersistencia implements CommandLineRunner {
     }
 
     private void testMediciones() {
-        System.out.println("── Test: Mediciones (batch) ─────────────────────────");
+    System.out.println("── Test: Mediciones (batch) ─────────────────────────");
 
-        SensorDePresion sensor = new SensorDePresion(1, new MockSensorDataProvider());
-        sensorDAO.guardar(sensor, 101);
+    SensorDePresion sensor = new SensorDePresion(1, new MockSensorDataProvider());
+    sensorDAO.guardar(sensor, 101);
 
-        List<Medicion> lote = List.of(
-            new Medicion(1, 100.5, "Pa", Sensor.TipoSensor.PRESION, Medicion.OrigenMedicion.MONOBOYA, 0),
-            new Medicion(1, 101.2, "Pa", Sensor.TipoSensor.PRESION, Medicion.OrigenMedicion.MONOBOYA, 0),
-            new Medicion(1, 99.8,  "Pa", Sensor.TipoSensor.PRESION, Medicion.OrigenMedicion.MONOBOYA, 0),
-            new Medicion(1, 102.0, "Pa", Sensor.TipoSensor.PRESION, Medicion.OrigenMedicion.MONOBOYA, 0),
-            new Medicion(1, 98.5,  "Pa", Sensor.TipoSensor.PRESION, Medicion.OrigenMedicion.MONOBOYA, 0)
-        );
+    // Necesitamos una operación real: mediciones.operacion_id ahora tiene FK
+    // hacia operaciones(id), así que el placeholder "0" ya no es válido.
+    int operacionId = operacionDAO.crearPlanificada(9876543, 1, "DESCARGA", 2);
+    System.out.println("  ✔ Operación de prueba creada: ID=" + operacionId);
 
-        medicionDAO.guardarLote(lote);
-        System.out.println("  ✔ Lote de " + lote.size() + " mediciones insertado");
+    List<Medicion> lote = List.of(
+        new Medicion(1, 100.5, "Pa", Sensor.TipoSensor.PRESION, Medicion.OrigenMedicion.MONOBOYA, operacionId),
+        new Medicion(1, 101.2, "Pa", Sensor.TipoSensor.PRESION, Medicion.OrigenMedicion.MONOBOYA, operacionId),
+        new Medicion(1, 99.8,  "Pa", Sensor.TipoSensor.PRESION, Medicion.OrigenMedicion.MONOBOYA, operacionId),
+        new Medicion(1, 102.0, "Pa", Sensor.TipoSensor.PRESION, Medicion.OrigenMedicion.MONOBOYA, operacionId),
+        new Medicion(1, 98.5,  "Pa", Sensor.TipoSensor.PRESION, Medicion.OrigenMedicion.MONOBOYA, operacionId)
+    );
 
-        List<MedicionDAO.MedicionInfo> leidas = medicionDAO.listarPorSensor(1, 10);
-        System.out.println("  ✔ Mediciones leídas de BD: " + leidas.size());
-        for (MedicionDAO.MedicionInfo m : leidas) {
-            System.out.println("    → Sensor " + m.getSensorId() + " | Valor: " + m.getValor() + " " + m.getUnidad() + " | " + m.getTimestamp());
-        }
+    medicionDAO.guardarLote(lote);
+    System.out.println("  ✔ Lote de " + lote.size() + " mediciones insertado");
+
+    List<MedicionDAO.MedicionInfo> leidas = medicionDAO.listarPorSensor(1, 10);
+    System.out.println("  ✔ Mediciones leídas de BD: " + leidas.size());
+    for (MedicionDAO.MedicionInfo m : leidas) {
+        System.out.println("    → Sensor " + m.getSensorId() + " | Valor: " + m.getValor() + " " + m.getUnidad() + " | " + m.getTimestamp());
     }
+}
 }

@@ -27,10 +27,7 @@ public class OperacionController {
         return Map.of(
             "data", operaciones,
             "pagination", Map.of(
-                "page", 1,
-                "limit", 20,
-                "total", operaciones.size(),
-                "totalPages", 1
+                "page", 1, "limit", 20, "total", operaciones.size(), "totalPages", 1
             )
         );
     }
@@ -38,11 +35,12 @@ public class OperacionController {
     @PostMapping
     public ResponseEntity<?> planificar(@RequestBody Map<String, Object> body) {
         try {
-            int buqueNroIMO = (int) body.get("buqueNroIMO");
-            int plantaId    = (int) body.get("plantaId");
-            String tipo     = (String) body.get("tipo");
+            int buqueNroIMO      = (int) body.get("buqueNroIMO");
+            int plantaId         = (int) body.get("plantaId");
+            String tipo          = (String) body.get("tipo");
+            int operadorBuqueDni = (int) body.get("operadorBuqueDni");
             return ResponseEntity.status(201).body(
-                operacionService.planificar(buqueNroIMO, plantaId, tipo)
+                operacionService.planificar(buqueNroIMO, plantaId, tipo, operadorBuqueDni)
             );
         } catch (Exception e) {
             return ResponseEntity.status(400).body(Map.of("error", e.getMessage()));
@@ -52,11 +50,11 @@ public class OperacionController {
     @PatchMapping("/{id}/preparar")
     public ResponseEntity<?> preparar(@PathVariable int id, @RequestBody Map<String, Object> body) {
         try {
-            int monoboyaId       = (int) body.get("monoboyaId");
-            int operadorPlantaId = (int) body.get("operadorPlantaId");
-            int operadorLanchaId = (int) body.get("operadorLanchaId");
+            int monoboyaId        = (int) body.get("monoboyaId");
+            int operadorPlantaDni = (int) body.get("operadorPlantaDni");
+            int operadorLanchaDni = (int) body.get("operadorLanchaDni");
             return ResponseEntity.ok(
-                operacionService.preparar(id, monoboyaId, operadorPlantaId, operadorLanchaId)
+                operacionService.preparar(id, monoboyaId, operadorPlantaDni, operadorLanchaDni)
             );
         } catch (IllegalStateException e) {
             return ResponseEntity.status(409).body(Map.of("error", e.getMessage()));
@@ -68,8 +66,8 @@ public class OperacionController {
     @PatchMapping("/{id}/iniciar")
     public ResponseEntity<?> iniciar(@PathVariable int id, @RequestBody Map<String, Object> body) {
         try {
-            int operadorBuqueId = (int) body.get("operadorBuqueId");
-            return ResponseEntity.ok(operacionService.iniciar(id, operadorBuqueId));
+            int operadorLanchaDni = (int) body.get("operadorLanchaDni");
+            return ResponseEntity.ok(operacionService.iniciar(id, operadorLanchaDni));
         } catch (IllegalStateException e) {
             return ResponseEntity.status(409).body(Map.of("error", e.getMessage()));
         } catch (Exception e) {

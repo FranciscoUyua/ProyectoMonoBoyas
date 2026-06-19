@@ -1,10 +1,3 @@
--- =====================================================================
--- Schema de base de datos para ProyectoMonoBoyas
--- Se ejecuta automáticamente al arrancar Spring Boot
--- Basado en las clases de dominio en: Equipamiento/, Sensores/, 
--- Usuarios/, Operaciones/, Alertas/
--- =====================================================================
-
 -- ── PLANTAS ──────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS plantas (
     id      SERIAL PRIMARY KEY,
@@ -38,7 +31,7 @@ CREATE TABLE IF NOT EXISTS usuarios (
     nombre      VARCHAR(100) NOT NULL,
     contrasena  VARCHAR(100) NOT NULL,
     dni         INT UNIQUE NOT NULL,
-    rol         VARCHAR(30) NOT NULL  -- ADMIN, OP_LANCHA, OP_BUQUE, OP_PLANTA, USUARIO_PLANTA
+    rol         VARCHAR(30) NOT NULL -- ADMIN, OPERADOR_LANCHA, OPERADOR_BUQUE, OPERADOR_PLANTA
 );
 
 -- ── OPERACIONES ─────────────────────────────────────────────────────
@@ -82,7 +75,9 @@ CREATE TABLE IF NOT EXISTS mediciones (
     timestamp   TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
--- Índice compuesto para consultas por sensor + rango de tiempo
+ALTER TABLE mediciones ADD COLUMN IF NOT EXISTS operacion_id INT REFERENCES operaciones(id);
+CREATE INDEX IF NOT EXISTS idx_mediciones_operacion ON mediciones (operacion_id);
+
 CREATE INDEX IF NOT EXISTS idx_mediciones_sensor_time
     ON mediciones (sensor_id, timestamp DESC);
 

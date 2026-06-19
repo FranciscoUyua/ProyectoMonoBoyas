@@ -1,12 +1,12 @@
 package Persistencia;
 
+import java.sql.PreparedStatement;
+import java.util.List;
+
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
-
-import java.sql.PreparedStatement;
-import java.util.List;
 
 @Repository
 public class OperacionDAO {
@@ -17,34 +17,28 @@ public class OperacionDAO {
         this.jdbc = jdbc;
     }
 
-    public int crearPlanificada(int buqueNroIMO, int plantaId, String tipo) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbc.update(con -> {
-            PreparedStatement ps = con.prepareStatement(
-                "INSERT INTO operaciones (buque_nro_imo, planta_id, tipo, estado) " +
-                "VALUES (?, ?, ?, 'PLANIFICADA')",
-                new String[]{"id"}
-            );
-            ps.setInt(1, buqueNroIMO);
-            ps.setInt(2, plantaId);
-            ps.setString(3, tipo);
-            return ps;
-        }, keyHolder);
-        return keyHolder.getKey().intValue();
-    }
+    public int crearPlanificada(int buqueNroIMO, int plantaId, String tipo, int operadorBuqueId) {
+    KeyHolder keyHolder = new GeneratedKeyHolder();
+    jdbc.update(con -> {
+        PreparedStatement ps = con.prepareStatement(
+            "INSERT INTO operaciones (buque_nro_imo, planta_id, tipo, operador_buque_id, estado) " +
+            "VALUES (?, ?, ?, ?, 'PLANIFICADA')",
+            new String[]{"id"}
+        );
+        ps.setInt(1, buqueNroIMO);
+        ps.setInt(2, plantaId);
+        ps.setString(3, tipo);
+        ps.setInt(4, operadorBuqueId);
+        return ps;
+    }, keyHolder);
+    return keyHolder.getKey().intValue();
+}
 
     public void actualizarParaPreparar(int id, int monoboyaId, int opPlantaId, int opLanchaId) {
         jdbc.update(
             "UPDATE operaciones SET monoboya_id = ?, operador_planta_id = ?, " +
             "operador_lancha_id = ?, estado = 'PREPARADA' WHERE id = ?",
             monoboyaId, opPlantaId, opLanchaId, id
-        );
-    }
-
-    public void actualizarParaIniciar(int id, int opBuqueId) {
-        jdbc.update(
-            "UPDATE operaciones SET operador_buque_id = ?, estado = 'EN_CURSO' WHERE id = ?",
-            opBuqueId, id
         );
     }
 
@@ -75,8 +69,9 @@ public class OperacionDAO {
         );
     }
 
+    // Cambiar el string hardcodeado:
     public List<OperacionInfo> listarActivas() {
-        return listarPorEstado("EN_CURSO");
+        return listarPorEstado("ACTIVA");
     }
 
     public List<OperacionInfo> listarTodas() {
