@@ -1,7 +1,9 @@
-package Main.java.com.monoboyas.api;
+package com.monoboyas.api;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
@@ -36,29 +38,47 @@ public class TelemetriaService {
 
     
 
+
     public TelemetriaResultado procesarMedicion(Medicion medicion) {
 
         int medicionId = medicionDAO.guardar(medicion);
-        Optional<Alerta> alertaOpt = centralDatos.procesarTelemetria(medicion);
+        Map<String, Alerta> alertasPorRol = centralDatos.procesarTelemetria(medicion);
 
-    
-        if (alertaOpt.isEmpty()) {
-            return new TelemetriaResultado(medicionId, null);
+        if (alertasPorRol.isEmpty()) {
+            return new TelemetriaResultado(medicionId, new ArrayList<>());
         }
-        Alerta alerta = alertaOpt.get();
-        int operacionId = medicion.getIdOperacion();
-        int alertaId = alertaDAO.guardar(alerta, operacionId, medicionId);
-        registrarRecepciones(alertaId, operacionId);
-        AlertaDAO.AlertaInfo info = new AlertaDAO.AlertaInfo(
-            alertaId,
-            alerta.getTipoAlerta().toString(),
-            alerta.getMensaje(),
-            operacionId,
-            medicionId,
-            LocalDateTime.now()
-        );
 
-        return new TelemetriaResultado(medicionId, info);
+        int operacionId = medicion.getIdOperacion();
+        OperacionDAO.OperacionInfo op = operacionDAO.buscarPorId(operacionId);
+        List<AlertaDAO.AlertaInfo> infos = new ArrayList<>();
+
+        for (Map.Entry<String, Alerta> entry : alertasPorRol.entrySet()) {
+            String rol = entry.getKey();
+            Alerta alerta = entry.getValue();
+
+            int alertaId = alertaDAO.guardar(alerta, operacionId, medicionId);
+
+            Integer usuarioId = switch (rol) {
+                case "OPERADOR_BUQUE"  -> op.getOperadorBuqueId();
+                case "OPERADOR_LANCHA" -> op.getOperadorLanchaId();
+                case "OPERADOR_PLANTA" -> op.getOperadorPlantaId();
+                default -> null;
+            };
+            if (usuarioId != null) {
+                usuarioAlertaDAO.registrarRecepcion(alertaId, usuarioId);
+            }
+
+            infos.add(new AlertaDAO.AlertaInfo(
+                alertaId,
+                alerta.getTipoAlerta().toString(),
+                alerta.getMensaje(),
+                operacionId,
+                medicionId,
+                LocalDateTime.now()
+            ));
+        }
+
+        return new TelemetriaResultado(medicionId, infos);
     }
 
     
@@ -73,20 +93,17 @@ public class TelemetriaService {
     
 
     public static class TelemetriaResultado {
-        private final int medicionId;
-        private final AlertaDAO.AlertaInfo alerta;
+    private final int medicionId;
+    private final List<AlertaDAO.AlertaInfo> alertas;
 
-        public TelemetriaResultado(int medicionId, AlertaDAO.AlertaInfo alerta) {
-
+    public TelemetriaResultado(int medicionId, List<AlertaDAO.AlertaInfo> alertas) {
         this.medicionId = medicionId;
-        this.alerta = alerta;
+        this.alertas = alertas;
+    }
 
-        }
-
-        public int getMedicionId() { return medicionId; }
-        public AlertaDAO.AlertaInfo getAlerta() { return alerta; }
-        public boolean tieneAlerta() { return alerta != null; }
-
+    public int getMedicionId() { return medicionId; }
+    public List<AlertaDAO.AlertaInfo> getAlertas() { return alertas; }
+    public boolean tieneAlertas() { return !alertas.isEmpty(); }
     }
 
 }

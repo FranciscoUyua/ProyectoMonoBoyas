@@ -1,4 +1,4 @@
-package Main.java.com.monoboyas.api;
+package com.monoboyas.api;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
