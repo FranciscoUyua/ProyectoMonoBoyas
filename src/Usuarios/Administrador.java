@@ -17,22 +17,22 @@ public class Administrador extends Usuario {
     }
 
     public String getRol() {
-    return rol;
+        return rol;
     }
+
     public void agregarUsuario(Usuario nuevoUsuario) {
-        
     }
 
     public void eliminarUsuario(int idUsuario) {
-        
     }
 
     public void modificarUmbrales() {
-        
     }
-    // Métodos específicos para Administrador
-    public void PlanificarOperacion(Buque barco,OperadorBuque operadorBuque) {
-        Operacion operacion = new Operacion((int)(Math.random() * 100),  barco, operadorBuque); 
+
+    public void PlanificarOperacion(Buque barco,OperadorBuque operadorBuque, Planta planta) {
+        Operacion operacion = new Operacion((int)(Math.random() * 100),  barco, operadorBuque, planta); 
+        //operacion ya se crea en preparada
+    
     }
 
 
