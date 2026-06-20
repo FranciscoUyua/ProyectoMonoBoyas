@@ -1,7 +1,8 @@
 package Usuarios;
-import Alertas.Alerta;
-import Operaciones.*;
 import java.util.ArrayList;
+
+import Alertas.Alerta;
+import Operaciones.Operacion;
 
 public abstract class UsuarioOperador extends Usuario{
     protected Operacion operacion;
@@ -13,12 +14,16 @@ public abstract class UsuarioOperador extends Usuario{
         rol = "OPERADOR";
     }
     public String getRol() {
-    return rol;
+        return rol;
     }
 
     public abstract void reconocerAlerta(); // Método abstracto para que cada operador lo implemente según su tipo
     public abstract void recibirAlerta(Alerta alerta); // Método abstracto para que cada operador lo implemente según su tipo
 
     // Métodos específicos para UsuarioOperador
+    @Override
+    public Operacion getOperacion() {
+        return operacion;
+    }
     
 }

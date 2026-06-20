@@ -1,8 +1,10 @@
 package Usuarios;
 
-import Alertas.Alerta;
 import java.util.ArrayList;
 import java.util.List;
+
+import Alertas.Alerta;
+import Operaciones.Operacion;
 
 public abstract class Usuario {
     protected int id;
@@ -30,4 +32,5 @@ public abstract class Usuario {
     public int getDni() { return dni; }
     public void setDni(int dni) { this.dni = dni; }
     public abstract String getRol(); // Método abstracto para obtener el rol del usuario
+    public Operacion getOperacion() { return null; } // por defecto: un usuario que no es operador no tiene operación asociada
 }

@@ -12,6 +12,7 @@ public class Operacion {
     protected OperadorBuque operadorBuque;   
     protected OperadorPlanta operadorPlanta;
     protected boolean estaActiva;
+    protected Planta planta; // Referencia a la planta que opera
     protected enum TipoOperacion {
         PREPARADA,
         ENCURSO,
@@ -20,9 +21,10 @@ public class Operacion {
     }
     protected TipoOperacion tipoOperacion;
 
-    public Operacion(int id, Buque b, OperadorBuque operadorBuque) {
+    public Operacion(int id, Buque b, OperadorBuque operadorBuque, Planta planta) {
         this.id = id;
         barco = b;
+        this.planta = planta;
         this.estaActiva = false;
         this.tipoOperacion = TipoOperacion.PREPARADA;
         this.operadorBuque = operadorBuque;
@@ -44,6 +46,24 @@ public class Operacion {
             return;
         }
         // 2. Pasa a ENCURSO
+        this.tipoOperacion = TipoOperacion.ENCURSO;
+        this.estaActiva = true;
+    }
+
+    public void detenerOperacion() {
+        if (tipoOperacion != TipoOperacion.ENCURSO) {
+            System.out.println("[OPERACIÓN " + id + "] No se puede detener: estado actual = " + tipoOperacion + " (se requiere ENCURSO).");
+            return;
+        }
+        this.tipoOperacion = TipoOperacion.DETENIDA;
+        this.estaActiva = false;
+    }
+
+    public void reanudarOperacion() {//verificar logica 
+        if (tipoOperacion != TipoOperacion.DETENIDA) {
+            System.out.println("[OPERACIÓN " + id + "] No se puede reanudar: estado actual = " + tipoOperacion + " (se requiere DETENIDA).");
+            return;
+        }
         this.tipoOperacion = TipoOperacion.ENCURSO;
         this.estaActiva = true;
     }
@@ -98,6 +118,5 @@ public class Operacion {
 
     public int getId() { return id; }
     public boolean isActiva() { return estaActiva; }
-
     
 }
