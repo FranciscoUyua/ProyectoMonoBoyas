@@ -113,6 +113,24 @@ public class Operacion {
     public void asignarBuque(Buque barco) {
         this.barco = barco;
     }
+    public Planta getPlanta() {
+        return planta;
+    }
+    public Buque getBuque() {
+        return barco;
+    }
+    public Monoboya getMonoboya() {
+        return monoboya;
+    }
+    public OperadorBuque getOperadorBuque() {
+        return operadorBuque;
+    }
+    public OperadorPlanta getOperadorPlanta() {
+        return operadorPlanta;
+    }
+    public OperadorLancha getOperadorLancha() {
+        return operadorLancha;
+    }
 
     
 

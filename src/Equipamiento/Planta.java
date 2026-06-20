@@ -39,6 +39,28 @@ public class Planta {
    
     }
 
+    public void recibirSolicitudTransferencia(Operacion operacion) {
+        System.out.println("\n[PLANTA " + nombre + "] >>> RECIBIENDO SOLICITUD DE TRANSFERENCIA DE CARGA DEL BUQUE ");
+        Monoboya m=obtenerMonoboyaDisponible();
+        //Aca habria una logica para que espere en caso de que no haya monoboyas disponibles
+        //Pero por cuestiones de tiempo y complejidad no lo hicimos
+        operacion.asignarMonoboya(m);
+        //Operador opPlanta = obtenerOperadorPlanta()
+        //operacion.asignarOperadorPlanta(opPlanta)
+        //Operador opLancha = obtenerOperadorLancha()
+        //opLancha.asignarOperacion(operacion)
+        //operacion.asignarOperadorLancha(opLancha)
+        //opLancha.iniciarOperacion()
+//reober
+    }
+
+    public Monoboya obtenerMonoboyaDisponible() {
+        for (int i = 0; i < cantidadActualMonoboyas; i++) {
+            if (monoboyas[i].getEstadoEnum() == Monoboya.EstadoMonoboya.DISPONIBLE) {
+                return monoboyas[i];
+            }
+        }
+        return null; // No hay monoboyas disponibles
     public CentralDatos getCentralDatos() {
         return centralDatos;
     }

@@ -33,6 +33,10 @@ public class Buque {
         publisher.publicar(nuevaMedicion);
     }
             
+    public void solitudTransferencia() {
+        operacion.getPlanta().recibirSolicitudTransferencia(operacion);
+        System.out.println("\n[BUQUE " + nombre + "] >>> SOLICITANDO TRANSFERENCIA DE CARGA...");
+    }
 
     public int getNroIMO() {
         return nroIMO;
@@ -74,23 +78,8 @@ public class Buque {
 
     }
 
-    public int transmitirMedicion(){
-        if (transmisorPresion != null) {
-            //Manejar nulo
-        }
-
-        return -1;
-    }
-
     public CentralDatos getCentralDatos() {
         return centralDatos;
     }
-
-    
-
-
-
-
-
 
 }
