@@ -1,17 +1,15 @@
 package com.monoboyas.api;
 
 import Persistencia.OperacionDAO;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import java.util.List;
-import java.util.Map;
-
 import Persistencia.BuqueDAO;
 import Persistencia.PlantaDAO;
-import Persistencia.MonoboyaDAO;
-import java.util.stream.Collectors;
 import Persistencia.UsuarioDAO;
 import Usuarios.Usuario;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -20,21 +18,17 @@ public class OperacionController {
 
     private final OperacionDAO operacionDAO;
     private final OperacionService operacionService;
-    private final OperacionDAO operacionDAO;
-    private final OperacionService operacionService;
     private final BuqueDAO buqueDAO;
     private final PlantaDAO plantaDAO;
     private final UsuarioDAO usuarioDAO;
-    private final MonoboyaDAO monoboyaDAO;
 
-    public OperacionController(OperacionDAO operacionDAO, OperacionService operacionService) {
+    public OperacionController(OperacionDAO operacionDAO, OperacionService operacionService,
+                              BuqueDAO buqueDAO, PlantaDAO plantaDAO, UsuarioDAO usuarioDAO) {
         this.operacionDAO = operacionDAO;
         this.operacionService = operacionService;
-        this.operacionDAO = operacionDAO;
         this.buqueDAO = buqueDAO;
         this.plantaDAO = plantaDAO;
         this.usuarioDAO = usuarioDAO;
-        this.monoboyaDAO = monoboyaDAO;
     }
 
     @GetMapping
@@ -42,13 +36,8 @@ public class OperacionController {
         List<OperacionDAO.OperacionInfo> operaciones = (estado != null)
             ? operacionDAO.listarPorEstado(estado)
             : operacionDAO.listarTodas();
-
-        return Map.of(
-            "data", operaciones,
-            "pagination", Map.of(
-                "page", 1, "limit", 20, "total", operaciones.size(), "totalPages", 1
-            )
-        );
+        return Map.of("data", operaciones, "pagination", Map.of(
+            "page", 1, "limit", 20, "total", operaciones.size(), "totalPages", 1));
     }
 
     @PostMapping
@@ -59,8 +48,7 @@ public class OperacionController {
             String tipo          = (String) body.get("tipo");
             int operadorBuqueDni = (int) body.get("operadorBuqueDni");
             return ResponseEntity.status(201).body(
-                operacionService.planificar(buqueNroIMO, plantaId, tipo, operadorBuqueDni)
-            );
+                operacionService.planificar(buqueNroIMO, plantaId, tipo, operadorBuqueDni));
         } catch (Exception e) {
             return ResponseEntity.status(400).body(Map.of("error", e.getMessage()));
         }
@@ -73,8 +61,7 @@ public class OperacionController {
             int operadorPlantaDni = (int) body.get("operadorPlantaDni");
             int operadorLanchaDni = (int) body.get("operadorLanchaDni");
             return ResponseEntity.ok(
-                operacionService.preparar(id, monoboyaId, operadorPlantaDni, operadorLanchaDni)
-            );
+                operacionService.preparar(id, monoboyaId, operadorPlantaDni, operadorLanchaDni));
         } catch (IllegalStateException e) {
             return ResponseEntity.status(409).body(Map.of("error", e.getMessage()));
         } catch (Exception e) {
@@ -95,24 +82,30 @@ public class OperacionController {
     }
 
     @PatchMapping("/{id}/detener")
-    public ResponseEntity<?> detener(@PathVariable int id) {
+    public ResponseEntity<?> detener(@PathVariable int id, @RequestBody Map<String, Object> body) {
         try {
-            return ResponseEntity.ok(operacionService.detener(id));
+            int operadorBuqueDni = (int) body.get("operadorBuqueDni");
+            return ResponseEntity.ok(operacionService.detener(id, operadorBuqueDni));
         } catch (IllegalStateException e) {
-            return ResponseEntity.status(409).body(Map.of("error", e.getMessage()));
+            return ResponseEntity.status(409).body(Map.of("error", Map.of(
+                "code", "CONFLICTO_ESTADO", "message", e.getMessage())));
         } catch (Exception e) {
-            return ResponseEntity.status(400).body(Map.of("error", e.getMessage()));
+            return ResponseEntity.status(400).body(Map.of("error", Map.of(
+                "code", "DATOS_INVALIDOS", "message", e.getMessage())));
         }
     }
 
     @PatchMapping("/{id}/reanudar")
-    public ResponseEntity<?> reanudar(@PathVariable int id) {
+    public ResponseEntity<?> reanudar(@PathVariable int id, @RequestBody Map<String, Object> body) {
         try {
-            return ResponseEntity.ok(operacionService.reanudar(id));
+            int operadorBuqueDni = (int) body.get("operadorBuqueDni");
+            return ResponseEntity.ok(operacionService.reanudar(id, operadorBuqueDni));
         } catch (IllegalStateException e) {
-            return ResponseEntity.status(409).body(Map.of("error", e.getMessage()));
+            return ResponseEntity.status(409).body(Map.of("error", Map.of(
+                "code", "CONFLICTO_ESTADO", "message", e.getMessage())));
         } catch (Exception e) {
-            return ResponseEntity.status(400).body(Map.of("error", e.getMessage()));
+            return ResponseEntity.status(400).body(Map.of("error", Map.of(
+                "code", "DATOS_INVALIDOS", "message", e.getMessage())));
         }
     }
 
@@ -144,7 +137,8 @@ public class OperacionController {
 
         return Map.of("buques", buques, "plantas", plantas, "operadoresBuque", operadoresBuque);
     }
-@GetMapping("/mis-operaciones")
+
+    @GetMapping("/mis-operaciones")
     public ResponseEntity<?> misOperaciones(@RequestParam int dni) {
         Usuario u;
         try {

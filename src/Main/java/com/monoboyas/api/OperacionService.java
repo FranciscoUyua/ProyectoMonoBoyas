@@ -71,16 +71,18 @@ public class OperacionService {
         return operacionDAO.buscarPorId(operacionId);
     }
 
-    public OperacionDAO.OperacionInfo detener(int operacionId) {
+    public OperacionDAO.OperacionInfo detener(int operacionId, int operadorBuqueDni) {
         OperacionDAO.OperacionInfo op = operacionDAO.buscarPorId(operacionId);
         requireEstado(op, ACTIVA, "detener");
+        validarYObtenerOperador(operadorBuqueDni, "OPERADOR_BUQUE");
         operacionDAO.actualizarEstado(operacionId, PAUSADA);
         return operacionDAO.buscarPorId(operacionId);
     }
 
-    public OperacionDAO.OperacionInfo reanudar(int operacionId) {
+    public OperacionDAO.OperacionInfo reanudar(int operacionId, int operadorBuqueDni) {
         OperacionDAO.OperacionInfo op = operacionDAO.buscarPorId(operacionId);
         requireEstado(op, PAUSADA, "reanudar");
+        validarYObtenerOperador(operadorBuqueDni, "OPERADOR_BUQUE");
         operacionDAO.actualizarEstado(operacionId, ACTIVA);
         return operacionDAO.buscarPorId(operacionId);
     }
