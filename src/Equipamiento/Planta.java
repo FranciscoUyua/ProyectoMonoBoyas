@@ -1,8 +1,14 @@
 package Equipamiento;
 
-import Usuarios.*;
-import Operaciones.*;
+import java.util.List;
+
 import Central.CentralDatos;
+import Operaciones.Operacion;
+import Persistencia.UsuarioDAO;
+import Usuarios.OperadorLancha;
+import Usuarios.OperadorPlanta;
+import Usuarios.Usuario;
+
 
 public class Planta {
     protected String nombre;
@@ -39,19 +45,23 @@ public class Planta {
    
     }
 
-    public void recibirSolicitudTransferencia(Operacion operacion) {
+    public void recibirSolicitudTransferencia(Operacion operacion, UsuarioDAO usuarioDAO) {
         System.out.println("\n[PLANTA " + nombre + "] >>> RECIBIENDO SOLICITUD DE TRANSFERENCIA DE CARGA DEL BUQUE ");
         Monoboya m=obtenerMonoboyaDisponible();
         //Aca habria una logica para que espere en caso de que no haya monoboyas disponibles
         //Pero por cuestiones de tiempo y complejidad no lo hicimos
+        
         operacion.asignarMonoboya(m);
+        OperadorLancha operadorLancha = obtenerOperadorLanchaDisponible(usuarioDAO);
+        OperadorPlanta operadorPlanta = obtenerOperadorPlantaDisponible(usuarioDAO);
+
         //Operador opPlanta = obtenerOperadorPlanta()
         //operacion.asignarOperadorPlanta(opPlanta)
         //Operador opLancha = obtenerOperadorLancha()
         //opLancha.asignarOperacion(operacion)
         //operacion.asignarOperadorLancha(opLancha)
         //opLancha.iniciarOperacion()
-//reober
+        //reober
     }
 
     public Monoboya obtenerMonoboyaDisponible() {
@@ -61,8 +71,43 @@ public class Planta {
             }
         }
         return null; // No hay monoboyas disponibles
+    }
+
     public CentralDatos getCentralDatos() {
         return centralDatos;
     }
+
+    // ── Operador Lancha ───────────────────────────────────────
+    public Usuario primerOperadorLanchaDisponible(List<Usuario> usuarios) {
+        for (Usuario u : usuarios) {
+            if (u.getOperacion() == null) {
+                return u;
+            }
+        }
+        return null;
+    }
+
+    public OperadorLancha obtenerOperadorLanchaDisponible(UsuarioDAO usuarioDAO) {
+        List<Usuario> usuarios = usuarioDAO.listarPorRol("OPERADOR_LANCHA");
+        Usuario disponible = primerOperadorLanchaDisponible(usuarios);
+        return (OperadorLancha) disponible;
+    }
+
+    // ── Operador Planta ───────────────────────────────────────
+    public Usuario primerOperadorPlantaDisponible(List<Usuario> usuarios) {
+        for (Usuario u : usuarios) {
+            if (u.getOperacion() == null) {
+                return u;
+            }
+        }
+        return null;
+    }
+
+    public OperadorPlanta obtenerOperadorPlantaDisponible(UsuarioDAO usuarioDAO) {
+        List<Usuario> usuarios = usuarioDAO.listarPorRol("OPERADOR_PLANTA");
+        Usuario disponible = primerOperadorPlantaDisponible(usuarios);
+        return (OperadorPlanta) disponible;
+    }
+
 
 }
