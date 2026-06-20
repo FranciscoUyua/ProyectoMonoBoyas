@@ -1,4 +1,3 @@
-// app/lib/data.ts
 import { apiFetch } from './api-client';
 import type {
   Monoboya, Buque, Sensor, Operacion,
@@ -6,7 +5,7 @@ import type {
   Paginated
 } from './definitions';
 
-// ─── PLANTAS ──────────────────────────────────────────────
+// PLANTAS 
 export async function fetchPlantas(): Promise<Planta[]> {
   return apiFetch<Planta[]>('/plantas');
 }
@@ -15,7 +14,7 @@ export async function fetchPlanta(id: number): Promise<Planta> {
   return apiFetch<Planta>(`/plantas/${id}`);
 }
 
-// ─── MONOBOYAS ────────────────────────────────────────────
+//| MONOBOYAS 
 export async function fetchMonoboyas(filtros?: {
   plantaId?: number;
   estado?: string;
@@ -31,7 +30,7 @@ export async function fetchMonoboya(id: number): Promise<Monoboya> {
   return apiFetch<Monoboya>(`/monoboyas/${id}`);
 }
 
-// ─── BUQUES ───────────────────────────────────────────────
+//  BUQUES
 export async function fetchBuques(): Promise<Buque[]> {
   return apiFetch<Buque[]>('/buques');
 }
@@ -40,7 +39,7 @@ export async function fetchBuque(nroIMO: number): Promise<Buque> {
   return apiFetch<Buque>(`/buques/${nroIMO}`);
 }
 
-// ─── SENSORES ─────────────────────────────────────────────
+// SENSORES 
 export async function fetchSensores(filtros?: {
   monoboyaId?: number;
   activo?: boolean;
@@ -52,7 +51,7 @@ export async function fetchSensores(filtros?: {
   return apiFetch<Sensor[]>(`/sensores${qs}`);
 }
 
-// ─── OPERACIONES ──────────────────────────────────────────
+// OPERACIONES
 export async function fetchOperaciones(filtros?: {
   estado?: string;
   monoboyaId?: number;
@@ -89,7 +88,7 @@ export async function fetchAlertasDeOperacion(
   return apiFetch<Alerta[]>(`/operaciones/${operacionId}/alertas`);
 }
 
-// ─── MEDICIONES ───────────────────────────────────────────
+// MEDICIONES 
 export async function fetchMediciones(filtros?: {
   sensorId?: string;
   operacionId?: number;
@@ -107,7 +106,7 @@ export async function fetchMediciones(filtros?: {
   return apiFetch<Paginated<Medicion>>(`/mediciones${qs}`);
 }
 
-// ─── ALERTAS ──────────────────────────────────────────────
+// ALERTAS 
 export async function fetchAlertas(filtros?: {
   tipo?: string;
   estado?: string;
@@ -127,7 +126,7 @@ export async function fetchAlerta(id: number): Promise<Alerta> {
   return apiFetch<Alerta>(`/alertas/${id}`);
 }
 
-// ─── UMBRALES ─────────────────────────────────────────────
+// UMBRALES 
 export async function fetchUmbrales(tipoSensor?: string): Promise<Umbral[]> {
   const qs = tipoSensor ? `?tipoSensor=${tipoSensor}` : '';
   return apiFetch<Umbral[]>(`/configuracion/umbrales${qs}`);
