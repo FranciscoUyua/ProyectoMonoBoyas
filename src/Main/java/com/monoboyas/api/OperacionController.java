@@ -6,16 +6,35 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+import Persistencia.BuqueDAO;
+import Persistencia.PlantaDAO;
+import Persistencia.MonoboyaDAO;
+import java.util.stream.Collectors;
+import Persistencia.UsuarioDAO;
+import Usuarios.Usuario;
+import java.util.stream.Collectors;
+
 @RestController
 @RequestMapping("/v1/operaciones")
 public class OperacionController {
 
     private final OperacionDAO operacionDAO;
     private final OperacionService operacionService;
+    private final OperacionDAO operacionDAO;
+    private final OperacionService operacionService;
+    private final BuqueDAO buqueDAO;
+    private final PlantaDAO plantaDAO;
+    private final UsuarioDAO usuarioDAO;
+    private final MonoboyaDAO monoboyaDAO;
 
     public OperacionController(OperacionDAO operacionDAO, OperacionService operacionService) {
         this.operacionDAO = operacionDAO;
         this.operacionService = operacionService;
+        this.operacionDAO = operacionDAO;
+        this.buqueDAO = buqueDAO;
+        this.plantaDAO = plantaDAO;
+        this.usuarioDAO = usuarioDAO;
+        this.monoboyaDAO = monoboyaDAO;
     }
 
     @GetMapping
@@ -106,5 +125,45 @@ public class OperacionController {
         } catch (Exception e) {
             return ResponseEntity.status(400).body(Map.of("error", e.getMessage()));
         }
+    }
+
+    @GetMapping("/opciones-planificacion")
+    public Map<String, Object> opcionesPlanificacion() {
+        List<Map<String, Object>> buques = buqueDAO.listarTodos().stream()
+            .map(b -> Map.<String, Object>of(
+                "nroIMO", b.getNroIMO(), "nombre", b.getNombre(), "capacidad", b.getCapacidad()))
+            .collect(Collectors.toList());
+
+        List<Map<String, Object>> plantas = plantaDAO.listarTodas().stream()
+            .map(p -> Map.<String, Object>of("id", p.getId(), "nombre", p.getNombre()))
+            .collect(Collectors.toList());
+
+        List<Map<String, Object>> operadoresBuque = usuarioDAO.listarPorRol("OPERADOR_BUQUE").stream()
+            .map(u -> Map.<String, Object>of("dni", u.getDni(), "nombre", u.getNombre()))
+            .collect(Collectors.toList());
+
+        return Map.of("buques", buques, "plantas", plantas, "operadoresBuque", operadoresBuque);
+    }
+@GetMapping("/mis-operaciones")
+    public ResponseEntity<?> misOperaciones(@RequestParam int dni) {
+        Usuario u;
+        try {
+            u = usuarioDAO.buscarPorDni(dni);
+        } catch (Exception e) {
+            return ResponseEntity.status(404).body(Map.of("error", Map.of(
+                "code", "USUARIO_NO_ENCONTRADO", "message", "Usuario no encontrado")));
+        }
+
+        List<OperacionDAO.OperacionInfo> propias = operacionDAO.listarTodas().stream()
+            .filter(o ->
+                (o.getOperadorLanchaId() != null && o.getOperadorLanchaId() == u.getId()) ||
+                (o.getOperadorBuqueId()  != null && o.getOperadorBuqueId()  == u.getId()) ||
+                (o.getOperadorPlantaId() != null && o.getOperadorPlantaId() == u.getId())
+            )
+            .filter(o -> !"FINALIZADA".equals(o.getEstado()))
+            .sorted((a, b) -> b.getId() - a.getId())
+            .collect(Collectors.toList());
+
+        return ResponseEntity.ok(propias);
     }
 }
