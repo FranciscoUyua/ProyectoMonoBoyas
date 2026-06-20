@@ -6,19 +6,21 @@ import Equipamiento.*;
 
 public class Operacion {
     protected int id;
-    protected Monoboya monoboya; 
-    protected Buque buque; 
-    protected OperadorLancha operadorLancha; 
-    protected OperadorBuque operadorBuque;   
+    protected Monoboya monoboya;
+    protected Buque buque;
+    protected OperadorLancha operadorLancha;
+    protected OperadorBuque operadorBuque;
     protected OperadorPlanta operadorPlanta;
     protected boolean estaActiva;
     protected Planta planta; // Referencia a la planta que opera
+
     public enum TipoOperacion {
         PREPARADA,
         ENCURSO,
         DETENIDA,
         FINALIZADA
     }
+
     protected TipoOperacion tipoOperacion;
 
     public Operacion(int id, Buque b, OperadorBuque operadorBuque, Planta planta) {
@@ -38,7 +40,8 @@ public class Operacion {
     public void iniciarOperacion() {
         // 1. Verifica que esté en PREPARADA
         if (tipoOperacion != TipoOperacion.PREPARADA) {
-            System.out.println("[OPERACIÓN " + id + "] No se puede iniciar: estado actual = " + tipoOperacion + " (se requiere PREPARADA).");
+            System.out.println("[OPERACIÓN " + id + "] No se puede iniciar: estado actual = " + tipoOperacion
+                    + " (se requiere PREPARADA).");
             return;
         }
         if (buque == null || monoboya == null) {
@@ -49,27 +52,27 @@ public class Operacion {
         this.tipoOperacion = TipoOperacion.ENCURSO;
         this.estaActiva = true;
 
-        while(!buque.finalizoDescarga() && tipoOperacion != TipoOperacion.DETENIDA){
-            monoboya.recolectarYTransmitirDatos(); 
-            Thread.sleep(500);
-
-
+        while (!buque.finalizoDescarga() && tipoOperacion != TipoOperacion.DETENIDA) {
+            monoboya.recolectarYTransmitirDatos();
+            // Thread.sleep(500);
 
         }
     }
 
     public void detenerOperacion() {
         if (tipoOperacion != TipoOperacion.ENCURSO) {
-            System.out.println("[OPERACIÓN " + id + "] No se puede detener: estado actual = " + tipoOperacion + " (se requiere ENCURSO).");
+            System.out.println("[OPERACIÓN " + id + "] No se puede detener: estado actual = " + tipoOperacion
+                    + " (se requiere ENCURSO).");
             return;
         }
         this.tipoOperacion = TipoOperacion.DETENIDA;
         this.estaActiva = false;
     }
 
-    public void reanudarOperacion() {//verificar logica 
+    public void reanudarOperacion() {// verificar logica
         if (tipoOperacion != TipoOperacion.DETENIDA) {
-            System.out.println("[OPERACIÓN " + id + "] No se puede reanudar: estado actual = " + tipoOperacion + " (se requiere DETENIDA).");
+            System.out.println("[OPERACIÓN " + id + "] No se puede reanudar: estado actual = " + tipoOperacion
+                    + " (se requiere DETENIDA).");
             return;
         }
         this.tipoOperacion = TipoOperacion.ENCURSO;
@@ -91,6 +94,7 @@ public class Operacion {
             System.out.println("[OPERACIÓN " + id + "] No se puede enviar alerta: no hay operador de lancha asignado.");
         }
     }
+
     public void enviarAlertaOperadorPlanta(Alerta alerta) {
         if (operadorPlanta != null) {
             operadorPlanta.recibirAlerta(alerta);
@@ -118,31 +122,41 @@ public class Operacion {
     public void asignarOperadorBuque(OperadorBuque operador) {
         this.operadorBuque = operador;
     }
+
     public void asignarBuque(Buque barco) {
         this.buque = barco;
     }
+
     public Planta getPlanta() {
         return planta;
     }
+
     public Buque getBuque() {
         return buque;
     }
+
     public Monoboya getMonoboya() {
         return monoboya;
     }
+
     public OperadorBuque getOperadorBuque() {
         return operadorBuque;
     }
+
     public OperadorPlanta getOperadorPlanta() {
         return operadorPlanta;
     }
+
     public OperadorLancha getOperadorLancha() {
         return operadorLancha;
     }
 
-    
+    public int getId() {
+        return id;
+    }
 
-    public int getId() { return id; }
-    public boolean isActiva() { return estaActiva; }
-    
+    public boolean isActiva() {
+        return estaActiva;
+    }
+
 }

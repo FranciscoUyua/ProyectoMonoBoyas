@@ -28,17 +28,25 @@ import Usuarios.OperadorLancha;
 import Usuarios.OperadorPlanta;
 
 @SpringBootApplication
-@ComponentScan({"Main", "Persistencia", "com.monoboyas.api"})
+@ComponentScan({ "Main", "Persistencia", "com.monoboyas.api" })
 public class TestTelemetria implements CommandLineRunner {
 
-    @Autowired private PlantaDAO plantaDAO;
-    @Autowired private BuqueDAO buqueDAO;
-    @Autowired private MonoboyaDAO monoboyaDAO;
-    @Autowired private UsuarioDAO usuarioDAO;
-    @Autowired private SensorDAO sensorDAO;
-    @Autowired private OperacionDAO operacionDAO;
-    @Autowired private CentralDatos centralDatos;
-    @Autowired private TelemetriaService telemetriaService;
+    @Autowired
+    private PlantaDAO plantaDAO;
+    @Autowired
+    private BuqueDAO buqueDAO;
+    @Autowired
+    private MonoboyaDAO monoboyaDAO;
+    @Autowired
+    private UsuarioDAO usuarioDAO;
+    @Autowired
+    private SensorDAO sensorDAO;
+    @Autowired
+    private OperacionDAO operacionDAO;
+    @Autowired
+    private CentralDatos centralDatos;
+    @Autowired
+    private TelemetriaService telemetriaService;
 
     public static void main(String[] args) {
         SpringApplication.run(TestTelemetria.class, args);
@@ -79,7 +87,8 @@ public class TestTelemetria implements CommandLineRunner {
         operacionDAO.actualizarParaPreparar(operacionId, monoboyaId, operadorPlantaId, operadorLanchaId);
         System.out.println("✔ Operación creada en BD: ID=" + operacionId);
 
-        Operacion operacionDominio = new Operacion(operacionId, buque, opBuque);
+        Operacion operacionDominio = new Operacion(operacionId, buque, opBuque, null);
+
         operacionDominio.asignarMonoboya(monoboya);
         operacionDominio.asignarOperadorLancha(opLancha);
         operacionDominio.asignarOperadorPlanta(opPlanta);
@@ -88,7 +97,8 @@ public class TestTelemetria implements CommandLineRunner {
         System.out.println("✔ Operación registrada en CentralDatos.operacionesActivas");
 
         // Medición que supera AMARRE_ROJA (900 kN)
-        Medicion medicion = new Medicion(sensorId, 950.0, "kN", Sensor.TipoSensor.AMARRE, OrigenMedicion.MONOBOYA, operacionId);
+        Medicion medicion = new Medicion(sensorId, 950.0, "kN", Sensor.TipoSensor.AMARRE, OrigenMedicion.MONOBOYA,
+                operacionId);
 
         TelemetriaService.TelemetriaResultado resultado = telemetriaService.procesarMedicion(medicion);
 
@@ -97,7 +107,7 @@ public class TestTelemetria implements CommandLineRunner {
         System.out.println("¿Generó alertas? " + resultado.tieneAlertas());
         for (var info : resultado.getAlertas()) {
             System.out.println("  → Alerta ID " + info.getId() + " | Tipo: " + info.getTipoAlerta()
-                + " | Mensaje: " + info.getMensaje());
+                    + " | Mensaje: " + info.getMensaje());
         }
     }
 }

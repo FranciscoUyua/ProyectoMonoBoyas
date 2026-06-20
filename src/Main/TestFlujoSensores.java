@@ -3,14 +3,6 @@ package Main;
 import Equipamiento.Buque;
 import Equipamiento.Monoboya;
 import Operaciones.Operacion;
-import Sensores.Anemometro;
-import Sensores.Caudalimetro;
-import Sensores.Correntometro;
-import Sensores.Giroscopio;
-import Sensores.SensorDeAmarre;
-import Sensores.SensorDeOleaje;
-import Sensores.SensorDePresion;
-import Sensores.SensorDeTension;
 import Sensores.*;
 import Central.BrokerMQTT;
 import Central.CentralDatos;
@@ -22,7 +14,7 @@ import Usuarios.OperadorPlanta;
 public class TestFlujoSensores {
 
     public static void main(String[] args) throws InterruptedException {
-        
+
         CentralDatos centralEnPlanta = new CentralDatos();
         BrokerMQTT broker = new BrokerMQTT();
         broker.suscribir(new CentralDatosSubscriber(centralEnPlanta));
@@ -37,7 +29,8 @@ public class TestFlujoSensores {
         Buque buque = new Buque(9876543, 50000, "MT Concordia", null, null);
 
         // Crear la operación con el nuevo constructor
-        Operacion opTransferencia = new Operacion(5001, buque, capitanBuque);
+        Operacion opTransferencia = new Operacion(5001, buque, capitanBuque, null);
+
         opTransferencia.asignarMonoboya(monoboya);
         monoboya.asignarOperacion(opTransferencia);
         opTransferencia.asignarOperadorLancha(juanLancha);
@@ -65,22 +58,24 @@ public class TestFlujoSensores {
         System.out.println("--- INICIANDO DESCARGA DE PETRÓLEO ---");
 
         int segundosTranscurridos = 0;
-        int tiempoSimuladoDescarga = 10; 
+        int tiempoSimuladoDescarga = 10;
 
         while (opTransferencia.isActiva() && segundosTranscurridos < tiempoSimuladoDescarga) {
             System.out.println("\n--- Segundo " + (segundosTranscurridos + 1) + " ---");
             monoboya.recolectarYTransmitirDatos();
-            Thread.sleep(1000); 
+            Thread.sleep(1000);
             segundosTranscurridos++;
         }
-        
+
         if (opTransferencia.isActiva()) {
-            System.out.println("\n[OPERADOR] Tiempo de descarga completado sin incidentes críticos. Finalizando manualmente.");
+            System.out.println(
+                    "\n[OPERADOR] Tiempo de descarga completado sin incidentes críticos. Finalizando manualmente.");
             opTransferencia.finalizarOperacion();
         } else {
-            System.out.println("\n[SISTEMA] El ciclo de muestreo se detuvo de forma anticipada debido a protocolos de seguridad.");
+            System.out.println(
+                    "\n[SISTEMA] El ciclo de muestreo se detuvo de forma anticipada debido a protocolos de seguridad.");
         }
-        
+
         System.out.println("--- EL BARCO SE HA DESCONECTADO ---");
     }
 }

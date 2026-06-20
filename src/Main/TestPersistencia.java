@@ -29,17 +29,25 @@ import Usuarios.OperadorPlanta;
 import Usuarios.Usuario;
 
 @SpringBootApplication
-@ComponentScan({"Main", "Persistencia"})
+@ComponentScan({ "Main", "Persistencia" })
 public class TestPersistencia implements CommandLineRunner {
 
-    @Autowired private PlantaDAO plantaDAO;
-    @Autowired private MonoboyaDAO monoboyaDAO;
-    @Autowired private BuqueDAO buqueDAO;
-    @Autowired private UsuarioDAO usuarioDAO;
-    @Autowired private SensorDAO sensorDAO;
-    @Autowired private MedicionDAO medicionDAO;
-    @Autowired private AlertaDAO alertaDAO;
-    @Autowired private OperacionDAO operacionDAO;
+    @Autowired
+    private PlantaDAO plantaDAO;
+    @Autowired
+    private MonoboyaDAO monoboyaDAO;
+    @Autowired
+    private BuqueDAO buqueDAO;
+    @Autowired
+    private UsuarioDAO usuarioDAO;
+    @Autowired
+    private SensorDAO sensorDAO;
+    @Autowired
+    private MedicionDAO medicionDAO;
+    @Autowired
+    private AlertaDAO alertaDAO;
+    @Autowired
+    private OperacionDAO operacionDAO;
 
     public static void main(String[] args) {
         SpringApplication.run(TestPersistencia.class, args);
@@ -100,7 +108,8 @@ public class TestPersistencia implements CommandLineRunner {
         usuarioDAO.guardar(admin);
 
         Usuario leido = usuarioDAO.buscarPorDni(11111111);
-        System.out.println("  ✔ Usuario guardado y leído: " + leido.getNombre() + " (tipo: " + leido.getClass().getSimpleName() + ")");
+        System.out.println("  ✔ Usuario guardado y leído: " + leido.getNombre() + " (tipo: "
+                + leido.getClass().getSimpleName() + ")");
 
         List<Usuario> todos = usuarioDAO.listarTodos();
         System.out.println("  ✔ Total usuarios en BD: " + todos.size());
@@ -115,31 +124,31 @@ public class TestPersistencia implements CommandLineRunner {
     }
 
     private void testMediciones() {
-    System.out.println("── Test: Mediciones (batch) ─────────────────────────");
+        System.out.println("── Test: Mediciones (batch) ─────────────────────────");
 
-    SensorDePresion sensor = new SensorDePresion(1, new MockSensorDataProvider());
-    sensorDAO.guardar(sensor, 101);
+        SensorDePresion sensor = new SensorDePresion(1, new MockSensorDataProvider());
+        sensorDAO.guardar(sensor, 101);
 
-    // Necesitamos una operación real: mediciones.operacion_id ahora tiene FK
-    // hacia operaciones(id), así que el placeholder "0" ya no es válido.
-    int operacionId = operacionDAO.crearPlanificada(9876543, 1, "DESCARGA", 2);
-    System.out.println("  ✔ Operación de prueba creada: ID=" + operacionId);
+        // Necesitamos una operación real: mediciones.operacion_id ahora tiene FK
+        // hacia operaciones(id), así que el placeholder "0" ya no es válido.
+        int operacionId = operacionDAO.crearPlanificada(9876543, 1, "DESCARGA", 2);
+        System.out.println("  ✔ Operación de prueba creada: ID=" + operacionId);
 
-    List<Medicion> lote = List.of(
-        new Medicion(1, 100.5, "Pa", Sensor.TipoSensor.PRESION, Medicion.OrigenMedicion.MONOBOYA, operacionId),
-        new Medicion(1, 101.2, "Pa", Sensor.TipoSensor.PRESION, Medicion.OrigenMedicion.MONOBOYA, operacionId),
-        new Medicion(1, 99.8,  "Pa", Sensor.TipoSensor.PRESION, Medicion.OrigenMedicion.MONOBOYA, operacionId),
-        new Medicion(1, 102.0, "Pa", Sensor.TipoSensor.PRESION, Medicion.OrigenMedicion.MONOBOYA, operacionId),
-        new Medicion(1, 98.5,  "Pa", Sensor.TipoSensor.PRESION, Medicion.OrigenMedicion.MONOBOYA, operacionId)
-    );
+        List<Medicion> lote = List.of(
+                new Medicion(1, 100.5, "Pa", Sensor.TipoSensor.PRESION, Medicion.OrigenMedicion.MONOBOYA, operacionId),
+                new Medicion(1, 101.2, "Pa", Sensor.TipoSensor.PRESION, Medicion.OrigenMedicion.MONOBOYA, operacionId),
+                new Medicion(1, 99.8, "Pa", Sensor.TipoSensor.PRESION, Medicion.OrigenMedicion.MONOBOYA, operacionId),
+                new Medicion(1, 102.0, "Pa", Sensor.TipoSensor.PRESION, Medicion.OrigenMedicion.MONOBOYA, operacionId),
+                new Medicion(1, 98.5, "Pa", Sensor.TipoSensor.PRESION, Medicion.OrigenMedicion.MONOBOYA, operacionId));
 
-    medicionDAO.guardarLote(lote);
-    System.out.println("  ✔ Lote de " + lote.size() + " mediciones insertado");
+        medicionDAO.guardarLote(lote);
+        System.out.println("  ✔ Lote de " + lote.size() + " mediciones insertado");
 
-    List<MedicionDAO.MedicionInfo> leidas = medicionDAO.listarPorSensor(1, 10);
-    System.out.println("  ✔ Mediciones leídas de BD: " + leidas.size());
-    for (MedicionDAO.MedicionInfo m : leidas) {
-        System.out.println("    → Sensor " + m.getSensorId() + " | Valor: " + m.getValor() + " " + m.getUnidad() + " | " + m.getTimestamp());
+        List<MedicionDAO.MedicionInfo> leidas = medicionDAO.listarPorSensor(1, 10);
+        System.out.println("  ✔ Mediciones leídas de BD: " + leidas.size());
+        for (MedicionDAO.MedicionInfo m : leidas) {
+            System.out.println("    → Sensor " + m.getSensorId() + " | Valor: " + m.getValor() + " " + m.getUnidad()
+                    + " | " + m.getTimestamp());
+        }
     }
-}
 }

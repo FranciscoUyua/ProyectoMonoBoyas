@@ -8,7 +8,7 @@ import Sensores.*;
 public class Buque {
 
     protected int nroIMO;
-    protected int capacidad; 
+    protected int capacidad;
     protected int capacidadRestante;
     protected String nombre;
     protected Sensor transmisorPresion;
@@ -16,10 +16,10 @@ public class Buque {
     protected CentralDatos centralDatos;
     protected Operacion operacion;
 
-    public Buque(int nroIMO, int capacidad, String nombre,Publisher publisher,Operacion operacion) {
+    public Buque(int nroIMO, int capacidad, String nombre, Publisher publisher, Operacion operacion) {
         this.nroIMO = nroIMO;
         this.capacidad = capacidad;
-        capacidadRestante=capacidad;
+        capacidadRestante = capacidad;
         this.nombre = nombre;
         this.publisher = publisher;
         this.operacion = operacion;
@@ -31,12 +31,14 @@ public class Buque {
     }
 
     public void recolectarDatos() {
-        Medicion nuevaMedicion = new Medicion(transmisorPresion.getId(),transmisorPresion.getValor(),transmisorPresion.getUnidad(),transmisorPresion.getTipo(),OrigenMedicion.BUQUE,operacion.getId());
+        Medicion nuevaMedicion = new Medicion(transmisorPresion.getId(), transmisorPresion.getValor(),
+                transmisorPresion.getUnidad(), transmisorPresion.getTipo(), OrigenMedicion.BUQUE, operacion.getId());
         publisher.publicar(nuevaMedicion);
     }
-            
+
     public void solitudTransferencia() {
-        operacion.getPlanta().recibirSolicitudTransferencia(operacion);
+        // HAY Q SACAR ESTE NULL DESPUES !!
+        operacion.getPlanta().recibirSolicitudTransferencia(operacion, null);
         System.out.println("\n[BUQUE " + nombre + "] >>> SOLICITANDO TRANSFERENCIA DE CARGA...");
     }
 
@@ -45,17 +47,18 @@ public class Buque {
     }
 
     public void descontarCapacidad(double litrosTransferidos) {
-        int litrosEnteros = (int) Math.round( litrosTransferidos) ; // trunca el decimal, ej: 142.7 -> 142
+        int litrosEnteros = (int) Math.round(litrosTransferidos); // trunca el decimal, ej: 142.7 -> 142
         capacidadRestante -= litrosEnteros;
         if (capacidadRestante < 0) {
             capacidadRestante = 0;
         }
     }
 
-    public int getCapacidadRestante(){
+    public int getCapacidadRestante() {
 
         return capacidadRestante;
     }
+
     public void setNroIMO(int nroIMO) {
         this.nroIMO = nroIMO;
     }
@@ -84,16 +87,18 @@ public class Buque {
         this.transmisorPresion = transmisorPresion;
     }
 
-    public void IniciarTransferencia(){
+    public void IniciarTransferencia() {
 
     }
 
-    public void DetenerTransferencia(){
+    public void DetenerTransferencia() {
 
     }
 
-    public boolean finalizoDescarga(){
-        if(capacidad!=)
+    public boolean finalizoDescarga() {
+        if (capacidadRestante <= 0) {
+            return true;
+        }
         return false;
     }
 
