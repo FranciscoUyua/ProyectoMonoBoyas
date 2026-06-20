@@ -13,7 +13,7 @@ public class Operacion {
     protected OperadorPlanta operadorPlanta;
     protected boolean estaActiva;
     protected Planta planta; // Referencia a la planta que opera
-    protected enum TipoOperacion {
+    public enum TipoOperacion {
         PREPARADA,
         ENCURSO,
         DETENIDA,

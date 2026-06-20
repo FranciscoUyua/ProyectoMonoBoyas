@@ -5,7 +5,7 @@ import java.util.List;
 
 import Alertas.Alerta;
 import Equipamiento.Planta;
-import Operaciones.Operacion;
+import Operaciones.*;
 
 public class OperadorLancha extends UsuarioOperador {
 
@@ -34,7 +34,10 @@ public class OperadorLancha extends UsuarioOperador {
             System.out.println("  OperadorLancha (" + nombre + "): sin operación asignada.");
             return;
         }
-        operacion.iniciarOperacion();
+        if(operacion.getTipoOperacion() == Operacion.TipoOperacion.PREPARADA){
+            operacion.iniciarOperacion();
+        }
+
         System.out.println(" OperadorLancha (" + nombre + ") inició la operación " + operacion.getId() + ".");
     }
 
