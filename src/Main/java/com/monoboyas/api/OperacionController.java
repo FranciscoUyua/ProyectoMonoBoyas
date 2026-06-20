@@ -1,7 +1,7 @@
 package com.monoboyas.api;
 
-import Persistencia.OperacionDAO;
 import Persistencia.BuqueDAO;
+import Persistencia.OperacionDAO;
 import Persistencia.PlantaDAO;
 import Persistencia.UsuarioDAO;
 import Usuarios.Usuario;
@@ -22,8 +22,11 @@ public class OperacionController {
     private final PlantaDAO plantaDAO;
     private final UsuarioDAO usuarioDAO;
 
-    public OperacionController(OperacionDAO operacionDAO, OperacionService operacionService,
-                              BuqueDAO buqueDAO, PlantaDAO plantaDAO, UsuarioDAO usuarioDAO) {
+    public OperacionController(OperacionDAO operacionDAO,
+                               OperacionService operacionService,
+                               BuqueDAO buqueDAO,
+                               PlantaDAO plantaDAO,
+                               UsuarioDAO usuarioDAO) {
         this.operacionDAO = operacionDAO;
         this.operacionService = operacionService;
         this.buqueDAO = buqueDAO;
@@ -34,34 +37,48 @@ public class OperacionController {
     @GetMapping
     public Map<String, Object> listar(@RequestParam(required = false) String estado) {
         List<OperacionDAO.OperacionInfo> operaciones = (estado != null)
-            ? operacionDAO.listarPorEstado(estado)
-            : operacionDAO.listarTodas();
-        return Map.of("data", operaciones, "pagination", Map.of(
-            "page", 1, "limit", 20, "total", operaciones.size(), "totalPages", 1));
+                ? operacionDAO.listarPorEstado(estado)
+                : operacionDAO.listarTodas();
+
+        return Map.of(
+                "data", operaciones,
+                "pagination", Map.of(
+                        "page", 1,
+                        "limit", 20,
+                        "total", operaciones.size(),
+                        "totalPages", 1
+                )
+        );
     }
 
     @PostMapping
-    public ResponseEntity<?> planificar(@RequestBody Map<String, Object> body) {
+    public ResponseEntity<?> planificar(@RequestBody PlanificarOperacionRequest body) {
         try {
-            int buqueNroIMO      = (int) body.get("buqueNroIMO");
-            int plantaId         = (int) body.get("plantaId");
-            String tipo          = (String) body.get("tipo");
-            int operadorBuqueDni = (int) body.get("operadorBuqueDni");
             return ResponseEntity.status(201).body(
-                operacionService.planificar(buqueNroIMO, plantaId, tipo, operadorBuqueDni));
+                    operacionService.planificar(
+                            body.getBuqueNroIMO(),
+                            body.getPlantaId(),
+                            body.getTipo(),
+                            body.getOperadorBuqueDni()
+                    )
+            );
         } catch (Exception e) {
             return ResponseEntity.status(400).body(Map.of("error", e.getMessage()));
         }
     }
 
     @PatchMapping("/{id}/preparar")
-    public ResponseEntity<?> preparar(@PathVariable int id, @RequestBody Map<String, Object> body) {
+    public ResponseEntity<?> preparar(@PathVariable int id,
+                                      @RequestBody PrepararOperacionRequest body) {
         try {
-            int monoboyaId        = (int) body.get("monoboyaId");
-            int operadorPlantaDni = (int) body.get("operadorPlantaDni");
-            int operadorLanchaDni = (int) body.get("operadorLanchaDni");
             return ResponseEntity.ok(
-                operacionService.preparar(id, monoboyaId, operadorPlantaDni, operadorLanchaDni));
+                    operacionService.preparar(
+                            id,
+                            body.getMonoboyaId(),
+                            body.getOperadorPlantaDni(),
+                            body.getOperadorLanchaDni()
+                    )
+            );
         } catch (IllegalStateException e) {
             return ResponseEntity.status(409).body(Map.of("error", e.getMessage()));
         } catch (Exception e) {
@@ -70,10 +87,12 @@ public class OperacionController {
     }
 
     @PatchMapping("/{id}/iniciar")
-    public ResponseEntity<?> iniciar(@PathVariable int id, @RequestBody Map<String, Object> body) {
+    public ResponseEntity<?> iniciar(@PathVariable int id,
+                                     @RequestBody IniciarOperacionRequest body) {
         try {
-            int operadorLanchaDni = (int) body.get("operadorLanchaDni");
-            return ResponseEntity.ok(operacionService.iniciar(id, operadorLanchaDni));
+            return ResponseEntity.ok(
+                    operacionService.iniciar(id, body.getOperadorLanchaDni())
+            );
         } catch (IllegalStateException e) {
             return ResponseEntity.status(409).body(Map.of("error", e.getMessage()));
         } catch (Exception e) {
@@ -82,37 +101,59 @@ public class OperacionController {
     }
 
     @PatchMapping("/{id}/detener")
-    public ResponseEntity<?> detener(@PathVariable int id, @RequestBody Map<String, Object> body) {
+    public ResponseEntity<?> detener(@PathVariable int id,
+                                     @RequestBody OperadorBuqueRequest body) {
         try {
-            int operadorBuqueDni = (int) body.get("operadorBuqueDni");
-            return ResponseEntity.ok(operacionService.detener(id, operadorBuqueDni));
+            return ResponseEntity.ok(
+                    operacionService.detener(id, body.getOperadorBuqueDni())
+            );
         } catch (IllegalStateException e) {
-            return ResponseEntity.status(409).body(Map.of("error", Map.of(
-                "code", "CONFLICTO_ESTADO", "message", e.getMessage())));
+            return ResponseEntity.status(409).body(Map.of(
+                    "error", Map.of(
+                            "code", "CONFLICTO_ESTADO",
+                            "message", e.getMessage()
+                    )
+            ));
         } catch (Exception e) {
-            return ResponseEntity.status(400).body(Map.of("error", Map.of(
-                "code", "DATOS_INVALIDOS", "message", e.getMessage())));
+            return ResponseEntity.status(400).body(Map.of(
+                    "error", Map.of(
+                            "code", "DATOS_INVALIDOS",
+                            "message", e.getMessage()
+                    )
+            ));
         }
     }
 
     @PatchMapping("/{id}/reanudar")
-    public ResponseEntity<?> reanudar(@PathVariable int id, @RequestBody Map<String, Object> body) {
+    public ResponseEntity<?> reanudar(@PathVariable int id,
+                                      @RequestBody OperadorBuqueRequest body) {
         try {
-            int operadorBuqueDni = (int) body.get("operadorBuqueDni");
-            return ResponseEntity.ok(operacionService.reanudar(id, operadorBuqueDni));
+            return ResponseEntity.ok(
+                    operacionService.reanudar(id, body.getOperadorBuqueDni())
+            );
         } catch (IllegalStateException e) {
-            return ResponseEntity.status(409).body(Map.of("error", Map.of(
-                "code", "CONFLICTO_ESTADO", "message", e.getMessage())));
+            return ResponseEntity.status(409).body(Map.of(
+                    "error", Map.of(
+                            "code", "CONFLICTO_ESTADO",
+                            "message", e.getMessage()
+                    )
+            ));
         } catch (Exception e) {
-            return ResponseEntity.status(400).body(Map.of("error", Map.of(
-                "code", "DATOS_INVALIDOS", "message", e.getMessage())));
+            return ResponseEntity.status(400).body(Map.of(
+                    "error", Map.of(
+                            "code", "DATOS_INVALIDOS",
+                            "message", e.getMessage()
+                    )
+            ));
         }
     }
 
     @PatchMapping("/{id}/finalizar")
     public ResponseEntity<?> finalizar(@PathVariable int id) {
         try {
-            return ResponseEntity.ok(operacionService.finalizar(id));
+            return ResponseEntity.ok(
+                    operacionService.finalizar(id)
+            );
         } catch (IllegalStateException e) {
             return ResponseEntity.status(409).body(Map.of("error", e.getMessage()));
         } catch (Exception e) {
@@ -122,42 +163,152 @@ public class OperacionController {
 
     @GetMapping("/opciones-planificacion")
     public Map<String, Object> opcionesPlanificacion() {
+
         List<Map<String, Object>> buques = buqueDAO.listarTodos().stream()
-            .map(b -> Map.<String, Object>of(
-                "nroIMO", b.getNroIMO(), "nombre", b.getNombre(), "capacidad", b.getCapacidad()))
-            .collect(Collectors.toList());
+                .map(b -> Map.<String, Object>of(
+                        "nroIMO", b.getNroIMO(),
+                        "nombre", b.getNombre(),
+                        "capacidad", b.getCapacidad()
+                ))
+                .collect(Collectors.toList());
 
         List<Map<String, Object>> plantas = plantaDAO.listarTodas().stream()
-            .map(p -> Map.<String, Object>of("id", p.getId(), "nombre", p.getNombre()))
-            .collect(Collectors.toList());
+                .map(p -> Map.<String, Object>of(
+                        "id", p.getId(),
+                        "nombre", p.getNombre()
+                ))
+                .collect(Collectors.toList());
 
-        List<Map<String, Object>> operadoresBuque = usuarioDAO.listarPorRol("OPERADOR_BUQUE").stream()
-            .map(u -> Map.<String, Object>of("dni", u.getDni(), "nombre", u.getNombre()))
-            .collect(Collectors.toList());
+        List<Map<String, Object>> operadoresBuque = usuarioDAO.listarPorRol("OPERADOR_BUQUE")
+                .stream()
+                .map(u -> Map.<String, Object>of(
+                        "dni", u.getDni(),
+                        "nombre", u.getNombre()
+                ))
+                .collect(Collectors.toList());
 
-        return Map.of("buques", buques, "plantas", plantas, "operadoresBuque", operadoresBuque);
+        return Map.of(
+                "buques", buques,
+                "plantas", plantas,
+                "operadoresBuque", operadoresBuque
+        );
     }
 
     @GetMapping("/mis-operaciones")
     public ResponseEntity<?> misOperaciones(@RequestParam int dni) {
+
         Usuario u;
+
         try {
             u = usuarioDAO.buscarPorDni(dni);
         } catch (Exception e) {
-            return ResponseEntity.status(404).body(Map.of("error", Map.of(
-                "code", "USUARIO_NO_ENCONTRADO", "message", "Usuario no encontrado")));
+            return ResponseEntity.status(404).body(Map.of(
+                    "error", Map.of(
+                            "code", "USUARIO_NO_ENCONTRADO",
+                            "message", "Usuario no encontrado"
+                    )
+            ));
         }
 
         List<OperacionDAO.OperacionInfo> propias = operacionDAO.listarTodas().stream()
-            .filter(o ->
-                (o.getOperadorLanchaId() != null && o.getOperadorLanchaId() == u.getId()) ||
-                (o.getOperadorBuqueId()  != null && o.getOperadorBuqueId()  == u.getId()) ||
-                (o.getOperadorPlantaId() != null && o.getOperadorPlantaId() == u.getId())
-            )
-            .filter(o -> !"FINALIZADA".equals(o.getEstado()))
-            .sorted((a, b) -> b.getId() - a.getId())
-            .collect(Collectors.toList());
+                .filter(o ->
+                        (o.getOperadorLanchaId() != null && o.getOperadorLanchaId() == u.getId()) ||
+                        (o.getOperadorBuqueId() != null && o.getOperadorBuqueId() == u.getId()) ||
+                        (o.getOperadorPlantaId() != null && o.getOperadorPlantaId() == u.getId())
+                )
+                .filter(o -> !"FINALIZADA".equals(o.getEstado()))
+                .sorted((a, b) -> b.getId() - a.getId())
+                .collect(Collectors.toList());
 
         return ResponseEntity.ok(propias);
+    }
+}
+class OperadorBuqueRequest {
+    private int operadorBuqueDni;
+
+    public int getOperadorBuqueDni() {
+        return operadorBuqueDni;
+    }
+
+    public void setOperadorBuqueDni(int operadorBuqueDni) {
+        this.operadorBuqueDni = operadorBuqueDni;
+    }
+}
+class IniciarOperacionRequest {
+    private int operadorLanchaDni;
+
+    public int getOperadorLanchaDni() {
+        return operadorLanchaDni;
+    }
+
+    public void setOperadorLanchaDni(int operadorLanchaDni) {
+        this.operadorLanchaDni = operadorLanchaDni;
+    }
+}
+class PrepararOperacionRequest {
+    private int monoboyaId;
+    private int operadorPlantaDni;
+    private int operadorLanchaDni;
+
+    public int getMonoboyaId() {
+        return monoboyaId;
+    }
+
+    public void setMonoboyaId(int monoboyaId) {
+        this.monoboyaId = monoboyaId;
+    }
+
+    public int getOperadorPlantaDni() {
+        return operadorPlantaDni;
+    }
+
+    public void setOperadorPlantaDni(int operadorPlantaDni) {
+        this.operadorPlantaDni = operadorPlantaDni;
+    }
+
+    public int getOperadorLanchaDni() {
+        return operadorLanchaDni;
+    }
+
+    public void setOperadorLanchaDni(int operadorLanchaDni) {
+        this.operadorLanchaDni = operadorLanchaDni;
+    }
+}
+class PlanificarOperacionRequest {
+    private int buqueNroIMO;
+    private int plantaId;
+    private String tipo;
+    private int operadorBuqueDni;
+
+    public int getBuqueNroIMO() {
+        return buqueNroIMO;
+    }
+
+    public void setBuqueNroIMO(int buqueNroIMO) {
+        this.buqueNroIMO = buqueNroIMO;
+    }
+
+    public int getPlantaId() {
+        return plantaId;
+    }
+
+    public void setPlantaId(int plantaId) {
+        this.plantaId = plantaId;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+
+    public int getOperadorBuqueDni() {
+        return operadorBuqueDni;
+    }
+
+    public void setOperadorBuqueDni(int operadorBuqueDni) {
+        this.operadorBuqueDni = operadorBuqueDni;
     }
 }

@@ -122,6 +122,20 @@ public class MedicionDAO {
             sensorId, desde, hasta
         );
     }
+    public List<MedicionInfo> listarPorOperacionYSensor(int operacionId, int sensorId) {
+    return jdbc.query(
+        "SELECT * FROM mediciones WHERE operacion_id = ? AND sensor_id = ? ORDER BY timestamp ASC",
+        (rs, rowNum) -> new MedicionInfo(
+            rs.getInt("id"),
+            rs.getInt("sensor_id"),
+            rs.getInt("operacion_id"),
+            rs.getDouble("valor"),
+            rs.getString("unidad"),
+            rs.getTimestamp("timestamp").toLocalDateTime()
+        ),
+        operacionId, sensorId
+    );
+}
 
     /**
      * Clase auxiliar para mediciones leídas de la BD.
