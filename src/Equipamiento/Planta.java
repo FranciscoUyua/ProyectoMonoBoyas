@@ -54,14 +54,10 @@ public class Planta {
         operacion.asignarMonoboya(m);
         OperadorLancha operadorLancha = obtenerOperadorLanchaDisponible(usuarioDAO);
         OperadorPlanta operadorPlanta = obtenerOperadorPlantaDisponible(usuarioDAO);
-
-        //Operador opPlanta = obtenerOperadorPlanta()
-        //operacion.asignarOperadorPlanta(opPlanta)
-        //Operador opLancha = obtenerOperadorLancha()
-        //opLancha.asignarOperacion(operacion)
-        //operacion.asignarOperadorLancha(opLancha)
-        //opLancha.iniciarOperacion()
-        //reober
+        operacion.asignarOperadorPlanta(operadorPlanta);
+        operacion.asignarOperadorLancha(operadorLancha);
+        operadorLancha.asignarOperacion(operacion);
+        operadorPlanta.asignarOperacion(operacion);
     }
 
     public Monoboya obtenerMonoboyaDisponible() {

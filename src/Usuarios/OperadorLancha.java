@@ -38,6 +38,10 @@ public class OperadorLancha extends UsuarioOperador {
         System.out.println(" OperadorLancha (" + nombre + ") inició la operación " + operacion.getId() + ".");
     }
 
+    public void asignarOperacion(Operacion op){
+        operacion = op;
+    }
+
     public void reconocerAlerta( ) {
         System.out.println("\n[OPERADOR DE LANCHA] >>> ALERTA RECONOCIDA. Tomando medidas de seguridad.");
     }

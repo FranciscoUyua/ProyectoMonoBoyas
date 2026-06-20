@@ -31,6 +31,10 @@ public class OperadorPlanta extends UsuarioOperador {
     public void reconocerAlerta() {
         System.out.println("\n[OPERADOR DE PLANTA] >>> ALERTA RECONOCIDA. Tomando medidas de seguridad.");
     }
+
+    public void asignarOperacion(Operacion op){
+        operacion=op;
+    }
     public void recibirAlerta(Alerta alerta) {
         alertasRecibidas.add(alerta);
         System.out.println("\n[OPERADOR DE PLANTA] >>> ALERTA RECIBIDA: " + alerta.getMensaje() + " (Tipo: " + alerta.getTipoAlerta() + ")");

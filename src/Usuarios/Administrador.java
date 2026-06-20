@@ -9,7 +9,6 @@ import Persistencia.UsuarioDAO;
 
 public class Administrador extends Usuario {
 
-    protected OperadorBuque operadorBuque; // Referencia al operador de buque asignado
     protected Usuario usuario; // Referencia al usuario que se está gestionando (para agregar, eliminar o modificar)
     protected Planta planta; // Referencia a la planta que opera
 
@@ -32,7 +31,7 @@ public class Administrador extends Usuario {
     }
 
     public void PlanificarOperacion(Buque barco, Planta planta, UsuarioDAO usuarioDAO) {
-        operadorBuque = obtenerOperadorBuqueDisponible(usuarioDAO);
+        OperadorBuque operadorBuque = obtenerOperadorBuqueDisponible(usuarioDAO);
         Operacion operacion = new Operacion((int)(Math.random() * 100),  barco, operadorBuque, planta); 
         //operacion ya se crea en preparada
     
