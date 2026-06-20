@@ -77,23 +77,28 @@ public class CentralDatos {
         operacionesActivas.remove(idOperacion);
     }
 
-    private Optional<Alerta> verificarUmbralAmarre(double valor,int idoperacion) {
+    private void verificarUmbralAmarre(double valor,int idoperacion) {
 
         if (valor > AMARRE_ROJA) {
             //aca creo la alerta , todo lo demas sera asi
             System.out.println("SOY LA CENTRAL estoy por crear una Alerta critica de amarre");
             Operacion op = operacionesActivas.get(idoperacion);    
-            Alerta alerta = new Alerta(1, Alerta.TipoAlerta.ROJA, "Amarre en riesgo de ruptura", op, 1, "kN");
-            //alerta.operacion.viajarOperadorX()
-            return Optional.of(alerta);
+            Alerta alertaBuque = new Alerta(1, Alerta.TipoAlerta.ROJA, "Amarre en riesgo de ruptura", op, 1, "kN");
+            Alerta alertaLancha = new Alerta(1, Alerta.TipoAlerta.ROJA, "Amarre en riesgo de ruptura", op, 1, "kN");
+            Alerta alertaPlanta = new Alerta(1, Alerta.TipoAlerta.ROJA, "Amarre en riesgo de ruptura", op, 1, "kN");
+
+
+            alertaBuque.getOperacion().enviarAlertaOperadorBuque(alertaBuque);
+            alertaLancha.getOperacion().enviarAlertaOperadorLancha(alertaLancha);
+            alertaPlanta.getOperacion().enviarAlertaOperadorPlanta(alertaPlanta);
+
+            //juan tiene q revisar los return
 
         } else if (valor > AMARRE_AMARILLA) {
             System.out.println("SOY LA CENTRAL [ALERTA AMARILLA] Amarre: " + valor + " kN");
-            return Optional.of(alerta);
 
-        } else {
-            return Optional.empty(); // VERDE — no se genera alerta
-        }
+        } 
+        
         //reportar(nivel, "Amarre", valor, "kN");
     }
 

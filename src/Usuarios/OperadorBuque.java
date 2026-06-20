@@ -30,7 +30,7 @@ public class OperadorBuque extends UsuarioOperador {
     }
     public void recibirAlerta(Alerta alerta) {
         alertasRecibidas.add(alerta);
-        System.out.println("\n[OPERADOR DE BUQUE] >>> ALERTA RECIBIDA: " + alerta.getMensaje() + " (Tipo: " + alerta.getTipo_Alerta() + ")");
+        System.out.println("\n[OPERADOR DE BUQUE] >>> ALERTA RECIBIDA: " + alerta.getMensaje() + " (Tipo: " + alerta.getTipoAlerta() + ")");
     }
 
 }

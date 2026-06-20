@@ -56,6 +56,21 @@ public class Operacion {
         }
     }
 
+    public void enviarAlertaOperadorLancha(Alerta alerta) {
+        if (operadorLancha != null) {
+            operadorLancha.recibirAlerta(alerta);
+        } else {
+            System.out.println("[OPERACIÓN " + id + "] No se puede enviar alerta: no hay operador de lancha asignado.");
+        }
+    }
+    public void enviarAlertaOperadorPlanta(Alerta alerta) {
+        if (operadorPlanta != null) {
+            operadorPlanta.recibirAlerta(alerta);
+        } else {
+            System.out.println("[OPERACIÓN " + id + "] No se puede enviar alerta: no hay operador de planta asignado.");
+        }
+    }
+
     public TipoOperacion getTipoOperacion() {
         return tipoOperacion;
     }
