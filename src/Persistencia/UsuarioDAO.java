@@ -1,10 +1,18 @@
 package Persistencia;
 
-import Usuarios.*;
+import java.sql.PreparedStatement;
+import java.util.List;
+
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import Usuarios.Administrador;
+import Usuarios.OperadorBuque;
+import Usuarios.OperadorLancha;
+import Usuarios.OperadorPlanta;
+import Usuarios.Usuario;
 
 @Repository
 public class UsuarioDAO {
@@ -28,6 +36,22 @@ public class UsuarioDAO {
             usuario.getRol()
         );
     }
+
+    public int crear(String nombre, String contrasena, int dni, String rol) {
+    KeyHolder keyHolder = new GeneratedKeyHolder();
+    jdbc.update(connection -> {
+        PreparedStatement ps = connection.prepareStatement(
+            "INSERT INTO usuarios (nombre, contrasena, dni, rol) VALUES (?, ?, ?, ?)",
+            new String[]{"id"}
+        );
+        ps.setString(1, nombre);
+        ps.setString(2, contrasena);
+        ps.setInt(3, dni);
+        ps.setString(4, rol);
+        return ps;
+    }, keyHolder);
+    return keyHolder.getKey().intValue();
+}
 
     public Usuario buscarPorDni(int dni) {
         return jdbc.queryForObject(
