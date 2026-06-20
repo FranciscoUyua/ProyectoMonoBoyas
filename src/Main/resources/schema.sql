@@ -76,6 +76,9 @@ CREATE TABLE IF NOT EXISTS mediciones (
 );
 
 ALTER TABLE mediciones ADD COLUMN IF NOT EXISTS operacion_id INT REFERENCES operaciones(id);
+DELETE FROM mediciones WHERE operacion_id IS NULL;
+ALTER TABLE mediciones ALTER COLUMN operacion_id SET NOT NULL;
+
 CREATE INDEX IF NOT EXISTS idx_mediciones_operacion ON mediciones (operacion_id);
 
 CREATE INDEX IF NOT EXISTS idx_mediciones_sensor_time
