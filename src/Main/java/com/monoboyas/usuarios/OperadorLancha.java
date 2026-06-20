@@ -25,7 +25,7 @@ public class OperadorLancha extends UsuarioOperador {
     }
 
     public String getRol() {
-    return rol;
+        return rol;
     }
 
     // Específico de la lancha: dispara el inicio. La lógica real vive en Operacion (compa).
