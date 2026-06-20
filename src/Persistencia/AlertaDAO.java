@@ -3,6 +3,7 @@ package Persistencia;
 import java.sql.PreparedStatement;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -101,6 +102,18 @@ public class AlertaDAO {
     }
 
     public void marcarComoReconocida(int idAlerta) {
-    jdbc.update("UPDATE alertas SET estado = 'RECONOCIDA' WHERE id = ?", idAlerta);
+        jdbc.update("UPDATE alertas SET estado = 'RECONOCIDA' WHERE id = ?", idAlerta);
+    }
+
+    public List<Map<String, Object>> listarDetalladoPorUsuario(int usuarioId) {
+    return jdbc.queryForList(
+        "SELECT a.id, a.tipo_alerta, a.mensaje, a.id_operacion, a.timestamp, " +
+        "       ua.reconocida, ua.fecha_reconocimiento " +
+        "FROM usuario_alerta ua " +
+        "JOIN alertas a ON a.id = ua.alerta_id " +
+        "WHERE ua.usuario_id = ? " +
+        "ORDER BY a.timestamp DESC",
+        usuarioId
+    );
 }
 }
