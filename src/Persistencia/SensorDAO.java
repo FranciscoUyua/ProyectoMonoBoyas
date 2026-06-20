@@ -1,10 +1,11 @@
 package Persistencia;
 
-import Sensores.*;
+import java.util.List;
+
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import Sensores.Sensor;
 
 @Repository
 public class SensorDAO {
@@ -22,14 +23,14 @@ public class SensorDAO {
     public void guardar(Sensor sensor) {
         jdbc.update(
             "INSERT INTO sensores (id, tipo, unidad, activo) VALUES (?, ?, ?, ?) ON CONFLICT (id) DO NOTHING",
-            sensor.getId(), sensor.getTipo(), sensor.getUnidad(), sensor.isActivo()
+            sensor.getId(), sensor.getTipo().toString(), sensor.getUnidad(), sensor.isActivo()
         );
     }
 
     public void guardar(Sensor sensor, int monoboyaId) {
         jdbc.update(
             "INSERT INTO sensores (id, tipo, unidad, activo, monoboya_id) VALUES (?, ?, ?, ?, ?) ON CONFLICT (id) DO NOTHING",
-            sensor.getId(), sensor.getTipo(), sensor.getUnidad(), sensor.isActivo(), monoboyaId
+            sensor.getId(), sensor.getTipo().toString(), sensor.getUnidad(), sensor.isActivo(), monoboyaId
         );
     }
 

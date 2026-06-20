@@ -67,9 +67,9 @@ public class TestTelemetria implements CommandLineRunner {
         Sensor sensorAmarre = new SensorDeAmarre(sensorId, new MockSensorDataProvider());
         sensorDAO.guardar(sensorAmarre, monoboyaId);
 
-        OperadorBuque opBuque = new OperadorBuque(operadorBuqueId, "Capitán Test", "1234", 11111111);
-        OperadorLancha opLancha = new OperadorLancha(operadorLanchaId, "Lanchero Test", "1234", 22222222);
-        OperadorPlanta opPlanta = new OperadorPlanta(operadorPlantaId, "Operador Planta Test", "1234", 33333333);
+        OperadorBuque opBuque = new OperadorBuque(operadorBuqueId, "Capitán Test", "1234", 111222111);
+        OperadorLancha opLancha = new OperadorLancha(operadorLanchaId, "Lanchero Test", "1234", 22232222);
+        OperadorPlanta opPlanta = new OperadorPlanta(operadorPlantaId, "Operador Planta Test", "1234", 333433);
         usuarioDAO.guardar(opBuque);
         usuarioDAO.guardar(opLancha);
         usuarioDAO.guardar(opPlanta);

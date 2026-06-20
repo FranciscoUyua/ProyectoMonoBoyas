@@ -30,6 +30,7 @@ public class Alerta {
         this.double_medicion = valor_medicion;
         this.string_medicion = string_medicion;
         this.estado = EstadoAlerta.NO_RECONOCIDA;
+        this.mensaje = mensaje;
     }
 
     public int getId() {
