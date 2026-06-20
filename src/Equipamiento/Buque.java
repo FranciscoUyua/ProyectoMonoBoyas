@@ -9,6 +9,7 @@ public class Buque {
 
     protected int nroIMO;
     protected int capacidad; 
+    protected int capacidadRestante;
     protected String nombre;
     protected Sensor transmisorPresion;
     private Publisher publisher;
@@ -18,6 +19,7 @@ public class Buque {
     public Buque(int nroIMO, int capacidad, String nombre,Publisher publisher,Operacion operacion) {
         this.nroIMO = nroIMO;
         this.capacidad = capacidad;
+        capacidadRestante=capacidad;
         this.nombre = nombre;
         this.publisher = publisher;
         this.operacion = operacion;
@@ -42,6 +44,18 @@ public class Buque {
         return nroIMO;
     }
 
+    public void descontarCapacidad(double litrosTransferidos) {
+        int litrosEnteros = (int) Math.round( litrosTransferidos) ; // trunca el decimal, ej: 142.7 -> 142
+        capacidadRestante -= litrosEnteros;
+        if (capacidadRestante < 0) {
+            capacidadRestante = 0;
+        }
+    }
+
+    public int getCapacidadRestante(){
+
+        return capacidadRestante;
+    }
     public void setNroIMO(int nroIMO) {
         this.nroIMO = nroIMO;
     }
@@ -76,6 +90,11 @@ public class Buque {
 
     public void DetenerTransferencia(){
 
+    }
+
+    public boolean finalizoDescarga(){
+        if(capacidad!=)
+        return false;
     }
 
     public CentralDatos getCentralDatos() {

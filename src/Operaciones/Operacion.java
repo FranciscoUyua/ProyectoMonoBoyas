@@ -7,7 +7,7 @@ import Equipamiento.*;
 public class Operacion {
     protected int id;
     protected Monoboya monoboya; 
-    protected Buque barco; 
+    protected Buque buque; 
     protected OperadorLancha operadorLancha; 
     protected OperadorBuque operadorBuque;   
     protected OperadorPlanta operadorPlanta;
@@ -23,7 +23,7 @@ public class Operacion {
 
     public Operacion(int id, Buque b, OperadorBuque operadorBuque, Planta planta) {
         this.id = id;
-        barco = b;
+        buque = b;
         this.planta = planta;
         this.estaActiva = false;
         this.tipoOperacion = TipoOperacion.PREPARADA;
@@ -41,13 +41,21 @@ public class Operacion {
             System.out.println("[OPERACIÓN " + id + "] No se puede iniciar: estado actual = " + tipoOperacion + " (se requiere PREPARADA).");
             return;
         }
-        if (barco == null || monoboya == null) {
+        if (buque == null || monoboya == null) {
             System.out.println("[OPERACIÓN " + id + "] No se puede iniciar: falta buque o monoboya.");
             return;
         }
         // 2. Pasa a ENCURSO
         this.tipoOperacion = TipoOperacion.ENCURSO;
         this.estaActiva = true;
+
+        while(!buque.finalizoDescarga() && tipoOperacion != TipoOperacion.DETENIDA){
+            monoboya.recolectarYTransmitirDatos(); 
+            Thread.sleep(500);
+
+
+
+        }
     }
 
     public void detenerOperacion() {
@@ -111,13 +119,13 @@ public class Operacion {
         this.operadorBuque = operador;
     }
     public void asignarBuque(Buque barco) {
-        this.barco = barco;
+        this.buque = barco;
     }
     public Planta getPlanta() {
         return planta;
     }
     public Buque getBuque() {
-        return barco;
+        return buque;
     }
     public Monoboya getMonoboya() {
         return monoboya;
