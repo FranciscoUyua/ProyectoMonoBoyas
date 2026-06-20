@@ -7,13 +7,13 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
-import Alertas.Alerta;
-import Central.CentralDatos;
-import Persistencia.AlertaDAO;
-import Persistencia.MedicionDAO;
-import Persistencia.OperacionDAO;
-import Persistencia.UsuarioAlertaDAO;
-import Sensores.Medicion;
+import com.monoboyas.alertas.Alerta;
+import com.monoboyas.central.CentralDatos;
+import com.monoboyas.persistencia.AlertaDAO;
+import com.monoboyas.persistencia.MedicionDAO;
+import com.monoboyas.persistencia.OperacionDAO;
+import com.monoboyas.persistencia.UsuarioAlertaDAO;
+import com.monoboyas.sensores.Medicion;
 
 
 @Service

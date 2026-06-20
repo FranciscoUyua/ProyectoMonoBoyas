@@ -1,4 +1,4 @@
-package Main.java.com.monoboyas.api;
+package com.monoboyas.api;
 
 import java.util.List;
 
@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import Persistencia.MonoboyaDAO;
+import com.monoboyas.persistencia.MonoboyaDAO;
 
 @RestController
 @RequestMapping("/v1/monoboyas")

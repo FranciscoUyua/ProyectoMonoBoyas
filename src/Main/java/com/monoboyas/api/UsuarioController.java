@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import Persistencia.UsuarioDAO;
+import com.monoboyas.persistencia.UsuarioDAO;
 
 @RestController
 @RequestMapping("/v1/usuarios")

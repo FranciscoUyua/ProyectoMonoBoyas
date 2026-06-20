@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan({"com.monoboyas.api", "Persistencia"})
+@ComponentScan("com.monoboyas")
 public class ApiApplication {
 
 	public static void main(String[] args) {

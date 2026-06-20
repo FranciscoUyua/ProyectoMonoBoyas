@@ -1,7 +1,7 @@
 package com.monoboyas.api;
 
-import Persistencia.UsuarioDAO;
-import Usuarios.Usuario;
+import com.monoboyas.persistencia.UsuarioDAO;
+import com.monoboyas.usuarios.Usuario;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

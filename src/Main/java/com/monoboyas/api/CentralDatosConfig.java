@@ -3,7 +3,7 @@ package com.monoboyas.api;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import Central.CentralDatos;
+import com.monoboyas.central.CentralDatos;
 
 @Configuration
 public class CentralDatosConfig {

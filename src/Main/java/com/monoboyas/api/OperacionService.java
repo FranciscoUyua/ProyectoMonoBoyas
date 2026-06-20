@@ -4,10 +4,10 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import Persistencia.MonoboyaDAO;
-import Persistencia.OperacionDAO;
-import Persistencia.UsuarioDAO;
-import Usuarios.Usuario;
+import com.monoboyas.persistencia.MonoboyaDAO;
+import com.monoboyas.persistencia.OperacionDAO;
+import com.monoboyas.persistencia.UsuarioDAO;
+import com.monoboyas.usuarios.Usuario;
 
 @Service
 public class OperacionService {

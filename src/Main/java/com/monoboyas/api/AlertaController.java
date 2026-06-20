@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import Persistencia.AlertaDAO;
-import Persistencia.UsuarioAlertaDAO;
-import Persistencia.UsuarioDAO;
-import Usuarios.Usuario;
+import com.monoboyas.persistencia.AlertaDAO;
+import com.monoboyas.persistencia.UsuarioAlertaDAO;
+import com.monoboyas.persistencia.UsuarioDAO;
+import com.monoboyas.usuarios.Usuario;
 
 @RestController
 @RequestMapping("/v1/alertas")

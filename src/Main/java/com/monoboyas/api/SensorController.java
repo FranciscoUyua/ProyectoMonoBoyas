@@ -1,6 +1,6 @@
 package com.monoboyas.api;
 
-import Persistencia.SensorDAO;
+import com.monoboyas.persistencia.SensorDAO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

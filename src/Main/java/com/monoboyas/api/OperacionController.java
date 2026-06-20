@@ -1,10 +1,10 @@
 package com.monoboyas.api;
 
-import Persistencia.BuqueDAO;
-import Persistencia.OperacionDAO;
-import Persistencia.PlantaDAO;
-import Persistencia.UsuarioDAO;
-import Usuarios.Usuario;
+import com.monoboyas.persistencia.BuqueDAO;
+import com.monoboyas.persistencia.OperacionDAO;
+import com.monoboyas.persistencia.PlantaDAO;
+import com.monoboyas.persistencia.UsuarioDAO;
+import com.monoboyas.usuarios.Usuario;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

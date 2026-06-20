@@ -1,8 +1,8 @@
 package com.monoboyas.api;
 
-import Persistencia.MedicionDAO;
-import Sensores.Medicion;
-import Sensores.Sensor;
+import com.monoboyas.persistencia.MedicionDAO;
+import com.monoboyas.sensores.Medicion;
+import com.monoboyas.sensores.Sensor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
