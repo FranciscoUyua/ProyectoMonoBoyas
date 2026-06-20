@@ -1,8 +1,10 @@
 package Usuarios;
-import Usuarios.*;
-import Operaciones.*;
-import Persistencia.UsuarioAlertaDAO;
-import Equipamiento.*;
+import java.util.List;
+
+import Equipamiento.Buque;
+import Equipamiento.Planta;
+import Operaciones.Operacion;
+import Persistencia.UsuarioDAO;
 
 
 public class Administrador extends Usuario {
@@ -29,11 +31,26 @@ public class Administrador extends Usuario {
     public void modificarUmbrales() {
     }
 
-    public void PlanificarOperacion(Buque barco,OperadorBuque operadorBuque, Planta planta) {
+    public void PlanificarOperacion(Buque barco, Planta planta, UsuarioDAO usuarioDAO) {
+        operadorBuque = obtenerOperadorBuqueDisponible(usuarioDAO);
         Operacion operacion = new Operacion((int)(Math.random() * 100),  barco, operadorBuque, planta); 
         //operacion ya se crea en preparada
     
     }
 
+    public Usuario primerOperadorBuqueDisponible(List<Usuario> usuarios) {
+        for (Usuario u : usuarios) {
+            if (u.getOperacion() == null) {
+                return u;
+            }
+        }
+        return null;
+    }
+
+    public OperadorBuque obtenerOperadorBuqueDisponible(UsuarioDAO usuarioDAO) {
+        List<Usuario> usuarios = usuarioDAO.listarPorRol("OPERADOR_BUQUE");
+        Usuario disponible = primerOperadorBuqueDisponible(usuarios);
+        return (OperadorBuque) disponible;
+    }
 
 }
