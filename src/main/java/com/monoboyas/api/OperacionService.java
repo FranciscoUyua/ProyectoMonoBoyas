@@ -4,9 +4,18 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.monoboyas.central.CentralDatos;
+import com.monoboyas.equipamiento.Buque;
+import com.monoboyas.equipamiento.Planta;
+import com.monoboyas.operaciones.Operacion;
+import com.monoboyas.persistencia.BuqueDAO;
 import com.monoboyas.persistencia.MonoboyaDAO;
 import com.monoboyas.persistencia.OperacionDAO;
+import com.monoboyas.persistencia.PlantaDAO;
 import com.monoboyas.persistencia.UsuarioDAO;
+import com.monoboyas.usuarios.OperadorBuque;
+import com.monoboyas.usuarios.OperadorLancha;
+import com.monoboyas.usuarios.OperadorPlanta;
 import com.monoboyas.usuarios.Usuario;
 
 @Service
@@ -21,12 +30,20 @@ public class OperacionService {
     private final OperacionDAO operacionDAO;
     private final MonoboyaDAO  monoboyaDAO;
     private final UsuarioDAO   usuarioDAO;
+    private final BuqueDAO buqueDAO;
+    private final PlantaDAO plantaDAO;
+    private final CentralDatos centralDatos;
 
-    public OperacionService(OperacionDAO operacionDAO, MonoboyaDAO monoboyaDAO, UsuarioDAO usuarioDAO) {
+    public OperacionService(OperacionDAO operacionDAO, MonoboyaDAO monoboyaDAO, UsuarioDAO usuarioDAO,
+                            BuqueDAO buqueDAO, PlantaDAO plantaDAO, CentralDatos centralDatos) {
         this.operacionDAO = operacionDAO;
         this.monoboyaDAO  = monoboyaDAO;
         this.usuarioDAO   = usuarioDAO;
+        this.buqueDAO     = buqueDAO;
+        this.plantaDAO    = plantaDAO;
+        this.centralDatos = centralDatos;
     }
+
 
     // ── TRANSICIONES DE ESTADO ───────────────────────────────────────────
 
@@ -35,7 +52,7 @@ public class OperacionService {
         .orElseThrow(() -> new IllegalStateException("No hay operadores de buque disponibles"));
     int id = operacionDAO.crearPlanificada(buqueNroIMO, plantaId, tipo, operadorBuque.getId());
     return operacionDAO.buscarPorId(id);
-}
+    }
 
     public OperacionDAO.OperacionInfo preparar(int operacionId, int monoboyaId,
                                                int operadorPlantaDni, int operadorLanchaDni) {
@@ -69,6 +86,7 @@ public class OperacionService {
             monoboyaDAO.actualizarOperacionActiva(op.getMonoboyaId(), operacionId);
             monoboyaDAO.actualizarEstado(op.getMonoboyaId(), "OCUPADA");
         }
+        registrarEnCentralDatos(op);
         return operacionDAO.buscarPorId(operacionId);
     }
 
@@ -103,7 +121,34 @@ public class OperacionService {
             monoboyaDAO.actualizarOperacionActiva(op.getMonoboyaId(), null);
             monoboyaDAO.actualizarEstado(op.getMonoboyaId(), "DISPONIBLE");
         }
+        centralDatos.finalizarOperacion(operacionId);
         return operacionDAO.buscarPorId(operacionId);
+    }
+
+    private void registrarEnCentralDatos(OperacionDAO.OperacionInfo op) {
+        Buque buque = (op.getBuqueNroIMO() != null) ? buqueDAO.buscarPorNroIMO(op.getBuqueNroIMO()) : null;
+        OperadorBuque operadorBuque = (op.getOperadorBuqueId() != null)
+            ? (OperadorBuque) usuarioDAO.buscarPorId(op.getOperadorBuqueId()) : null;
+
+        Planta planta = null;
+        if (op.getPlantaId() != null) {
+            PlantaDAO.PlantaInfo info = plantaDAO.buscarPorId(op.getPlantaId());
+            planta = new Planta(info.getNombre(), info.getId());
+        }
+
+        Operacion operacionDominio = new Operacion(op.getId(), buque, operadorBuque, planta);
+
+        if (op.getMonoboyaId() != null) {
+            operacionDominio.asignarMonoboya(monoboyaDAO.buscarPorId(op.getMonoboyaId()));
+        }
+        if (op.getOperadorLanchaId() != null) {
+            operacionDominio.asignarOperadorLancha((OperadorLancha) usuarioDAO.buscarPorId(op.getOperadorLanchaId()));
+        }
+        if (op.getOperadorPlantaId() != null) {
+            operacionDominio.asignarOperadorPlanta((OperadorPlanta) usuarioDAO.buscarPorId(op.getOperadorPlantaId()));
+        }
+
+        centralDatos.iniciarOperacion(operacionDominio);
     }
 
     // ── CONSULTAS ────────────────────────────────────────────────────────
