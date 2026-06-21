@@ -54,6 +54,7 @@ public class Operacion {
 
         while (!buque.finalizoDescarga() && tipoOperacion != TipoOperacion.DETENIDA) {
             monoboya.recolectarYTransmitirDatos();
+            buque.recolectarYTransmitirDatos();
             // Thread.sleep(500);
 
         }
