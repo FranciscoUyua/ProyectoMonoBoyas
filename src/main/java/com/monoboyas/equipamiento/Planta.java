@@ -58,6 +58,7 @@ public class Planta {
         operacion.asignarOperadorLancha(operadorLancha);
         operadorLancha.asignarOperacion(operacion);
         operadorPlanta.asignarOperacion(operacion);
+        centralDatos.iniciarOperacion(operacion);
     }
 
     public Monoboya obtenerMonoboyaDisponible() {
