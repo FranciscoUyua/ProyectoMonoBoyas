@@ -7,18 +7,15 @@ import com.monoboyas.sensores.Medicion.OrigenMedicion;
 
 public class Monoboya {
     protected int id;
-    protected Sensor[] sensores; // Arreglo de sensores con tamanio fijo
+    protected Sensor[] sensores; // Arreglo de sensores con tam fijo
     protected Operacion operacion;
     protected int contadorSensores; // Para llevar el control de cuantos se han agregado 
-    protected CentralDatos centralDatos; //La Monoboya conoce y se asocia directamente a la CentralDatos 
-    //central de datos se va
     protected Publisher publisher; // La Monoboya tiene un Publisher para enviar datos a la CentralDatos
-    protected enum EstadoMonoboya {
+    public enum EstadoMonoboya {
         OCUPADA,
         DISPONIBLE,
         DESHABILITADA
     }
-    
 
     protected EstadoMonoboya estado;
     
@@ -34,24 +31,20 @@ public class Monoboya {
         this.operacion = operacion; 
     }
 
-    // ----------------------------------------------------------------------
-    // RECOLECCIÓN Y TRANSMISIÓN DE TELEMETRÍA (Sin parámetros)
-    // ----------------------------------------------------------------------
-    
-
     public void recolectarYTransmitirDatos() {
     // Agregamos "Sensor" (con mayúscula si es tu clase) antes de la variable
         for (Sensor sensor : sensores) { 
             if (sensor != null) {
                 sensor.actualizarDato();
                 Medicion nuevaMedicion = new Medicion(sensor.getId(), sensor.getValor(), sensor.getUnidad(), sensor.getTipo(),OrigenMedicion.MONOBOYA,operacion.getId());
+                if (sensor.getTipo() == Sensor.TipoSensor.CAUDAL) {
+                double litrosEnEsteCiclo = sensor.getValor();
+                operacion.getBuque().descontarCapacidad(litrosEnEsteCiclo);
+            }
+                
                 publisher.publicar(nuevaMedicion);
             }
         }
-    }
-
-    public void establecerObjetivoTransferencia(int objetivo) {
-        System.out.println("[MONOBOYA] Objetivo de transferencia establecido: " + objetivo + " unidades.");
     }
 
     public void agregarSensor(Sensor sensor) {
@@ -84,10 +77,6 @@ public class Monoboya {
     
     public Operacion getOperacion() {
         return operacion;
-    }
-
-    public CentralDatos getCentralDatos() {
-        return centralDatos;
     }
 
 }

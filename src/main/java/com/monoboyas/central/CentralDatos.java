@@ -106,7 +106,6 @@ public class CentralDatos {
             alertas.put("OPERADOR_LANCHA", alertaLancha);
             alertas.put("OPERADOR_PLANTA", alertaPlanta);
         }
-
         return alertas;
     }
 
@@ -140,13 +139,11 @@ public class CentralDatos {
             alertas.put("OPERADOR_BUQUE", alertaBuque);
             alertas.put("OPERADOR_PLANTA", alertaPlanta);
         }
-
         return alertas;
     }
 
     private Map<String, Alerta> verificarUmbralOleaje(double valor, int idoperacion) {
         Map<String, Alerta> alertas = new HashMap<>();
-
         if (valor > OLEAJE_ROJA) {
             System.out.println("SOY LA CENTRAL estoy por crear una Alerta Roja de Oleaje");
             Operacion op = operacionesActivas.get(idoperacion);
@@ -168,7 +165,6 @@ public class CentralDatos {
 
             alertas.put("OPERADOR_LANCHA", alertaLancha);
         }
-
         return alertas;
     }
 

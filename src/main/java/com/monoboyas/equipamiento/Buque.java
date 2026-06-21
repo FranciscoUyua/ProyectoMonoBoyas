@@ -40,7 +40,6 @@ public class Buque {
     }
 
     public void solitudTransferencia(UsuarioDAO usuarioDAO) {
-        // HAY Q SACAR ESTE NULL DESPUES !!
         operacion.getPlanta().recibirSolicitudTransferencia(operacion, usuarioDAO);
         System.out.println("\n[BUQUE " + nombre + "] >>> SOLICITANDO TRANSFERENCIA DE CARGA...");
     }
@@ -58,7 +57,6 @@ public class Buque {
     }
 
     public int getCapacidadRestante() {
-
         return capacidadRestante;
     }
 
