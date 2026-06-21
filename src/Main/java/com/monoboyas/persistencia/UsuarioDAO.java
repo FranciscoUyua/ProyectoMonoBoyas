@@ -13,6 +13,7 @@ import com.monoboyas.usuarios.OperadorBuque;
 import com.monoboyas.usuarios.OperadorLancha;
 import com.monoboyas.usuarios.OperadorPlanta;
 import com.monoboyas.usuarios.Usuario;
+import java.util.Optional;
 
 @Repository
 public class UsuarioDAO {
@@ -145,5 +146,21 @@ public class UsuarioDAO {
             default ->
                 throw new IllegalArgumentException("Rol desconocido: " + rol);
         };
+    }
+
+    public Optional<Usuario> primerOperadorBuqueDisponible() {
+        List<Usuario> resultado = jdbc.query(
+            "SELECT * FROM usuarios u " +
+            "WHERE u.rol = 'OPERADOR_BUQUE' " +
+            "AND u.id NOT IN (" +
+            "  SELECT operador_buque_id FROM operaciones " +
+            "  WHERE estado != 'FINALIZADA' AND operador_buque_id IS NOT NULL" +
+            ") ORDER BY u.id LIMIT 1",
+            (rs, rowNum) -> instanciarUsuario(
+                rs.getInt("id"), rs.getString("nombre"), rs.getString("contrasena"),
+                rs.getInt("dni"), rs.getString("rol")
+            )
+        );
+        return resultado.isEmpty() ? Optional.empty() : Optional.of(resultado.get(0));
     }
 }

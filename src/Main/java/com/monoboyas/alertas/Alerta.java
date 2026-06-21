@@ -10,12 +10,6 @@ public class Alerta {
     protected double double_medicion;
     protected String string_medicion;
 
-    public enum EstadoAlerta {
-        NO_RECONOCIDA,
-        RECONOCIDA
-    }
-    protected EstadoAlerta estado;
-
     public enum TipoAlerta {
         VERDE,
         AMARILLA,
@@ -29,7 +23,6 @@ public class Alerta {
         this.operacion = operacion;
         this.double_medicion = valor_medicion;
         this.string_medicion = string_medicion;
-        this.estado = EstadoAlerta.NO_RECONOCIDA;
         this.mensaje = mensaje;
     }
 
@@ -47,17 +40,6 @@ public class Alerta {
 
     public void setTipoAlerta(TipoAlerta tipoAlerta) {
         this.tipoAlerta = tipoAlerta;
-    }
-
-    public EstadoAlerta getEstadoAlerta() {
-        return estado;
-    }
-
-    public void setEstado(EstadoAlerta estado) {
-        this.estado = estado;
-    }
-    public void cambiarEstado(){
-        this.estado = EstadoAlerta.RECONOCIDA;
     }
 
     public String getMensaje() {
@@ -92,7 +74,4 @@ public class Alerta {
         this.string_medicion = string_medicion;
     }
 
-    public EstadoAlerta getEstado() {
-        return estado;
-    }
 }

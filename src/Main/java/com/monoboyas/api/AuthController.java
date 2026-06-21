@@ -1,5 +1,6 @@
 package com.monoboyas.api;
 
+import com.monoboyas.persistencia.OperacionDAO;
 import com.monoboyas.persistencia.UsuarioDAO;
 import com.monoboyas.usuarios.Usuario;
 import org.springframework.http.ResponseEntity;
@@ -13,10 +14,12 @@ import java.util.Map;
 public class AuthController {
 
     private final UsuarioDAO usuarioDAO;
+    private final OperacionDAO operacionDAO;
 
-    public AuthController(UsuarioDAO usuarioDAO) {
-        this.usuarioDAO = usuarioDAO;
-    }
+    public AuthController(UsuarioDAO usuarioDAO, OperacionDAO operacionDAO) {
+    this.usuarioDAO = usuarioDAO;
+    this.operacionDAO = operacionDAO;
+}
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, Object> body) {
@@ -67,8 +70,8 @@ public class AuthController {
 
             // Estos campos pueden ser null.
             // Agregá los getters en Usuario cuando implementemos Operaciones.
-            usuarioResponse.put("plantaId", null);
-            usuarioResponse.put("buqueNroIMO", null);
+            usuarioResponse.put("plantaId", operacionDAO.obtenerPlantaIdDeOperador(usuario.getId()));
+            usuarioResponse.put("buqueNroIMO", operacionDAO.obtenerBuqueNroImoDeOperador(usuario.getId()));
             usuarioResponse.put("operacionId", null);
             usuarioResponse.put("creadoEn", null);
 

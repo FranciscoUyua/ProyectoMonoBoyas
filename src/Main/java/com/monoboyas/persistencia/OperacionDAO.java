@@ -95,6 +95,24 @@ public class OperacionDAO {
         );
     }
 
+    public Integer obtenerPlantaIdDeOperador(int usuarioId) {
+        List<Integer> resultado = jdbc.query(
+            "SELECT planta_id FROM operaciones WHERE operador_planta_id = ? ORDER BY id DESC LIMIT 1",
+            (rs, rowNum) -> rs.getObject("planta_id", Integer.class),
+            usuarioId
+        );
+        return resultado.isEmpty() ? null : resultado.get(0);
+    }
+
+    public Integer obtenerBuqueNroImoDeOperador(int usuarioId) {
+        List<Integer> resultado = jdbc.query(
+            "SELECT buque_nro_imo FROM operaciones WHERE operador_buque_id = ? ORDER BY id DESC LIMIT 1",
+            (rs, rowNum) -> rs.getObject("buque_nro_imo", Integer.class),
+            usuarioId
+        );
+        return resultado.isEmpty() ? null : resultado.get(0);
+    }
+
     public static class OperacionInfo {
         private final int id;
         private final Integer monoboyaId;

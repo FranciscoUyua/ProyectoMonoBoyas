@@ -34,16 +34,19 @@ public class AlertaController {
         this.usuarioAlertaDAO = usuarioAlertaDAO;
     }
 
-    // GET /v1/alertas  (el que ya tenías)
+    // GET /v1/alertas
     @GetMapping
-    public Map<String, Object> listar(@RequestParam(required = false) String tipo,
-                                      @RequestParam(required = false) String estado) {
-        List<AlertaDAO.AlertaInfo> alertas = alertaDAO.listarTodas();
+    public Map<String, Object> listar(@RequestParam(required = false) String tipo, @RequestParam(required = false) Integer operacionId, @RequestParam(required = false) String estado) {
+        List<AlertaDAO.AlertaInfo> alertas = (operacionId != null)
+            ? alertaDAO.listarPorOperacion(operacionId)
+            : alertaDAO.listarTodas();
+
         if (tipo != null) {
             alertas = alertas.stream()
                 .filter(a -> tipo.equalsIgnoreCase(a.getTipoAlerta()))
                 .collect(Collectors.toList());
         }
+
         return Map.of("data", alertas, "pagination",
             Map.of("page", 1, "limit", 50, "total", alertas.size(), "totalPages", 1));
     }

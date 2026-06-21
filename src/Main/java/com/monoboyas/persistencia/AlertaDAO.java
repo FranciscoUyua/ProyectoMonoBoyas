@@ -101,10 +101,6 @@ public class AlertaDAO {
         public LocalDateTime getTimestamp() { return timestamp; }
     }
 
-    public void marcarComoReconocida(int idAlerta) {
-        jdbc.update("UPDATE alertas SET estado = 'RECONOCIDA' WHERE id = ?", idAlerta);
-    }
-
     public List<Map<String, Object>> listarDetalladoPorUsuario(int usuarioId) {
     return jdbc.queryForList(
         "SELECT a.id, a.tipo_alerta, a.mensaje, a.id_operacion, a.timestamp, " +

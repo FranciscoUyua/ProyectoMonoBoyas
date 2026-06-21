@@ -58,10 +58,11 @@ public class OperacionController {
                     operacionService.planificar(
                             body.getBuqueNroIMO(),
                             body.getPlantaId(),
-                            body.getTipo(),
-                            body.getOperadorBuqueDni()
+                            body.getTipo()
                     )
             );
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(409).body(Map.of("error", e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(400).body(Map.of("error", e.getMessage()));
         }
@@ -278,7 +279,6 @@ class PlanificarOperacionRequest {
     private int buqueNroIMO;
     private int plantaId;
     private String tipo;
-    private int operadorBuqueDni;
 
     public int getBuqueNroIMO() {
         return buqueNroIMO;
@@ -302,13 +302,5 @@ class PlanificarOperacionRequest {
 
     public void setTipo(String tipo) {
         this.tipo = tipo;
-    }
-
-    public int getOperadorBuqueDni() {
-        return operadorBuqueDni;
-    }
-
-    public void setOperadorBuqueDni(int operadorBuqueDni) {
-        this.operadorBuqueDni = operadorBuqueDni;
     }
 }

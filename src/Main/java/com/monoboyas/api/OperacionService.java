@@ -30,11 +30,12 @@ public class OperacionService {
 
     // ── TRANSICIONES DE ESTADO ───────────────────────────────────────────
 
-    public OperacionDAO.OperacionInfo planificar(int buqueNroIMO, int plantaId, String tipo, int operadorBuqueDni) {
-        Usuario operadorBuque = validarYObtenerOperador(operadorBuqueDni, "OPERADOR_BUQUE");
-        int id = operacionDAO.crearPlanificada(buqueNroIMO, plantaId, tipo, operadorBuque.getId());
-        return operacionDAO.buscarPorId(id);
-    }
+    public OperacionDAO.OperacionInfo planificar(int buqueNroIMO, int plantaId, String tipo) {
+    Usuario operadorBuque = usuarioDAO.primerOperadorBuqueDisponible()
+        .orElseThrow(() -> new IllegalStateException("No hay operadores de buque disponibles"));
+    int id = operacionDAO.crearPlanificada(buqueNroIMO, plantaId, tipo, operadorBuque.getId());
+    return operacionDAO.buscarPorId(id);
+}
 
     public OperacionDAO.OperacionInfo preparar(int operacionId, int monoboyaId,
                                                int operadorPlantaDni, int operadorLanchaDni) {
