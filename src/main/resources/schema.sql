@@ -91,7 +91,7 @@ CREATE TABLE IF NOT EXISTS alertas (
     mensaje         TEXT NOT NULL,
     id_operacion    INT REFERENCES operaciones(id),
     medicion_id     INT NOT NULL REFERENCES mediciones(id),
-    timestamp       TIMESTAMP NOT NULL DEFAULT NOW()
+    timestamp       TIMESTAMP(0) NOT NULL DEFAULT NOW()
 );
 
 -- ── USUARIO_ALERTA (relación con atributos propios) ──────────────────

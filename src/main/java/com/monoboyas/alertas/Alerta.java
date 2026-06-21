@@ -1,5 +1,7 @@
 package com.monoboyas.alertas;
 
+import java.time.LocalDateTime;
+
 import com.monoboyas.operaciones.Operacion;
 
 public class Alerta {
@@ -9,21 +11,25 @@ public class Alerta {
     protected Operacion operacion;
     protected double double_medicion;
     protected String string_medicion;
+    protected LocalDateTime timestamp;
 
     public enum TipoAlerta {
         VERDE,
         AMARILLA,
         ROJA
     }
+
     protected TipoAlerta tipoAlerta;
 
-    public Alerta(int id, TipoAlerta tipoAlerta, String mensaje, Operacion operacion, double valor_medicion, String string_medicion) {
+    public Alerta(int id, TipoAlerta tipoAlerta, String mensaje, Operacion operacion, double valor_medicion,
+            String string_medicion) {
         this.id = id;
         this.tipoAlerta = tipoAlerta;
         this.operacion = operacion;
         this.double_medicion = valor_medicion;
         this.string_medicion = string_medicion;
         this.mensaje = mensaje;
+        this.timestamp = LocalDateTime.now();
     }
 
     public int getId() {
@@ -32,6 +38,10 @@ public class Alerta {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public LocalDateTime getTimestamp() {
+        return timestamp;
     }
 
     public TipoAlerta getTipoAlerta() {
