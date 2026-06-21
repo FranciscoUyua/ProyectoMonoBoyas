@@ -1,13 +1,23 @@
 package com.monoboyas.central;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import org.springframework.stereotype.Service;
 
 import com.monoboyas.alertas.Alerta;
 import com.monoboyas.operaciones.Operacion;
+import com.monoboyas.persistencia.AlertaDAO;
+import com.monoboyas.persistencia.MedicionDAO;
+import com.monoboyas.persistencia.OperacionDAO;
+import com.monoboyas.persistencia.UsuarioAlertaDAO;
 import com.monoboyas.sensores.Medicion;
 import com.monoboyas.sensores.Medicion.OrigenMedicion;
 
+@Service
 public class CentralDatos {
 
     public enum NivelAlerta {
@@ -20,6 +30,18 @@ public class CentralDatos {
     private Map<Integer, Double> ultimaPresionMonoboyaPorOperacion = new HashMap<>();
     private Map<Integer, Double> ultimaPresionBuquePorOperacion = new HashMap<>();
     private int contadorAlertaId = 1;
+
+    private final MedicionDAO medicionDAO;
+    private final AlertaDAO alertaDAO;
+    private final OperacionDAO operacionDAO;
+    private final UsuarioAlertaDAO usuarioAlertaDAO;
+
+    public CentralDatos(MedicionDAO medicionDAO, AlertaDAO alertaDAO, OperacionDAO operacionDAO, UsuarioAlertaDAO usuarioAlertaDAO) {
+        this.medicionDAO = medicionDAO;
+        this.alertaDAO = alertaDAO;
+        this.operacionDAO = operacionDAO;
+        this.usuarioAlertaDAO = usuarioAlertaDAO;
+}
 
     private int nextAlertaId() {
         return contadorAlertaId++;
@@ -50,8 +72,10 @@ public class CentralDatos {
     private static final double VIENTO_AMARILLA = 55.0;
     private static final double VIENTO_ROJA = 75.0;
 
-    public Map<String, Alerta> procesarTelemetria(Medicion medicion) {
-        return switch (medicion.getTipo()) {
+    public TelemetriaResultado procesarTelemetria(Medicion medicion) {
+        int medicionId = medicionDAO.guardar(medicion);
+
+        Map<String, Alerta> alertasPorRol = switch (medicion.getTipo()) {
             case TENSION -> verificarUmbralTension(medicion.getValor(), medicion.getIdOperacion());
             case PRESION -> verificarUmbralPresion(medicion);
             case OLEAJE -> verificarUmbralOleaje(medicion.getValor(), medicion.getIdOperacion());
@@ -61,6 +85,37 @@ public class CentralDatos {
             case VIENTO -> verificarUmbralViento(medicion.getValor(), medicion.getIdOperacion());
             case AMARRE -> verificarUmbralAmarre(medicion.getValor(), medicion.getIdOperacion());
         };
+
+        if (alertasPorRol.isEmpty()) {
+            return new TelemetriaResultado(medicionId, new ArrayList<>());
+        }
+
+        int operacionId = medicion.getIdOperacion();
+        OperacionDAO.OperacionInfo op = operacionDAO.buscarPorId(operacionId);
+        List<AlertaDAO.AlertaInfo> infos = new ArrayList<>();
+
+        for (Map.Entry<String, Alerta> entry : alertasPorRol.entrySet()) {
+            String rol = entry.getKey();
+            Alerta alerta = entry.getValue();
+            int alertaId = alertaDAO.guardar(alerta, operacionId, medicionId);
+
+            Integer usuarioId = switch (rol) {
+                case "OPERADOR_BUQUE"  -> op.getOperadorBuqueId();
+                case "OPERADOR_LANCHA" -> op.getOperadorLanchaId();
+                case "OPERADOR_PLANTA" -> op.getOperadorPlantaId();
+                default -> null;
+            };
+            if (usuarioId != null) {
+                usuarioAlertaDAO.registrarRecepcion(alertaId, usuarioId);
+            }
+
+            infos.add(new AlertaDAO.AlertaInfo(
+                alertaId, alerta.getTipoAlerta().toString(), alerta.getMensaje(),
+                operacionId, medicionId, LocalDateTime.now()
+            ));
+        }
+
+        return new TelemetriaResultado(medicionId, infos);
     }
 
     public void iniciarOperacion(Operacion operacion) {
@@ -324,23 +379,41 @@ public class CentralDatos {
     }
 
     private void actualizarPresionYVerificarDiscrepancia(Medicion medicion) {
-    int idOperacion = medicion.getIdOperacion();
+        int idOperacion = medicion.getIdOperacion();
 
-    if (medicion.getOrigen() == OrigenMedicion.MONOBOYA) {
-        ultimaPresionMonoboyaPorOperacion.put(idOperacion, medicion.getValor());
-    } else if (medicion.getOrigen() == OrigenMedicion.BUQUE) {
-        ultimaPresionBuquePorOperacion.put(idOperacion, medicion.getValor());
-    }
+        if (medicion.getOrigen() == OrigenMedicion.MONOBOYA) {
+            ultimaPresionMonoboyaPorOperacion.put(idOperacion, medicion.getValor());
+        } else if (medicion.getOrigen() == OrigenMedicion.BUQUE) {
+            ultimaPresionBuquePorOperacion.put(idOperacion, medicion.getValor());
+        }
 
-    Double presionMonoboya = ultimaPresionMonoboyaPorOperacion.get(idOperacion);
-    Double presionBuque = ultimaPresionBuquePorOperacion.get(idOperacion);
+        Double presionMonoboya = ultimaPresionMonoboyaPorOperacion.get(idOperacion);
+        Double presionBuque = ultimaPresionBuquePorOperacion.get(idOperacion);
 
-    if (presionMonoboya != null && presionBuque != null) {
-        double discrepancia = Math.abs(presionMonoboya - presionBuque);
-        if (discrepancia > PRESION_ROJA_DISCREPANCIA) {
-            System.out.println("[ALERTA CRITICA] Discrepancia de presión Monoboya/Buque (Operación "
-                    + idOperacion + "): " + discrepancia + " Pa (posible fuga en la línea)");
+        if (presionMonoboya != null && presionBuque != null) {
+            double discrepancia = Math.abs(presionMonoboya - presionBuque);
+            if (discrepancia > PRESION_ROJA_DISCREPANCIA) {
+                System.out.println("[ALERTA CRITICA] Discrepancia de presión Monoboya/Buque (Operación "
+                        + idOperacion + "): " + discrepancia + " Pa (posible fuga en la línea)");
+            }
         }
     }
-}
+
+    public java.util.Collection<Operacion> obtenerOperacionesActivas() {
+        return operacionesActivas.values();
+    }
+
+    public static class TelemetriaResultado {
+        private final int medicionId;
+        private final List<AlertaDAO.AlertaInfo> alertas;
+
+        public TelemetriaResultado(int medicionId, List<AlertaDAO.AlertaInfo> alertas) {
+            this.medicionId = medicionId;
+            this.alertas = alertas;
+        }
+
+        public int getMedicionId() { return medicionId; }
+        public List<AlertaDAO.AlertaInfo> getAlertas() { return alertas; }
+        public boolean tieneAlertas() { return !alertas.isEmpty(); }
+    }
 }

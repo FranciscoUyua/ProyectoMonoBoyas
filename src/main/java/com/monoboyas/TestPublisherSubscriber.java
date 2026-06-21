@@ -1,4 +1,4 @@
-package com.monoboyas;
+/* package com.monoboyas;
 
 import com.monoboyas.central.BrokerMQTT;
 import com.monoboyas.central.CentralDatos;
@@ -21,4 +21,4 @@ public class TestPublisherSubscriber {
         monoboya.recolectarYTransmitirDatos();
         //lo testie y funciono flama
     }
-}
+} */

@@ -6,7 +6,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
-import com.monoboyas.api.TelemetriaService;
 import com.monoboyas.central.CentralDatos;
 import com.monoboyas.equipamiento.Buque;
 import com.monoboyas.equipamiento.Monoboya;
@@ -44,8 +43,6 @@ public class TestTelemetria implements CommandLineRunner {
     private OperacionDAO operacionDAO;
     @Autowired
     private CentralDatos centralDatos;
-    @Autowired
-    private TelemetriaService telemetriaService;
 
     public static void main(String[] args) {
         SpringApplication.run(TestTelemetria.class, args);
@@ -99,7 +96,7 @@ public class TestTelemetria implements CommandLineRunner {
         Medicion medicion = new Medicion(sensorId, 950.0, "kN", Sensor.TipoSensor.AMARRE, OrigenMedicion.MONOBOYA,
                 operacionId);
 
-        TelemetriaService.TelemetriaResultado resultado = telemetriaService.procesarMedicion(medicion);
+        CentralDatos.TelemetriaResultado resultado = centralDatos.procesarTelemetria(medicion);
 
         System.out.println("\n=== Resultado ===");
         System.out.println("Medición guardada con ID: " + resultado.getMedicionId());

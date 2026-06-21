@@ -5,16 +5,23 @@ import java.util.List;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.monoboyas.central.BrokerMQTT;
 import com.monoboyas.equipamiento.Monoboya;
+import com.monoboyas.sensores.Sensor;
 
 @Repository
 public class MonoboyaDAO {
 
     private final JdbcTemplate jdbc;
+    private final SensorDAO sensorDAO;
+    private final BrokerMQTT broker;
 
-    public MonoboyaDAO(JdbcTemplate jdbc) {
+    public MonoboyaDAO(JdbcTemplate jdbc, SensorDAO sensorDAO, BrokerMQTT broker) {
         this.jdbc = jdbc;
+        this.sensorDAO = sensorDAO;
+        this.broker = broker;
     }
+
 
     // Guarda desde el objeto de dominio (sin operacion_activa_id ni planta_id)
     // Usa esta cuando ya tenés un objeto Monoboya armado en memoria.
@@ -76,16 +83,18 @@ public class MonoboyaDAO {
     }
 
     public Monoboya buscarPorId(int id) {
-        return jdbc.queryForObject(
+        List<Sensor> sensores = sensorDAO.cargarDominioPorMonoboya(id);
+
+        Monoboya monoboya = jdbc.queryForObject(
             "SELECT * FROM monoboyas WHERE id = ?",
-            (rs, rowNum) -> new Monoboya(
-                rs.getInt("id"),
-                0,    // capacidad no se persiste; sensores se cargan aparte si se necesitan
-                null, // operacion — se carga aparte si se necesita
-                null  // publisher — se asigna en runtime, no se persiste
-            ),
+            (rs, rowNum) -> new Monoboya(rs.getInt("id"), sensores.size(), null, broker),
             id
         );
+
+        for (Sensor sensor : sensores) {
+            monoboya.agregarSensor(sensor);
+        }
+        return monoboya;
     }
 
     // Devuelve el ID de la operación activa, o null si no hay ninguna

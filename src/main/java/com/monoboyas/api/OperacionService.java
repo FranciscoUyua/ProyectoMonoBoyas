@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.monoboyas.central.CentralDatos;
 import com.monoboyas.equipamiento.Buque;
+import com.monoboyas.equipamiento.Monoboya;
 import com.monoboyas.equipamiento.Planta;
 import com.monoboyas.operaciones.Operacion;
 import com.monoboyas.persistencia.BuqueDAO;
@@ -150,7 +151,9 @@ public class OperacionService implements CommandLineRunner {
         Operacion operacionDominio = new Operacion(op.getId(), buque, operadorBuque, planta);
 
         if (op.getMonoboyaId() != null) {
-            operacionDominio.asignarMonoboya(monoboyaDAO.buscarPorId(op.getMonoboyaId()));
+            Monoboya monoboya = monoboyaDAO.buscarPorId(op.getMonoboyaId());
+            monoboya.asignarOperacion(operacionDominio);
+            operacionDominio.asignarMonoboya(monoboya);
         }
         if (op.getOperadorLanchaId() != null) {
             operacionDominio.asignarOperadorLancha((OperadorLancha) usuarioDAO.buscarPorId(op.getOperadorLanchaId()));

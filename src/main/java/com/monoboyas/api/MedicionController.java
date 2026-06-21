@@ -1,25 +1,33 @@
 package com.monoboyas.api;
 
-import com.monoboyas.persistencia.MedicionDAO;
-import com.monoboyas.sensores.Medicion;
-import com.monoboyas.sensores.Sensor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.monoboyas.central.CentralDatos;
+import com.monoboyas.persistencia.MedicionDAO;
+import com.monoboyas.sensores.Medicion;
+import com.monoboyas.sensores.Sensor;
 
 @RestController
 @RequestMapping("/v1")
 public class MedicionController {
 
     private final MedicionDAO medicionDAO;
-    private final TelemetriaService telemetriaService;
+    private final CentralDatos centralDatos;
 
-    public MedicionController(MedicionDAO medicionDAO, TelemetriaService telemetriaService) {
+    public MedicionController(MedicionDAO medicionDAO, CentralDatos centralDatos) {
         this.medicionDAO = medicionDAO;
-        this.telemetriaService = telemetriaService;
+        this.centralDatos = centralDatos;
     }
 
     // GET /v1/operaciones/{id}/mediciones?sensorId=&desde=&hasta=
@@ -55,7 +63,7 @@ public ResponseEntity<?> ingestar(@RequestBody MedicionRequest body) {
             tipoSensor, origen, body.getIdOperacion()
         );
 
-        TelemetriaService.TelemetriaResultado resultado = telemetriaService.procesarMedicion(medicion);
+        CentralDatos.TelemetriaResultado resultado = centralDatos.procesarTelemetria(medicion);
 
         return ResponseEntity.status(201).body(Map.of(
             "medicionId", resultado.getMedicionId(),

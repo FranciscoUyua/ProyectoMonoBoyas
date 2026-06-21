@@ -1,19 +1,32 @@
 package com.monoboyas.persistencia;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.monoboyas.sensores.Anemometro;
+import com.monoboyas.sensores.Caudalimetro;
+import com.monoboyas.sensores.Correntometro;
+import com.monoboyas.sensores.Giroscopio;
+import com.monoboyas.sensores.ISensorDataProvider;
+import com.monoboyas.sensores.ProveedorRegistry;
 import com.monoboyas.sensores.Sensor;
+import com.monoboyas.sensores.SensorDeAmarre;
+import com.monoboyas.sensores.SensorDeOleaje;
+import com.monoboyas.sensores.SensorDePresion;
+import com.monoboyas.sensores.SensorDeTension;
 
 @Repository
 public class SensorDAO {
 
     private final JdbcTemplate jdbc;
+    private final ProveedorRegistry proveedores;
 
-    public SensorDAO(JdbcTemplate jdbc) {
+    public SensorDAO(JdbcTemplate jdbc, ProveedorRegistry proveedores) {
         this.jdbc = jdbc;
+        this.proveedores = proveedores;
     }
 
     /**
@@ -51,6 +64,31 @@ public class SensorDAO {
             ),
             id
         );
+    }
+
+    public List<Sensor> cargarDominioPorMonoboya(int monoboyaId) {
+        List<SensorInfo> infos = listarPorMonoboya(monoboyaId);
+        List<Sensor> sensores = new ArrayList<>();
+        for (SensorInfo info : infos) {
+            Sensor sensor = construirSensor(info);
+            if (sensor != null) sensores.add(sensor);
+        }
+        return sensores;
+    }
+
+    private Sensor construirSensor(SensorInfo info) {
+        ISensorDataProvider provider = proveedores.get(info.getTipo());
+        return switch (info.getTipo()) {
+            case "PRESION"     -> new SensorDePresion(info.getId(), provider);
+            case "AMARRE"      -> new SensorDeAmarre(info.getId(), provider);
+            case "OLEAJE"      -> new SensorDeOleaje(info.getId(), provider);
+            case "TENSION"     -> new SensorDeTension(info.getId(), provider);
+            case "VIENTO"      -> new Anemometro(info.getId(), provider);
+            case "CAUDAL"      -> new Caudalimetro(info.getId(), provider);
+            case "CORRIENTE"   -> new Correntometro(info.getId(), provider);
+            case "ORIENTACION" -> new Giroscopio(info.getId(), provider);
+            default -> null;
+        };
     }
 
     public List<SensorInfo> listarPorMonoboya(int monoboyaId) {

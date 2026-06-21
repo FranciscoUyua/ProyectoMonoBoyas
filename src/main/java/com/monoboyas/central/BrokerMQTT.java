@@ -1,8 +1,12 @@
 package com.monoboyas.central;
-import com.monoboyas.sensores.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Component;
+
+import com.monoboyas.sensores.Medicion;
+
+@Component
 public class BrokerMQTT implements Publisher {
 
     private List<Subscriber> subscribers = new ArrayList<>();

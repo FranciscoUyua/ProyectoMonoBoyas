@@ -1,4 +1,4 @@
-package com.monoboyas;
+/*package com.monoboyas;
 
 import com.monoboyas.equipamiento.Buque;
 import com.monoboyas.equipamiento.Monoboya;
@@ -78,4 +78,4 @@ public class TestFlujoSensores {
 
         System.out.println("--- EL BARCO SE HA DESCONECTADO ---");
     }
-}
+} */
