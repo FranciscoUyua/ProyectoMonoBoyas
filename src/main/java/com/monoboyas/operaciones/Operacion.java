@@ -55,8 +55,13 @@ public class Operacion {
         while (!buque.finalizoDescarga() && tipoOperacion != TipoOperacion.DETENIDA) {
             monoboya.recolectarYTransmitirDatos();
             buque.recolectarYTransmitirDatos();
-            // Thread.sleep(500);
-
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                System.out.println("[OPERACIÓN " + id + "] El hilo fue interrumpido durante la espera.");
+                break;
+            }
         }
     }
 
