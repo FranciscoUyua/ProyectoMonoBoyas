@@ -1,4 +1,5 @@
 package com.monoboyas.sensores;
+
 import com.monoboyas.sensores.ISensorDataProvider;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -28,12 +29,14 @@ public class ArchivoDataProvider implements ISensorDataProvider {
             throw new Exception("Archivo no encontrado o vacío: " + rutaArchivo);
         }
 
-        int indice = Math.min(indiceActual, lineas.size() - 1);
-        String linea = lineas.get(indice).trim();
+        String linea = lineas.get(indiceActual).trim();
         double valor = Double.parseDouble(linea);
-        System.out.println("[PROVEEDOR ARCHIVO] " + rutaArchivo + " -> línea " + (indice + 1) + " = " + valor);
-        if (indiceActual < lineas.size() - 1) {
-            indiceActual++;
+        System.out.println("[PROVEEDOR ARCHIVO] " + rutaArchivo + " -> línea " + (indiceActual + 1) + " = " + valor);
+
+        // Avanzar al siguiente, y si llegamos al final, volver a cero (Loop infinito)
+        indiceActual++;
+        if (indiceActual >= lineas.size()) {
+            indiceActual = 0;
         }
 
         return valor;
