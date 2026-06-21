@@ -17,8 +17,8 @@ public class CentralDatos {
     }
 
     private Map<Integer, Operacion> operacionesActivas = new HashMap<>();
-    private Double ultimaPresionMonoboya;
-    private Double ultimaPresionBuque;
+    private Map<Integer, Double> ultimaPresionMonoboyaPorOperacion = new HashMap<>();
+    private Map<Integer, Double> ultimaPresionBuquePorOperacion = new HashMap<>();
     private int contadorAlertaId = 1;
 
     private int nextAlertaId() {
@@ -69,7 +69,9 @@ public class CentralDatos {
 
     public void finalizarOperacion(int idOperacion) {
         operacionesActivas.remove(idOperacion);
-    }
+        ultimaPresionMonoboyaPorOperacion.remove(idOperacion);
+        ultimaPresionBuquePorOperacion.remove(idOperacion);
+}
 
     private Map<String, Alerta> verificarUmbralAmarre(double valor, int idoperacion) {
         Map<String, Alerta> alertas = new HashMap<>();
@@ -322,18 +324,23 @@ public class CentralDatos {
     }
 
     private void actualizarPresionYVerificarDiscrepancia(Medicion medicion) {
-        if (medicion.getOrigen() == OrigenMedicion.MONOBOYA) {
-            ultimaPresionMonoboya = medicion.getValor();
-        } else if (medicion.getOrigen() == OrigenMedicion.BUQUE) {
-            ultimaPresionBuque = medicion.getValor();
-        }
+    int idOperacion = medicion.getIdOperacion();
 
-        if (ultimaPresionMonoboya != null && ultimaPresionBuque != null) {
-            double discrepancia = Math.abs(ultimaPresionMonoboya - ultimaPresionBuque);
-            if (discrepancia > PRESION_ROJA_DISCREPANCIA) {
-                System.out.println("[ALERTA CRITICA] Discrepancia de presión Monoboya/Buque: "
-                        + discrepancia + " Pa (posible fuga en la línea)");
-            }
+    if (medicion.getOrigen() == OrigenMedicion.MONOBOYA) {
+        ultimaPresionMonoboyaPorOperacion.put(idOperacion, medicion.getValor());
+    } else if (medicion.getOrigen() == OrigenMedicion.BUQUE) {
+        ultimaPresionBuquePorOperacion.put(idOperacion, medicion.getValor());
+    }
+
+    Double presionMonoboya = ultimaPresionMonoboyaPorOperacion.get(idOperacion);
+    Double presionBuque = ultimaPresionBuquePorOperacion.get(idOperacion);
+
+    if (presionMonoboya != null && presionBuque != null) {
+        double discrepancia = Math.abs(presionMonoboya - presionBuque);
+        if (discrepancia > PRESION_ROJA_DISCREPANCIA) {
+            System.out.println("[ALERTA CRITICA] Discrepancia de presión Monoboya/Buque (Operación "
+                    + idOperacion + "): " + discrepancia + " Pa (posible fuga en la línea)");
         }
     }
+}
 }
