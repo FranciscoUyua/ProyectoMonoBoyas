@@ -2,6 +2,7 @@ package com.monoboyas.api;
 
 import java.util.List;
 
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 
 import com.monoboyas.central.CentralDatos;
@@ -18,8 +19,10 @@ import com.monoboyas.usuarios.OperadorLancha;
 import com.monoboyas.usuarios.OperadorPlanta;
 import com.monoboyas.usuarios.Usuario;
 
+
+
 @Service
-public class OperacionService {
+public class OperacionService implements CommandLineRunner {
 
     private static final String PLANIFICADA = "PLANIFICADA";
     private static final String PREPARADA   = "PREPARADA";
@@ -42,6 +45,14 @@ public class OperacionService {
         this.buqueDAO     = buqueDAO;
         this.plantaDAO    = plantaDAO;
         this.centralDatos = centralDatos;
+    }
+
+    @Override
+    public void run(String... args) {
+        List<OperacionDAO.OperacionInfo> activas = operacionDAO.listarPorEstado(ACTIVA);
+        for (OperacionDAO.OperacionInfo op : activas) {
+            registrarEnCentralDatos(op);
+        }
     }
 
 
