@@ -36,15 +36,14 @@ export type Sensor = {
 
 export type Operacion = {
   id: number;
-  estado: 'ACTIVA' | 'FINALIZADA' | 'CANCELADA';
+  estado: 'PLANIFICADA' | 'PREPARADA' | 'ACTIVA' | 'PAUSADA' | 'FINALIZADA';
   tipo: 'CARGA' | 'DESCARGA';
-  monoboyaId: number;
-  buqueNroIMO: number;
-  operadorLanchaDni: number;
-  operadorBuqueDni: number;
-  operadorPlantaDni: number;
-  iniciadaEn: string;
-  finalizadaEn: string | null;
+  monoboyaId: number | null;
+  buqueNroIMO: number | null;
+  operadorLanchaId: number | null;
+  operadorBuqueId: number | null;
+  operadorPlantaId: number | null;
+  plantaId: number | null;
 };
 
 export type Medicion = {

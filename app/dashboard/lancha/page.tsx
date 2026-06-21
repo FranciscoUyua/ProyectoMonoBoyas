@@ -1,38 +1,39 @@
 import { redirect } from 'next/navigation';
 import { getUsuarioActual } from '@/app/lib/actions';
-import {
-  fetchOperacion, fetchAlertasDeOperacion, fetchSensores,
-  fetchMonoboyas, fetchBuques,
-} from '@/app/lib/data';
-import IniciarOperacion from '@/app/ui/lancha/IniciarOperacion';
+import { fetchOperacionAsignada, fetchAlertasDeOperacion, fetchSensores } from '@/app/lib/data';
+import EsperandoAsignacion from '@/app/ui/lancha/EsperandoAsignacion';
+import ConfirmarInicio from '@/app/ui/lancha/ConfirmarInicio';
 import LanchaDashboard from '@/app/ui/lancha/LanchaDashboard';
 
 export default async function LanchaPage() {
   const usuario = await getUsuarioActual();
   if (!usuario) redirect('/');
 
-  // Sin operación → formulario para iniciarla
-  if (!usuario.operacionId) {
-    const [monoboyas, buques] = await Promise.all([
-      fetchMonoboyas({ estado: 'DISPONIBLE' }),
-      fetchBuques(),
-    ]);
-    return <IniciarOperacion usuario={usuario} monoboyas={monoboyas} buques={buques} />;
+  const operacion = await fetchOperacionAsignada(usuario.dni);
+
+  if (!operacion) {
+    return <EsperandoAsignacion nombreUsuario={usuario.nombre} />;
   }
 
-  // Con operación → monitoreo
-  const operacion = await fetchOperacion(usuario.operacionId);
-  const [alertas, sensores] = await Promise.all([
-    fetchAlertasDeOperacion(operacion.id),
-    fetchSensores({ monoboyaId: operacion.monoboyaId, activo: true }),
-  ]);
+  if (operacion.estado === 'PREPARADA') {
+    return <ConfirmarInicio operacion={operacion} operadorLanchaDni={usuario.dni} nombreUsuario={usuario.nombre} />;
+  }
 
-  return (
-    <LanchaDashboard
-      operacion={operacion}
-      sensores={sensores}
-      alertasIniciales={alertas}
-      nombreUsuario={usuario.nombre}
-    />
-  );
+  if (operacion.estado === 'ACTIVA' || operacion.estado === 'PAUSADA') {
+    const [alertas, sensores] = await Promise.all([
+      fetchAlertasDeOperacion(operacion.id),
+      fetchSensores({ monoboyaId: operacion.monoboyaId ?? undefined, activo: true }),
+    ]);
+    return (
+      <LanchaDashboard
+        operacion={operacion}
+        sensores={sensores}
+        alertasIniciales={alertas}
+        nombreUsuario={usuario.nombre}
+      />
+    );
+  }
+
+  // PLANIFICADA aún sin preparar, o cualquier estado raro
+  return <EsperandoAsignacion nombreUsuario={usuario.nombre} />;
 }

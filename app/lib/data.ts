@@ -87,10 +87,17 @@ export async function fetchMedicionesDeOperacion(
   return apiFetch<Paginated<Medicion>>(`/operaciones/${operacionId}/mediciones${qs}`);
 }
 
-export async function fetchAlertasDeOperacion(
-  operacionId: number
-): Promise<Alerta[]> {
-  return apiFetch<Alerta[]>(`/operaciones/${operacionId}/alertas`);
+export async function fetchAlertasDeOperacion(operacionId: number): Promise<Alerta[]> {
+  const { data } = await fetchAlertas({ operacionId });
+  return data;
+}
+
+export async function fetchOpcionesPlanificacion(): Promise<{
+  buques: { nroIMO: number; nombre: string; capacidad: number }[];
+  plantas: { id: number; nombre: string }[];
+  operadoresBuque: { dni: number; nombre: string }[];
+}> {
+  return apiFetch('/operaciones/opciones-planificacion');
 }
 
 // MEDICIONES 

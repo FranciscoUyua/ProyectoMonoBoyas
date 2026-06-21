@@ -1,9 +1,9 @@
 import { redirect } from 'next/navigation';
 import { getUsuarioActual } from '@/app/lib/actions';
 import { fetchOperacionAsignada } from '@/app/lib/data';
-import PlantaDashboard from '@/app/ui/planta/PlantaDashboard';
+import BuqueDashboard from '@/app/ui/buque/BuqueDashboard';
 
-export default async function PlantaPage() {
+export default async function BuquePage() {
   const usuario = await getUsuarioActual();
   if (!usuario) redirect('/');
 
@@ -14,17 +14,18 @@ export default async function PlantaPage() {
       <section className="p-8 max-w-lg">
         <h1 className="text-lg font-bold">Hola, {usuario.nombre}</h1>
         <p className="text-sm text-[var(--color-text-muted)] mt-2">
-          No tenés ninguna operación activa asignada. Cuando se inicie una operación
-          donde estés designado como operador de planta, la telemetría va a aparecer acá.
+          No tenés ninguna operación activa asignada. Cuando se inicie una operación donde
+          estés designado como operador de buque, los controles y la telemetría aparecen acá.
         </p>
       </section>
     );
   }
 
   return (
-    <PlantaDashboard
+    <BuqueDashboard
       operacionId={operacion.id}
       estadoInicial={operacion.estado as 'ACTIVA' | 'PAUSADA'}
+      operadorBuqueDni={usuario.dni}
       nombre={usuario.nombre}
     />
   );

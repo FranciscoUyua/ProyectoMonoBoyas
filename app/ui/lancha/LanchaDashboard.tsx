@@ -111,7 +111,7 @@ export default function LanchaDashboard({
             Operación #{operacion.id}
           </span>
           <p className="font-bold mt-0.5">{operacion.tipo} · Monoboya #{operacion.monoboyaId}</p>
-          <p className="text-xs font-mono text-[var(--color-text-muted)]">Desde {fmtFecha(operacion.iniciadaEn)}</p>
+          <p className="text-xs font-mono text-[var(--color-text-muted)]">Buque IMO {operacion.buqueNroIMO ?? '—'}</p>
         </div>
         <span className="text-xs font-bold px-3 py-1 rounded-full"
           style={{ background: 'rgba(34,197,94,0.12)', color: 'var(--color-alerta-verde)' }}>
