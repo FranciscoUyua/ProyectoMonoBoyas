@@ -30,6 +30,11 @@ export async function fetchMonoboya(id: number): Promise<Monoboya> {
   return apiFetch<Monoboya>(`/monoboyas/${id}`);
 }
 
+export async function fetchOperacionAsignada(dni: number): Promise<Operacion | null> {
+  const lista = await apiFetch<Operacion[]>(`/operaciones/mis-operaciones?dni=${dni}`);
+  return lista[0] ?? null;
+}
+
 //  BUQUES
 export async function fetchBuques(): Promise<Buque[]> {
   return apiFetch<Buque[]>('/buques');
