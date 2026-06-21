@@ -4,17 +4,18 @@ import { useState, useEffect } from 'react';
 import type { Operacion, Alerta, Medicion, Sensor } from '@/app/lib/definitions';
 import { useAlertas } from '@/app/ui/alertas/AlertasProvider';
 
-// Tipos de sensor que ve la lancha
-const TIPOS_LANCHA = ['ANEMOMETRO', 'CORRENTOMETRO', 'SENSOR_OLEAJE', 'SENSOR_TENSION', 'SENSOR_DISTANCIA'] as const;
+// Tipos de sensor reales del back (Sensor.TipoSensor) que le interesan a la lancha
+const TIPOS_LANCHA = ['VIENTO', 'CORRIENTE', 'OLEAJE', 'AMARRE', 'ORIENTACION'] as const;
 const LABELS: Record<string, string> = {
-  ANEMOMETRO:      'Viento',
-  CORRENTOMETRO:   'Corriente',
-  SENSOR_OLEAJE:   'Oleaje',
-  SENSOR_TENSION:  'Tensión de amarre',
-  SENSOR_DISTANCIA:'Distancia',
+  VIENTO: 'Viento',
+  CORRIENTE: 'Corriente',
+  OLEAJE: 'Oleaje',
+  AMARRE: 'Tensión de amarre',
+  ORIENTACION: 'Orientación',
 };
 
-function fmtFecha(iso: string) {
+function fmtFecha(iso: string | null | undefined) {
+  if (!iso) return '—';
   return new Date(iso).toLocaleString('es-AR', {
     day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false,
   });
@@ -28,22 +29,23 @@ export default function LanchaDashboard({
   alertasIniciales: Alerta[];
   nombreUsuario: string;
 }) {
-  const [mediciones, setMediciones] = useState<Record<string, Medicion>>({});
+  const [mediciones, setMediciones] = useState<Record<number, Medicion>>({});
   const [alertas, setAlertas] = useState<Alerta[]>(alertasIniciales);
   const [hora, setHora] = useState<string | null>(null);
   const { notificar } = useAlertas();
 
-  // Polling de mediciones cada 2s
+  // Polling de mediciones cada 2s — reusa la ruta que ya funciona en TelemetriaEnVivo
   useEffect(() => {
     let activo = true;
     async function traer() {
       try {
-        const res = await fetch(`/api/mediciones?operacionId=${operacion.id}`, { cache: 'no-store' });
+        const res = await fetch(`/api/operaciones/${operacion.id}/mediciones`, { cache: 'no-store' });
         if (!res.ok) return;
         const data: Medicion[] = await res.json();
-        if (!activo) return;
+        if (!activo || !Array.isArray(data)) return;
         setHora(new Date().toLocaleTimeString('es-AR', { hour12: false }));
-        const mapa: Record<string, Medicion> = {};
+        // último valor por sensor (las mediciones vienen ASC por timestamp)
+        const mapa: Record<number, Medicion> = {};
         data.forEach((m) => { mapa[m.sensorId] = m; });
         setMediciones(mapa);
       } catch { /* mantener último valor */ }
@@ -61,25 +63,28 @@ export default function LanchaDashboard({
         const res = await fetch(`/api/alertas?operacionId=${operacion.id}`, { cache: 'no-store' });
         if (!res.ok) return;
         const data: Alerta[] = await res.json();
-        if (!activo) return;
-        const idsActuales = new Set(alertas.map((a) => a.id));
-        data.forEach((a) => {
-          if (!idsActuales.has(a.id) && a.tipo === 'CRITICA' && a.estado === 'PENDIENTE') {
-            notificar({
-              nivel: 'rojo',
-              sensorLabel: a.sensorId ?? 'Sistema',
-              valor: a.valorMedicion ?? '—',
-              unidad: '',
-              mensaje: a.mensaje,
-            });
-          }
+        if (!activo || !Array.isArray(data)) return;
+        setAlertas((prev) => {
+          const idsPrevios = new Set(prev.map((a) => a.id));
+          data.forEach((a) => {
+            if (!idsPrevios.has(a.id) && a.tipo === 'CRITICA' && a.estado === 'PENDIENTE') {
+              notificar({
+                nivel: 'rojo',
+                sensorLabel: a.sensorId != null ? String(a.sensorId) : 'Sistema',
+                valor: a.valorMedicion ?? '—',
+                unidad: '',
+                mensaje: a.mensaje,
+              });
+            }
+          });
+          return data;
         });
-        setAlertas(data);
       } catch { /* sin cambios */ }
     }
+    traer();
     const t = setInterval(traer, 5000);
     return () => { activo = false; clearInterval(t); };
-  }, [operacion.id, alertas, notificar]);
+  }, [operacion.id, notificar]);
 
   // Mapear cada tipo de la lancha a su sensor (de la monoboya) y su última medición
   const lecturas = TIPOS_LANCHA.map((tipo) => {
@@ -92,7 +97,6 @@ export default function LanchaDashboard({
 
   return (
     <section className="p-8 max-w-3xl flex flex-col gap-6">
-      {/* Encabezado */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h1 className="text-lg font-bold tracking-tight">Panel de Lancha</h1>
@@ -104,7 +108,6 @@ export default function LanchaDashboard({
         </div>
       </div>
 
-      {/* Estado de la operación */}
       <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-4 flex items-center justify-between flex-wrap gap-3">
         <div>
           <span className="text-[10px] uppercase tracking-widest font-bold text-[var(--color-text-faint)]">
@@ -119,7 +122,6 @@ export default function LanchaDashboard({
         </span>
       </div>
 
-      {/* Sensores de maniobra — números grandes */}
       <div>
         <div className="flex items-center gap-3 mb-3">
           <h2 className="text-sm font-bold">Condiciones de maniobra</h2>
@@ -140,7 +142,6 @@ export default function LanchaDashboard({
         </div>
       </div>
 
-      {/* Alertas críticas */}
       <div>
         <div className="flex items-center gap-3 mb-3">
           <h2 className="text-sm font-bold">Alertas críticas</h2>

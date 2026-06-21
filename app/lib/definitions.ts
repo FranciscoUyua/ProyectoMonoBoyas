@@ -24,14 +24,11 @@ export type Buque = {
 };
 
 export type Sensor = {
-  id: string;
-  tipo: 'ANEMOMETRO' | 'CAUDALIMETRO' | 'CORRENTOMETRO' | 'GIROSCOPIO'
-      | 'SENSOR_DISTANCIA' | 'SENSOR_OLEAJE' | 'SENSOR_PRESION' | 'SENSOR_TENSION';
-  categoria: 'AMBIENTAL' | 'MECANICA' | 'OPERATIVO';
+  id: number;
+  tipo: 'TENSION' | 'PRESION' | 'OLEAJE' | 'ORIENTACION' | 'CORRIENTE' | 'CAUDAL' | 'VIENTO' | 'AMARRE';
   unidad: string;
   activo: boolean;
-  monoboyaId: number | null;
-  buqueNroIMO: number | null;
+  monoboyaId: number ;
 };
 
 export type Operacion = {
@@ -48,7 +45,7 @@ export type Operacion = {
 
 export type Medicion = {
   id: number;
-  sensorId: string;
+  sensorId: number;
   valor: number;
   unidad: string;
   timestamp: string;

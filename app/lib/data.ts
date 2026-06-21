@@ -70,6 +70,8 @@ export async function fetchOperaciones(filtros?: {
   return apiFetch<Paginated<Operacion>>(`/operaciones${qs}`);
 }
 
+
+
 export async function fetchOperacion(id: number): Promise<Operacion> {
   return apiFetch<Operacion>(`/operaciones/${id}`);
 }
@@ -96,6 +98,7 @@ export async function fetchOpcionesPlanificacion(): Promise<{
   buques: { nroIMO: number; nombre: string; capacidad: number }[];
   plantas: { id: number; nombre: string }[];
   operadoresBuque: { dni: number; nombre: string }[];
+  operadoresLancha: { dni: number; nombre: string }[];
 }> {
   return apiFetch('/operaciones/opciones-planificacion');
 }

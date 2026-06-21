@@ -5,18 +5,20 @@ import { useRouter } from 'next/navigation';
 import type { Operacion, Monoboya } from '@/app/lib/definitions';
 
 export default function PrepararOperacionForm({
-  operaciones, monoboyas, usuario,
+  operaciones, monoboyas, operadoresLancha, usuario,
 }: {
   operaciones: Operacion[];
   monoboyas: Monoboya[];
+  operadoresLancha: { dni: number; nombre: string }[];
   usuario: { dni: number; nombre: string };
 }) {
   const router = useRouter();
   const [operacionId, setOperacionId] = useState<number | ''>(operaciones[0]?.id ?? '');
   const [monoboyaId, setMonoboyaId] = useState<number | ''>('');
-  const [operadorLanchaDni, setOperadorLanchaDni] = useState('');
+  const [operadorLanchaDni, setOperadorLanchaDni] = useState<number | ''>('');
   const [enviando, setEnviando] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
 
   const submit = async () => {
     setError(null);
@@ -73,9 +75,11 @@ export default function PrepararOperacionForm({
           </select>
         </div>
         <div>
-          <label className={labelCls}>DNI operador de lancha</label>
-          <input type="number" className={fieldCls} value={operadorLanchaDni}
-            onChange={(e) => setOperadorLanchaDni(e.target.value)} placeholder="Ej. 41234567" />
+          <label className={labelCls}>Operador de lancha</label>
+          <select className={fieldCls} value={operadorLanchaDni} onChange={(e) => setOperadorLanchaDni(Number(e.target.value))}>
+            <option value="">Seleccioná un operador…</option>
+            {operadoresLancha.map((o) => <option key={o.dni} value={o.dni}>{o.nombre} · DNI {o.dni}</option>)}
+          </select>
         </div>
         <div>
           <label className={labelCls}>Operador de planta (vos)</label>
