@@ -22,6 +22,17 @@ public class MedicionDAO {
         this.jdbc = jdbc;
     }
 
+    public List<MedicionInfo> listarRecientePorOperacion(int operacionId, int limite) {
+    return jdbc.query(
+        "SELECT * FROM (SELECT * FROM mediciones WHERE operacion_id = ? " +
+        "ORDER BY timestamp DESC LIMIT ?) t ORDER BY timestamp ASC",
+        (rs, n) -> new MedicionInfo(
+            rs.getInt("id"), rs.getInt("sensor_id"), rs.getInt("operacion_id"),
+            rs.getDouble("valor"), rs.getString("unidad"),
+            rs.getTimestamp("timestamp").toLocalDateTime()),
+        operacionId, limite);
+}
+
     /**
      * Guarda una medición individual y devuelve el ID generado por la BD.
      */
@@ -135,6 +146,7 @@ public class MedicionDAO {
         ),
         operacionId, sensorId
     );
+    
 }
 
     /**
