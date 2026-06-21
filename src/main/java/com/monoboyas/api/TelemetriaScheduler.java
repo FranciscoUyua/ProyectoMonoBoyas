@@ -65,11 +65,11 @@ public class TelemetriaScheduler {
                         ultimosValores.put(sensor.getTipo(), valor); // Guardar caché
                     } catch (Exception e) {
                         System.err.println("Error leyendo " + sensor.getTipo() + ": " + e.getMessage());
-                        // Si falla la API o se acaba el archivo, usar el último valor o fallback
-                        valor = ultimosValores.getOrDefault(sensor.getTipo(), generarValorSimulado(sensor.getTipo()));
+                        // Si falla la API y no hay caché, mandamos 0.0
+                        valor = ultimosValores.getOrDefault(sensor.getTipo(), 0.0);
                     }
                 } else {
-                    valor = generarValorSimulado(sensor.getTipo());
+                    valor = 0.0;
                 }
 
                 Sensor.TipoSensor tipo = Sensor.TipoSensor.valueOf(sensor.getTipo());
@@ -83,15 +83,5 @@ public class TelemetriaScheduler {
         }
     }
 
-    private double generarValorSimulado(String tipo) {
-        return switch (tipo) {
-            case "PRESION" -> 8.5 + random.nextDouble() * 3; // 8.5 - 11.5 bar
-            case "VIENTO" -> 12 + random.nextDouble() * 15; // 12 - 27 kn
-            case "OLEAJE" -> 0.8 + random.nextDouble() * 1.5; // 0.8 - 2.3 m
-            case "CORRIENTE" -> 0.8 + random.nextDouble() * 1.8; // 0.8 - 2.6 kn
-            case "CAUDAL" -> 900 + random.nextDouble() * 400; // 900 - 1300 m3/h
-            case "AMARRE" -> 35 + random.nextDouble() * 30; // 35 - 65 t
-            default -> 50 + random.nextDouble() * 50;
-        };
-    }
+
 }
