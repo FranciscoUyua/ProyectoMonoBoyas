@@ -175,12 +175,7 @@ public class OperacionController {
                         "nombre", u.getNombre()))
                 .collect(Collectors.toList());
 
-        return Map.of(
-                "buques", buques,
-                "plantas", plantas,
-                "operadoresBuque", operadoresBuque);
-
-        javaList<Map<String, Object>> operadoresLancha = usuarioDAO.listarPorRol("OPERADOR_LANCHA")
+        List<Map<String, Object>> operadoresLancha = usuarioDAO.listarPorRol("OPERADOR_LANCHA")
                 .stream()
                 .map(u -> Map.<String, Object>of(
                         "dni", u.getDni(),

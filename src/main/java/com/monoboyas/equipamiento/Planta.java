@@ -12,7 +12,7 @@ import com.monoboyas.usuarios.Usuario;
 public class Planta {
     protected String nombre;
     protected int idPlanta;
-    protected int capacidadMaximaMonoboyas;
+    protected final int capacidadMaximaMonoboyas = 3;
     protected int cantidadActualMonoboyas;
     protected OperadorPlanta[] operadorPlanta;
     protected CentralDatos centralDatos;
