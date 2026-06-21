@@ -88,6 +88,10 @@ public class Buque {
         this.transmisorPresion = transmisorPresion;
     }
 
+    public void setOperacion(Operacion operacion) {
+        this.operacion = operacion;
+    }
+
     public void IniciarTransferencia() {
 
     }

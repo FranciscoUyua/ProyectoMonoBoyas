@@ -1,4 +1,4 @@
-package com.monoboyas;
+/* package com.monoboyas;
 
 import java.util.List;
 
@@ -100,7 +100,7 @@ public class TestPersistencia implements CommandLineRunner {
         OperadorLancha opLancha = new OperadorLancha(1, "Juan (Lancha)", "123", 11111111);
         OperadorBuque opBuque = new OperadorBuque(2, "Capitán Smith", "456", 22222222);
         OperadorPlanta opPlanta = new OperadorPlanta(3, "Pedro (Sala Control)", "789", 33333333);
-        Administrador admin = new Administrador(4, "Admin Sistema", "admin", 99999999);
+        Administrador admin = new Administrador(4, "Admin Sistema", "admin", 99999999, null);
 
         usuarioDAO.guardar(opLancha);
         usuarioDAO.guardar(opBuque);
@@ -152,3 +152,5 @@ public class TestPersistencia implements CommandLineRunner {
         }
     }
 }
+
+*/

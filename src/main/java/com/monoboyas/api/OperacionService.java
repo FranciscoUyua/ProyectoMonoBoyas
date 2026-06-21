@@ -20,31 +20,29 @@ import com.monoboyas.usuarios.OperadorLancha;
 import com.monoboyas.usuarios.OperadorPlanta;
 import com.monoboyas.usuarios.Usuario;
 
-
-
 @Service
 public class OperacionService implements CommandLineRunner {
 
     private static final String PLANIFICADA = "PLANIFICADA";
-    private static final String PREPARADA   = "PREPARADA";
-    private static final String ACTIVA      = "ACTIVA";   // antes EN_CURSO
-    private static final String PAUSADA     = "PAUSADA";  // antes DETENIDA
-    private static final String FINALIZADA  = "FINALIZADA";
+    private static final String PREPARADA = "PREPARADA";
+    private static final String ACTIVA = "ACTIVA"; // antes EN_CURSO
+    private static final String PAUSADA = "PAUSADA"; // antes DETENIDA
+    private static final String FINALIZADA = "FINALIZADA";
 
     private final OperacionDAO operacionDAO;
-    private final MonoboyaDAO  monoboyaDAO;
-    private final UsuarioDAO   usuarioDAO;
+    private final MonoboyaDAO monoboyaDAO;
+    private final UsuarioDAO usuarioDAO;
     private final BuqueDAO buqueDAO;
     private final PlantaDAO plantaDAO;
     private final CentralDatos centralDatos;
 
     public OperacionService(OperacionDAO operacionDAO, MonoboyaDAO monoboyaDAO, UsuarioDAO usuarioDAO,
-                            BuqueDAO buqueDAO, PlantaDAO plantaDAO, CentralDatos centralDatos) {
+            BuqueDAO buqueDAO, PlantaDAO plantaDAO, CentralDatos centralDatos) {
         this.operacionDAO = operacionDAO;
-        this.monoboyaDAO  = monoboyaDAO;
-        this.usuarioDAO   = usuarioDAO;
-        this.buqueDAO     = buqueDAO;
-        this.plantaDAO    = plantaDAO;
+        this.monoboyaDAO = monoboyaDAO;
+        this.usuarioDAO = usuarioDAO;
+        this.buqueDAO = buqueDAO;
+        this.plantaDAO = plantaDAO;
         this.centralDatos = centralDatos;
     }
 
@@ -56,18 +54,17 @@ public class OperacionService implements CommandLineRunner {
         }
     }
 
-
     // ── TRANSICIONES DE ESTADO ───────────────────────────────────────────
 
     public OperacionDAO.OperacionInfo planificar(int buqueNroIMO, int plantaId, String tipo) {
-    Usuario operadorBuque = usuarioDAO.primerOperadorBuqueDisponible()
-        .orElseThrow(() -> new IllegalStateException("No hay operadores de buque disponibles"));
-    int id = operacionDAO.crearPlanificada(buqueNroIMO, plantaId, tipo, operadorBuque.getId());
-    return operacionDAO.buscarPorId(id);
+        Usuario operadorBuque = usuarioDAO.primerOperadorBuqueDisponible()
+                .orElseThrow(() -> new IllegalStateException("No hay operadores de buque disponibles"));
+        int id = operacionDAO.crearPlanificada(buqueNroIMO, plantaId, tipo, operadorBuque.getId());
+        return operacionDAO.buscarPorId(id);
     }
 
     public OperacionDAO.OperacionInfo preparar(int operacionId, int monoboyaId,
-                                               int operadorPlantaDni, int operadorLanchaDni) {
+            int operadorPlantaDni, int operadorLanchaDni) {
         OperacionDAO.OperacionInfo op = operacionDAO.buscarPorId(operacionId);
         requireEstado(op, PLANIFICADA, "preparar");
 
@@ -87,10 +84,10 @@ public class OperacionService implements CommandLineRunner {
         validarYObtenerOperador(operadorLanchaDni, "OPERADOR_LANCHA");
 
         boolean monoboyaOcupada = operacionDAO.listarPorEstado(ACTIVA).stream()
-            .anyMatch(o -> op.getMonoboyaId() != null && op.getMonoboyaId().equals(o.getMonoboyaId()));
+                .anyMatch(o -> op.getMonoboyaId() != null && op.getMonoboyaId().equals(o.getMonoboyaId()));
         if (monoboyaOcupada) {
             throw new IllegalStateException(
-                "La monoboya " + op.getMonoboyaId() + " ya tiene una operación ACTIVA");
+                    "La monoboya " + op.getMonoboyaId() + " ya tiene una operación ACTIVA");
         }
 
         operacionDAO.actualizarEstado(operacionId, ACTIVA);
@@ -122,11 +119,11 @@ public class OperacionService implements CommandLineRunner {
         OperacionDAO.OperacionInfo op = operacionDAO.buscarPorId(operacionId);
         if (FINALIZADA.equals(op.getEstado())) {
             throw new IllegalStateException(
-                "La operación " + operacionId + " ya está FINALIZADA y no puede modificarse");
+                    "La operación " + operacionId + " ya está FINALIZADA y no puede modificarse");
         }
         if (!ACTIVA.equals(op.getEstado()) && !PAUSADA.equals(op.getEstado())) {
             throw new IllegalStateException(
-                "Solo se puede finalizar una operación ACTIVA o PAUSADA. Estado actual: " + op.getEstado());
+                    "Solo se puede finalizar una operación ACTIVA o PAUSADA. Estado actual: " + op.getEstado());
         }
         operacionDAO.actualizarEstado(operacionId, FINALIZADA);
         if (op.getMonoboyaId() != null) {
@@ -140,12 +137,13 @@ public class OperacionService implements CommandLineRunner {
     private void registrarEnCentralDatos(OperacionDAO.OperacionInfo op) {
         Buque buque = (op.getBuqueNroIMO() != null) ? buqueDAO.buscarPorNroIMO(op.getBuqueNroIMO()) : null;
         OperadorBuque operadorBuque = (op.getOperadorBuqueId() != null)
-            ? (OperadorBuque) usuarioDAO.buscarPorId(op.getOperadorBuqueId()) : null;
+                ? (OperadorBuque) usuarioDAO.buscarPorId(op.getOperadorBuqueId())
+                : null;
 
         Planta planta = null;
         if (op.getPlantaId() != null) {
             PlantaDAO.PlantaInfo info = plantaDAO.buscarPorId(op.getPlantaId());
-            planta = new Planta(info.getNombre(), info.getId());
+            planta = new Planta(info.getNombre(), info.getId(), centralDatos);
         }
 
         Operacion operacionDominio = new Operacion(op.getId(), buque, operadorBuque, planta);
@@ -185,8 +183,8 @@ public class OperacionService implements CommandLineRunner {
         Usuario usuario = usuarioDAO.buscarPorDni(dni);
         if (!rolEsperado.equals(usuario.getRol())) {
             throw new IllegalArgumentException(
-                "El usuario con DNI " + dni + " tiene rol " + usuario.getRol() +
-                ", se requiere " + rolEsperado);
+                    "El usuario con DNI " + dni + " tiene rol " + usuario.getRol() +
+                            ", se requiere " + rolEsperado);
         }
         return usuario;
     }
@@ -194,12 +192,12 @@ public class OperacionService implements CommandLineRunner {
     private void requireEstado(OperacionDAO.OperacionInfo op, String requerido, String accion) {
         if (FINALIZADA.equals(op.getEstado())) {
             throw new IllegalStateException(
-                "La operación " + op.getId() + " ya está FINALIZADA y no puede modificarse");
+                    "La operación " + op.getId() + " ya está FINALIZADA y no puede modificarse");
         }
         if (!requerido.equals(op.getEstado())) {
             throw new IllegalStateException(
-                "No se puede " + accion + " la operación " + op.getId() +
-                ": estado actual " + op.getEstado() + ", se requiere " + requerido);
+                    "No se puede " + accion + " la operación " + op.getId() +
+                            ": estado actual " + op.getEstado() + ", se requiere " + requerido);
         }
     }
 }

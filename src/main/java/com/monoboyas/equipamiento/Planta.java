@@ -9,21 +9,22 @@ import com.monoboyas.usuarios.OperadorLancha;
 import com.monoboyas.usuarios.OperadorPlanta;
 import com.monoboyas.usuarios.Usuario;
 
-
 public class Planta {
     protected String nombre;
     protected int idPlanta;
     protected int capacidadMaximaMonoboyas;
     protected int cantidadActualMonoboyas;
-    protected OperadorPlanta[] operadorPlanta; 
-    protected CentralDatos centralDatos; 
+    protected OperadorPlanta[] operadorPlanta;
+    protected CentralDatos centralDatos;
     private Monoboya[] monoboyas;
 
-    public Planta(String nombre, int idPlanta) {
+    public Planta(String nombre, int idPlanta, CentralDatos centralDatos) {
         this.nombre = nombre;
         this.idPlanta = idPlanta;
         cantidadActualMonoboyas = 0;
         this.monoboyas = new Monoboya[capacidadMaximaMonoboyas];
+        this.centralDatos = centralDatos;
+
     }
 
     /**
@@ -36,21 +37,22 @@ public class Planta {
         }
     }
 
-    public void iniciarOperacion(Monoboya m , Operacion operacion) {
-            if(m.getEstadoEnum() == Monoboya.EstadoMonoboya.DISPONIBLE && operacion != null) {
-                m.estado = Monoboya.EstadoMonoboya.DESHABILITADA; 
-                m.asignarOperacion(operacion);
-            //terminar
-            }
-   
+    public void iniciarOperacion(Monoboya m, Operacion operacion) {
+        if (m.getEstadoEnum() == Monoboya.EstadoMonoboya.DISPONIBLE && operacion != null) {
+            m.estado = Monoboya.EstadoMonoboya.DESHABILITADA;
+            m.asignarOperacion(operacion);
+            // terminar
+        }
+
     }
 
     public void recibirSolicitudTransferencia(Operacion operacion, UsuarioDAO usuarioDAO) {
         System.out.println("\n[PLANTA " + nombre + "] >>> RECIBIENDO SOLICITUD DE TRANSFERENCIA DE CARGA DEL BUQUE ");
-        Monoboya m=obtenerMonoboyaDisponible();
-        //Aca habria una logica para que espere en caso de que no haya monoboyas disponibles
-        //Pero por cuestiones de tiempo y complejidad no lo hicimos
-        
+        Monoboya m = obtenerMonoboyaDisponible();
+        // Aca habria una logica para que espere en caso de que no haya monoboyas
+        // disponibles
+        // Pero por cuestiones de tiempo y complejidad no lo hicimos
+
         operacion.asignarMonoboya(m);
         OperadorLancha operadorLancha = obtenerOperadorLanchaDisponible(usuarioDAO);
         OperadorPlanta operadorPlanta = obtenerOperadorPlantaDisponible(usuarioDAO);
@@ -59,6 +61,7 @@ public class Planta {
         operadorLancha.asignarOperacion(operacion);
         operadorPlanta.asignarOperacion(operacion);
         centralDatos.iniciarOperacion(operacion);
+        operacion.iniciarOperacion();
     }
 
     public Monoboya obtenerMonoboyaDisponible() {
@@ -105,6 +108,5 @@ public class Planta {
         Usuario disponible = primerOperadorPlantaDisponible(usuarios);
         return (OperadorPlanta) disponible;
     }
-
 
 }

@@ -2,6 +2,7 @@ package com.monoboyas.persistencia;
 
 import java.sql.PreparedStatement;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -13,7 +14,6 @@ import com.monoboyas.usuarios.OperadorBuque;
 import com.monoboyas.usuarios.OperadorLancha;
 import com.monoboyas.usuarios.OperadorPlanta;
 import com.monoboyas.usuarios.Usuario;
-import java.util.Optional;
 
 @Repository
 public class UsuarioDAO {
@@ -132,7 +132,7 @@ public class UsuarioDAO {
 
         return switch (rol) {
             case "ADMIN" ->
-                new Administrador(id, nombre, contrasena, dni);
+                new Administrador(id, nombre, contrasena, dni, null);
 
             case "OPERADOR_LANCHA" ->
                 new OperadorLancha(id, nombre, contrasena, dni);

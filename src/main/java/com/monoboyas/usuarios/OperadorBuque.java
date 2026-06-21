@@ -1,12 +1,10 @@
 package com.monoboyas.usuarios;
 
-import com.monoboyas.alertas.Alerta;
-import com.monoboyas.operaciones.Operacion;
-import com.monoboyas.usuarios.*;
-    
-
 import java.util.ArrayList;
 import java.util.List;
+
+import com.monoboyas.alertas.Alerta;
+import com.monoboyas.operaciones.Operacion;
 
 public class OperadorBuque extends UsuarioOperador {
 
@@ -31,6 +29,10 @@ public class OperadorBuque extends UsuarioOperador {
     public void recibirAlerta(Alerta alerta) {
         alertasRecibidas.add(alerta);
         System.out.println("\n[OPERADOR DE BUQUE] >>> ALERTA RECIBIDA: " + alerta.getMensaje() + " (Tipo: " + alerta.getTipoAlerta() + ")");
+    }
+
+    public void asignarOperacion(Operacion operacion) {
+        this.operacion = operacion;
     }
 
 }
