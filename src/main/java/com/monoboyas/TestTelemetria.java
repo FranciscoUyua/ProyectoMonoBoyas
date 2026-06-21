@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 import com.monoboyas.api.TelemetriaService;
-
 import com.monoboyas.central.CentralDatos;
 import com.monoboyas.equipamiento.Buque;
 import com.monoboyas.equipamiento.Monoboya;
@@ -28,7 +27,7 @@ import com.monoboyas.usuarios.OperadorLancha;
 import com.monoboyas.usuarios.OperadorPlanta;
 
 @SpringBootApplication
-@ComponentScan({ "Main", "Persistencia", "com.monoboyas.api" })
+@ComponentScan("com.monoboyas")
 public class TestTelemetria implements CommandLineRunner {
 
     @Autowired

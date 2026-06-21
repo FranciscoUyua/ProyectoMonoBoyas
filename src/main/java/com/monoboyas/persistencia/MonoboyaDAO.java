@@ -1,10 +1,11 @@
 package com.monoboyas.persistencia;
 
-import com.monoboyas.equipamiento.Monoboya;
+import java.util.List;
+
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import com.monoboyas.equipamiento.Monoboya;
 
 @Repository
 public class MonoboyaDAO {
@@ -16,25 +17,48 @@ public class MonoboyaDAO {
     }
 
     // Guarda desde el objeto de dominio (sin operacion_activa_id ni planta_id)
+    // Usa esta cuando ya tenés un objeto Monoboya armado en memoria.
     public void guardar(Monoboya m) {
-        jdbc.update(
+        int filas = jdbc.update(
             "INSERT INTO monoboyas (id) VALUES (?) ON CONFLICT (id) DO NOTHING",
             m.getId()
         );
+        if (filas > 0) {
+            crearSensoresPorDefecto(m.getId());
+        }
     }
 
-    // Overload sin operacionActivaId
+    // Overload sin operacionActivaId — solo delega, no inserta nada por su cuenta.
+    // No hace falta tocarlo: como no hace su propio INSERT, no necesita crear sensores acá.
     public void guardar(int id, Integer plantaId) {
         guardar(id, plantaId, null);
     }
 
-    // Guarda con todos los campos conocidos en el momento de la inserción
+    // Guarda con todos los campos conocidos en el momento de la inserción.
+    // Usa esta cuando tenés los datos sueltos (id, planta, operación activa) en vez de un objeto.
     public void guardar(int id, Integer plantaId, Integer operacionActivaId) {
-        jdbc.update(
+        int filas = jdbc.update(
             "INSERT INTO monoboyas (id, planta_id, operacion_activa_id) " +
             "VALUES (?, ?, ?) ON CONFLICT (id) DO NOTHING",
             id, plantaId, operacionActivaId
         );
+        if (filas > 0) {
+            crearSensoresPorDefecto(id);
+        }
+    }
+
+    // Nuevo: crea los 8 sensores de una monoboya recién creada.
+    // No se llama nunca solo — solo lo disparan los dos métodos de arriba, y solo si la
+    // monoboya era nueva de verdad (no si ya existía).
+    private void crearSensoresPorDefecto(int monoboyaId) {
+        String[] tipos    = {"TENSION", "PRESION", "OLEAJE", "ORIENTACION", "CORRIENTE", "CAUDAL", "VIENTO", "AMARRE"};
+        String[] unidades = {"tf",      "Pa",      "m",      "grados",      "m/s",       "l/s",    "km/h",  "kN"};
+        for (int i = 0; i < tipos.length; i++) {
+            jdbc.update(
+                "INSERT INTO sensores (tipo, unidad, activo, monoboya_id) VALUES (?, ?, true, ?)",
+                tipos[i], unidades[i], monoboyaId
+            );
+        }
     }
 
     public void actualizarOperacionActiva(int monoboyaId, Integer operacionId) {
@@ -107,18 +131,20 @@ public class MonoboyaDAO {
             );
     }
 
-        public MonoboyaInfo buscarInfoPorId(int id) {
-            return jdbc.queryForObject(
-                "SELECT id, estado, planta_id, operacion_activa_id FROM monoboyas WHERE id = ?",
-                (rs, rowNum) -> new MonoboyaInfo(
-                    rs.getInt("id"),
-                    rs.getString("estado"),
-                    rs.getObject("planta_id", Integer.class),
-                    rs.getObject("operacion_activa_id", Integer.class)
-                ),
-                id
-            );
+    public MonoboyaInfo buscarInfoPorId(int id) {
+        return jdbc.queryForObject(
+            "SELECT id, estado, planta_id, operacion_activa_id FROM monoboyas WHERE id = ?",
+            (rs, rowNum) -> new MonoboyaInfo(
+                rs.getInt("id"),
+                rs.getString("estado"),
+                rs.getObject("planta_id", Integer.class),
+                rs.getObject("operacion_activa_id", Integer.class)
+            ),
+            id
+        );
     }
+
+
 
         public static class MonoboyaInfo {
             private final int id;

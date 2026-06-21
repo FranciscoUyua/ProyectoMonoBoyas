@@ -3,6 +3,7 @@ package com.monoboyas.equipamiento;
 import com.monoboyas.central.CentralDatos;
 import com.monoboyas.central.Publisher;
 import com.monoboyas.operaciones.Operacion;
+import com.monoboyas.persistencia.UsuarioDAO;
 import com.monoboyas.sensores.Medicion;
 import com.monoboyas.sensores.Medicion.OrigenMedicion;
 import com.monoboyas.sensores.Sensor;
@@ -38,9 +39,9 @@ public class Buque {
         publisher.publicar(nuevaMedicion);
     }
 
-    public void solitudTransferencia() {
+    public void solitudTransferencia(UsuarioDAO usuarioDAO) {
         // HAY Q SACAR ESTE NULL DESPUES !!
-        operacion.getPlanta().recibirSolicitudTransferencia(operacion, null);
+        operacion.getPlanta().recibirSolicitudTransferencia(operacion, usuarioDAO);
         System.out.println("\n[BUQUE " + nombre + "] >>> SOLICITANDO TRANSFERENCIA DE CARGA...");
     }
 

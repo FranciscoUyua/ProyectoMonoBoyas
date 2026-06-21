@@ -29,7 +29,7 @@ import com.monoboyas.usuarios.OperadorPlanta;
 import com.monoboyas.usuarios.Usuario;
 
 @SpringBootApplication
-@ComponentScan({ "Main", "Persistencia" })
+@ComponentScan("com.monoboyas")
 public class TestPersistencia implements CommandLineRunner {
 
     @Autowired
@@ -117,7 +117,7 @@ public class TestPersistencia implements CommandLineRunner {
 
     private void testMonoboya() {
         System.out.println("── Test: Monoboya ───────────────────────────────────");
-        monoboyaDAO.guardar(101, 1);
+        monoboyaDAO.guardar(999, 1);
 
         Monoboya leida = monoboyaDAO.buscarPorId(101);
         System.out.println("  ✔ Monoboya guardada y leída: ID=" + leida.getId());
