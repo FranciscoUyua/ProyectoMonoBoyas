@@ -87,8 +87,8 @@ public class TestTelemetria implements CommandLineRunner {
         plantaDAO.guardar(plantaId, "Planta Test Telemetria");
 
         Administrador admin = new Administrador(1, "Admin Test", "adminpass", 12345678, planta);
-
-        Buque buque = new Buque(buqueNroIMO, 50000, "Buque Test", broker);
+        SensorDePresion presion2 = new SensorDePresion(22, new ArchivoDataProvider("presion.txt"));
+        Buque buque = new Buque(buqueNroIMO, 10000,presion2 ,"Buque Test", broker);
         buqueDAO.guardar(buque);
 
         Monoboya monoboya = new Monoboya(monoboyaId, 8, null, broker);

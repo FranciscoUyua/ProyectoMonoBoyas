@@ -17,12 +17,16 @@ public class TelemetriaScheduler {
     }
 
     @Scheduled(fixedRate = 3000)
+    /* */
     public void generarLecturas() {
+
+        /* 
         for (Operacion operacion : centralDatos.obtenerOperacionesActivas()) {
             Monoboya monoboya = operacion.getMonoboya();
             if (monoboya != null) {
                 monoboya.recolectarYTransmitirDatos();
             }
         }
+            */
     }
 }

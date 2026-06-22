@@ -19,9 +19,10 @@ public class Buque {
     protected CentralDatos centralDatos;
     protected Operacion operacion;
 
-    public Buque(int nroIMO, int capacidad, String nombre, Publisher publisher, Operacion operacion) {
+    public Buque(int nroIMO, int capacidad, Sensor sensorPresion,  String nombre, Publisher publisher, Operacion operacion) {
         this.nroIMO = nroIMO;
         this.capacidad = capacidad;
+        this.transmisorPresion = sensorPresion;
         capacidadRestante = capacidad;
         this.nombre = nombre;
         this.publisher = publisher;
@@ -29,8 +30,8 @@ public class Buque {
         this.centralDatos = centralDatos;
     }
 
-    public Buque(int nroIMO, int capacidad, String nombre, Publisher publisher) {
-        this(nroIMO, capacidad, nombre, publisher, null);
+    public Buque(int nroIMO, int capacidad, Sensor sensorPresion,String nombre, Publisher publisher) {
+        this(nroIMO, capacidad,sensorPresion, nombre, publisher, null);
     }
 
     public void recolectarYTransmitirDatos() {
@@ -104,7 +105,8 @@ public class Buque {
         if (capacidadRestante <= 0) {
             return true;
         }
-        return false;
+        else
+            return false;
     }
 
     public CentralDatos getCentralDatos() {

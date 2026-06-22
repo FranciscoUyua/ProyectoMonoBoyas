@@ -53,6 +53,7 @@ public class Operacion {
         this.estaActiva = true;
 
         while (!buque.finalizoDescarga() && tipoOperacion != TipoOperacion.DETENIDA) {
+
             monoboya.recolectarYTransmitirDatos();
             buque.recolectarYTransmitirDatos();
             try {

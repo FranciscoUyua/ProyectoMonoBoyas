@@ -47,21 +47,36 @@ public class Planta {
     }
 
     public void recibirSolicitudTransferencia(Operacion operacion, UsuarioDAO usuarioDAO) {
-        System.out.println("\n[PLANTA " + nombre + "] >>> RECIBIENDO SOLICITUD DE TRANSFERENCIA DE CARGA DEL BUQUE ");
+        System.out.println("\n[PLANTA " + nombre + "] >>> RECIBIENDO SOLICITUD DE TRANSFERENCIA ");
         Monoboya m = obtenerMonoboyaDisponible();
         // Aca habria una logica para que espere en caso de que no haya monoboyas
         // disponibles
         // Pero por cuestiones de tiempo y complejidad no lo hicimos
 
         operacion.asignarMonoboya(m);
+        m.asignarOperacion(operacion);
+
+        System.out.println("\n[PLANTA] >>> MONOBOYA ASIGNADA " + m);
+        System.out.println("\n[PLANTA] voy a pedir el buque" + operacion.getBuque());
+
         OperadorLancha operadorLancha = obtenerOperadorLanchaDisponible(usuarioDAO);
         OperadorPlanta operadorPlanta = obtenerOperadorPlantaDisponible(usuarioDAO);
+
+        System.out.println("\n[PLANTA] voy a pedir el buque" + operadorLancha);
+        System.out.println("\n[PLANTA] voy a pedir el buque" + operadorPlanta);
+
         operacion.asignarOperadorPlanta(operadorPlanta);
         operacion.asignarOperadorLancha(operadorLancha);
+
         operadorLancha.asignarOperacion(operacion);
         operadorPlanta.asignarOperacion(operacion);
+
         centralDatos.iniciarOperacion(operacion);
+
+
         operacion.iniciarOperacion();
+
+        System.out.println("\n[PLANTA] >>> post inciar op ");
     }
 
     public Monoboya obtenerMonoboyaDisponible() {

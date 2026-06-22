@@ -39,7 +39,7 @@ public abstract class Sensor {
     //En lugar de generar un objeto, simplemente actualiza su estado interno
     public void actualizarDato() {
         if (this.activo && this.dataProvider != null) {
-            System.out.println("[SENSOR] " + tipo + " (ID=" + id + ") solicitando dato al proveedor " + dataProvider.getClass().getSimpleName());
+            System.out.println("[SENSOR] " + tipo + " (ID=" + id + ") solicitando dato al proveedor " );
             try {
                 this.valor = dataProvider.obtenerDato();
                 this.ultimaMedicion = LocalDateTime.now();

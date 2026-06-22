@@ -25,6 +25,7 @@ public class Monoboya {
         this.contadorSensores = 0;
         this.operacion = operacion; 
         this.publisher = publisher;
+        estado = EstadoMonoboya.DISPONIBLE;
     }
 
     public void asignarOperacion(Operacion operacion){
@@ -38,10 +39,9 @@ public class Monoboya {
                 sensor.actualizarDato();
                 Medicion nuevaMedicion = new Medicion(sensor.getId(), sensor.getValor(), sensor.getUnidad(), sensor.getTipo(),OrigenMedicion.MONOBOYA,operacion.getId());
                 if (sensor.getTipo() == Sensor.TipoSensor.CAUDAL) {
-                double litrosEnEsteCiclo = sensor.getValor();
-                operacion.getBuque().descontarCapacidad(litrosEnEsteCiclo);
+                    double litrosEnEsteCiclo = sensor.getValor();
+                    operacion.getBuque().descontarCapacidad(litrosEnEsteCiclo);
             }
-                
                 publisher.publicar(nuevaMedicion);
             }
         }
