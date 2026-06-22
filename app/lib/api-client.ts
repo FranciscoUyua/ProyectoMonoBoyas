@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL!;
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080/v1';
 
 // Tipo para los errores que devuelve tu backend
 export class ApiError extends Error {
