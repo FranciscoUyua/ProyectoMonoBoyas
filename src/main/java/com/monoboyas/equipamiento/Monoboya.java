@@ -40,7 +40,10 @@ public class Monoboya {
                 Medicion nuevaMedicion = new Medicion(sensor.getId(), sensor.getValor(), sensor.getUnidad(), sensor.getTipo(),OrigenMedicion.MONOBOYA,operacion.getId());
                 if (sensor.getTipo() == Sensor.TipoSensor.CAUDAL) {
                     double litrosEnEsteCiclo = sensor.getValor();
-                    operacion.getBuque().descontarCapacidad(litrosEnEsteCiclo);
+                    System.out.println("");
+                    System.out.println("MONOVOYA VOY A RESTAR "+(int) Math.round(litrosEnEsteCiclo));
+                    System.out.println("");
+                    operacion.getBuque().descontarCapacidad((int) Math.round(litrosEnEsteCiclo)    );
             }
                 publisher.publicar(nuevaMedicion);
             }

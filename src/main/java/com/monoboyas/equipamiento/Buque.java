@@ -41,8 +41,8 @@ public class Buque {
     }
 
     public void solitudTransferencia(UsuarioDAO usuarioDAO) {
-        operacion.getPlanta().recibirSolicitudTransferencia(operacion, usuarioDAO);
         System.out.println("\n[BUQUE " + nombre + "] >>> SOLICITANDO TRANSFERENCIA DE CARGA...");
+        operacion.getPlanta().recibirSolicitudTransferencia(operacion, usuarioDAO);     
     }
 
     public int getNroIMO() {
@@ -50,10 +50,17 @@ public class Buque {
     }
 
     public void descontarCapacidad(double litrosTransferidos) {
+            System.out.println("");
+            System.out.print("soy el buque llamada a restar");
+            System.out.println("");
         int litrosEnteros = (int) Math.round(litrosTransferidos); // trunca el decimal, ej: 142.7 -> 142
-        capacidadRestante -= litrosEnteros;
+        capacidadRestante = capacidadRestante - litrosEnteros;
+
+        System.out.println("");
+            System.out.print("mi capacidad es "+capacidadRestante);
+            System.out.println("");
         if (capacidadRestante < 0) {
-            capacidadRestante = 0;
+            ;
         }
     }
 

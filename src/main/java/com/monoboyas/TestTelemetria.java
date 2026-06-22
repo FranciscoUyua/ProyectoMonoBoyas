@@ -90,6 +90,7 @@ public class TestTelemetria implements CommandLineRunner {
         SensorDePresion presion2 = new SensorDePresion(22, new ArchivoDataProvider("presion.txt"));
         Buque buque = new Buque(buqueNroIMO, 10000,presion2 ,"Buque Test", broker);
         buqueDAO.guardar(buque);
+        sensorDAO.guardar(presion2, monoboyaId);
 
         Monoboya monoboya = new Monoboya(monoboyaId, 8, null, broker);
         planta.agregarMonoboya(monoboya);
