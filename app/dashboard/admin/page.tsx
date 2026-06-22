@@ -1,5 +1,6 @@
 import CrearUsuarioForm from './CrearUsuarioForm';
 import PlanificarOperacionForm from '@/app/ui/admin/PlanificarOperacionForm';
+import UmbralesForm from '@/app/ui/admin/UmbralesForm';
 import { fetchOpcionesPlanificacion, fetchOperaciones } from '@/app/lib/data';
 
 const ESTADO_COLOR: Record<string, string> = {
@@ -21,6 +22,7 @@ export default async function AdminPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <CrearUsuarioForm />
         <PlanificarOperacionForm buques={opciones.buques} plantas={opciones.plantas} />
+        <UmbralesForm />
       </div>
 
       <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-5">

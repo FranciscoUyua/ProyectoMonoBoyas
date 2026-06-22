@@ -193,6 +193,26 @@ export default function TelemetriaEnVivo({ operacionId }: { operacionId: number 
     Object.fromEntries(SENSORES_INIT.map((s) => [s.id, 'verde' as Nivel]))
   );
 
+  // ── Trae los umbrales configurados por el admin y pisa amarillo/rojo de cada sensor ──
+  useEffect(() => {
+    fetch('/api/umbrales')
+      .then((r) => r.json())
+      .then((u) => {
+        setSensores((prev) => prev.map((s) => {
+          switch (s.tipoSensor) {
+            case 'PRESION':   return { ...s, amarillo: u.PRESION.amarillaAlta / 100000, rojo: u.PRESION.rojaAlta / 100000 }; // Pa → bar
+            case 'VIENTO':    return { ...s, amarillo: u.VIENTO.amarilla, rojo: u.VIENTO.roja };
+            case 'OLEAJE':    return { ...s, amarillo: u.OLEAJE.amarilla, rojo: u.OLEAJE.roja };
+            case 'CORRIENTE': return { ...s, amarillo: u.CORRIENTE.amarilla, rojo: u.CORRIENTE.roja };
+            case 'AMARRE':    return { ...s, amarillo: u.AMARRE.amarilla, rojo: u.AMARRE.roja };
+            case 'CAUDAL':    return { ...s, amarillo: u.CAUDAL.amarilla, rojo: s.rojo }; // no hay "roja" de caudal definida
+            default:          return s;
+          }
+        }));
+      })
+      .catch(() => { /* si falla, se quedan los valores hardcodeados por defecto */ });
+  }, []);
+
   // ── Polling: lee mediciones reales cada 3 seg, sin encimar requests ──
   useEffect(() => {
     if (!operacionId) return;

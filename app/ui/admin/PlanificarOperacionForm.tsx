@@ -65,7 +65,7 @@ export default function PlanificarOperacionForm({ buques, plantas }: { buques: B
       </div>
       {error && <p className="text-sm" style={{ color: 'var(--color-alerta-rojo)' }}>{error}</p>}
       {ok && <p className="text-sm" style={{ color: 'var(--color-alerta-verde)' }}>Operación #{ok} planificada. Queda esperando que la planta la prepare.</p>}
-      <button onClick={submit} disabled={enviando}
+      <button type="button" onClick={submit} disabled={enviando}
         className="mt-1 w-full py-3 rounded-lg font-semibold text-white disabled:opacity-50"
         style={{ background: 'var(--color-primary)' }}>
         {enviando ? 'Planificando…' : 'Planificar operación'}
