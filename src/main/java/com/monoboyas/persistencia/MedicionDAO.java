@@ -23,15 +23,15 @@ public class MedicionDAO {
     }
 
     public List<MedicionInfo> listarRecientePorOperacion(int operacionId, int limite) {
-    return jdbc.query(
-        "SELECT * FROM (SELECT * FROM mediciones WHERE operacion_id = ? " +
-        "ORDER BY timestamp DESC LIMIT ?) t ORDER BY timestamp ASC",
-        (rs, n) -> new MedicionInfo(
-            rs.getInt("id"), rs.getInt("sensor_id"), rs.getInt("operacion_id"),
-            rs.getDouble("valor"), rs.getString("unidad"),
-            rs.getTimestamp("timestamp").toLocalDateTime()),
-        operacionId, limite);
-}
+        return jdbc.query(
+                "SELECT * FROM (SELECT * FROM mediciones WHERE operacion_id = ? " +
+                        "ORDER BY timestamp DESC LIMIT ?) t ORDER BY timestamp ASC",
+                (rs, n) -> new MedicionInfo(
+                        rs.getInt("id"), rs.getInt("sensor_id"), rs.getInt("operacion_id"),
+                        rs.getDouble("valor"), rs.getString("unidad"),
+                        rs.getTimestamp("timestamp").toLocalDateTime()),
+                operacionId, limite);
+    }
 
     /**
      * Guarda una medición individual y devuelve el ID generado por la BD.
@@ -40,10 +40,9 @@ public class MedicionDAO {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement(
-                // A2: Se agregó operacion_id al INSERT
-                "INSERT INTO mediciones (sensor_id, operacion_id, valor, unidad, timestamp) VALUES (?, ?, ?, ?, ?)",
-                new String[]{"id"}
-            );
+                    // A2: Se agregó operacion_id al INSERT
+                    "INSERT INTO mediciones (sensor_id, operacion_id, valor, unidad, timestamp) VALUES (?, ?, ?, ?, ?)",
+                    new String[] { "id" });
             ps.setInt(1, medicion.getIdSensor());
             ps.setInt(2, medicion.getIdOperacion()); // A2: Se mapea el ID de la operación
             ps.setDouble(3, medicion.getValor());
@@ -59,7 +58,6 @@ public class MedicionDAO {
      * Ideal para el carril rápido de telemetría (8 mediciones/segundo).
      */
     public void guardarLote(List<Medicion> lote) {
-        // A2: Se agregó operacion_id al INSERT del lote
         String sql = "INSERT INTO mediciones (sensor_id, operacion_id, valor, unidad, timestamp) VALUES (?, ?, ?, ?, ?)";
 
         jdbc.batchUpdate(sql, new BatchPreparedStatementSetter() {
@@ -81,21 +79,20 @@ public class MedicionDAO {
     }
 
     /**
-     * Esto te permite buscar todas las mediciones de una operación específica para el gráfico.
+     * Esto te permite buscar todas las mediciones de una operación específica para
+     * el gráfico.
      */
     public List<MedicionInfo> listarPorOperacion(int operacionId) {
         return jdbc.query(
-            "SELECT * FROM mediciones WHERE operacion_id = ? ORDER BY timestamp ASC",
-            (rs, rowNum) -> new MedicionInfo(
-                rs.getInt("id"),
-                rs.getInt("sensor_id"),
-                rs.getInt("operacion_id"), 
-                rs.getDouble("valor"),
-                rs.getString("unidad"),
-                rs.getTimestamp("timestamp").toLocalDateTime()
-            ),
-            operacionId
-        );
+                "SELECT * FROM mediciones WHERE operacion_id = ? ORDER BY timestamp ASC",
+                (rs, rowNum) -> new MedicionInfo(
+                        rs.getInt("id"),
+                        rs.getInt("sensor_id"),
+                        rs.getInt("operacion_id"),
+                        rs.getDouble("valor"),
+                        rs.getString("unidad"),
+                        rs.getTimestamp("timestamp").toLocalDateTime()),
+                operacionId);
     }
 
     /**
@@ -103,17 +100,15 @@ public class MedicionDAO {
      */
     public List<MedicionInfo> listarPorSensor(int sensorId, int limite) {
         return jdbc.query(
-            "SELECT * FROM mediciones WHERE sensor_id = ? ORDER BY timestamp DESC LIMIT ?",
-            (rs, rowNum) -> new MedicionInfo(
-                rs.getInt("id"),
-                rs.getInt("sensor_id"),
-                rs.getInt("operacion_id"), // A2: Leemos la nueva columna
-                rs.getDouble("valor"),
-                rs.getString("unidad"),
-                rs.getTimestamp("timestamp").toLocalDateTime()
-            ),
-            sensorId, limite
-        );
+                "SELECT * FROM mediciones WHERE sensor_id = ? ORDER BY timestamp DESC LIMIT ?",
+                (rs, rowNum) -> new MedicionInfo(
+                        rs.getInt("id"),
+                        rs.getInt("sensor_id"),
+                        rs.getInt("operacion_id"),
+                        rs.getDouble("valor"),
+                        rs.getString("unidad"),
+                        rs.getTimestamp("timestamp").toLocalDateTime()),
+                sensorId, limite);
     }
 
     /**
@@ -121,33 +116,30 @@ public class MedicionDAO {
      */
     public List<MedicionInfo> listarPorRangoTiempo(int sensorId, Timestamp desde, Timestamp hasta) {
         return jdbc.query(
-            "SELECT * FROM mediciones WHERE sensor_id = ? AND timestamp BETWEEN ? AND ? ORDER BY timestamp DESC",
-            (rs, rowNum) -> new MedicionInfo(
-                rs.getInt("id"),
-                rs.getInt("sensor_id"),
-                rs.getInt("operacion_id"), // A2: Leemos la nueva columna
-                rs.getDouble("valor"),
-                rs.getString("unidad"),
-                rs.getTimestamp("timestamp").toLocalDateTime()
-            ),
-            sensorId, desde, hasta
-        );
+                "SELECT * FROM mediciones WHERE sensor_id = ? AND timestamp BETWEEN ? AND ? ORDER BY timestamp DESC",
+                (rs, rowNum) -> new MedicionInfo(
+                        rs.getInt("id"),
+                        rs.getInt("sensor_id"),
+                        rs.getInt("operacion_id"),
+                        rs.getDouble("valor"),
+                        rs.getString("unidad"),
+                        rs.getTimestamp("timestamp").toLocalDateTime()),
+                sensorId, desde, hasta);
     }
+
     public List<MedicionInfo> listarPorOperacionYSensor(int operacionId, int sensorId) {
-    return jdbc.query(
-        "SELECT * FROM mediciones WHERE operacion_id = ? AND sensor_id = ? ORDER BY timestamp ASC",
-        (rs, rowNum) -> new MedicionInfo(
-            rs.getInt("id"),
-            rs.getInt("sensor_id"),
-            rs.getInt("operacion_id"),
-            rs.getDouble("valor"),
-            rs.getString("unidad"),
-            rs.getTimestamp("timestamp").toLocalDateTime()
-        ),
-        operacionId, sensorId
-    );
-    
-}
+        return jdbc.query(
+                "SELECT * FROM mediciones WHERE operacion_id = ? AND sensor_id = ? ORDER BY timestamp ASC",
+                (rs, rowNum) -> new MedicionInfo(
+                        rs.getInt("id"),
+                        rs.getInt("sensor_id"),
+                        rs.getInt("operacion_id"),
+                        rs.getDouble("valor"),
+                        rs.getString("unidad"),
+                        rs.getTimestamp("timestamp").toLocalDateTime()),
+                operacionId, sensorId);
+
+    }
 
     /**
      * Clase auxiliar para mediciones leídas de la BD.
@@ -155,25 +147,43 @@ public class MedicionDAO {
     public static class MedicionInfo {
         private final int id;
         private final int sensorId;
-        private final int operacionId; // A2: Nuevo atributo
+        private final int operacionId;
         private final double valor;
         private final String unidad;
         private final java.time.LocalDateTime timestamp;
 
-        public MedicionInfo(int id, int sensorId, int operacionId, double valor, String unidad, java.time.LocalDateTime timestamp) {
+        public MedicionInfo(int id, int sensorId, int operacionId, double valor, String unidad,
+                java.time.LocalDateTime timestamp) {
             this.id = id;
             this.sensorId = sensorId;
-            this.operacionId = operacionId; // A2: Asignación
+            this.operacionId = operacionId;
             this.valor = valor;
             this.unidad = unidad;
             this.timestamp = timestamp;
         }
 
-        public int getId() { return id; }
-        public int getSensorId() { return sensorId; }
-        public int getOperacionId() { return operacionId; } // A2: Getter
-        public double getValor() { return valor; }
-        public String getUnidad() { return unidad; }
-        public java.time.LocalDateTime getTimestamp() { return timestamp; }
+        public int getId() {
+            return id;
+        }
+
+        public int getSensorId() {
+            return sensorId;
+        }
+
+        public int getOperacionId() {
+            return operacionId;
+        } // A2: Getter
+
+        public double getValor() {
+            return valor;
+        }
+
+        public String getUnidad() {
+            return unidad;
+        }
+
+        public java.time.LocalDateTime getTimestamp() {
+            return timestamp;
+        }
     }
 }

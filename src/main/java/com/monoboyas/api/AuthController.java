@@ -17,9 +17,9 @@ public class AuthController {
     private final OperacionDAO operacionDAO;
 
     public AuthController(UsuarioDAO usuarioDAO, OperacionDAO operacionDAO) {
-    this.usuarioDAO = usuarioDAO;
-    this.operacionDAO = operacionDAO;
-}
+        this.usuarioDAO = usuarioDAO;
+        this.operacionDAO = operacionDAO;
+    }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, Object> body) {
@@ -31,9 +31,7 @@ public class AuthController {
             return ResponseEntity.status(400).body(Map.of(
                     "error", Map.of(
                             "code", "DATOS_INVALIDOS",
-                            "message", "DNI y contraseña son requeridos"
-                    )
-            ));
+                            "message", "DNI y contraseña son requeridos")));
         }
 
         int dni;
@@ -44,9 +42,7 @@ public class AuthController {
             return ResponseEntity.status(400).body(Map.of(
                     "error", Map.of(
                             "code", "DATOS_INVALIDOS",
-                            "message", "El DNI debe ser un número"
-                    )
-            ));
+                            "message", "El DNI debe ser un número")));
         }
 
         try {
@@ -57,9 +53,7 @@ public class AuthController {
                 return ResponseEntity.status(401).body(Map.of(
                         "error", Map.of(
                                 "code", "CREDENCIALES_INVALIDAS",
-                                "message", "DNI o contraseña incorrectos"
-                        )
-                ));
+                                "message", "DNI o contraseña incorrectos")));
             }
 
             HashMap<String, Object> usuarioResponse = new HashMap<>();
@@ -69,7 +63,6 @@ public class AuthController {
             usuarioResponse.put("rol", usuario.getRol());
 
             // Estos campos pueden ser null.
-            // Agregá los getters en Usuario cuando implementemos Operaciones.
             usuarioResponse.put("plantaId", operacionDAO.obtenerPlantaIdDeOperador(usuario.getId()));
             usuarioResponse.put("buqueNroIMO", operacionDAO.obtenerBuqueNroImoDeOperador(usuario.getId()));
             usuarioResponse.put("operacionId", null);
@@ -77,16 +70,13 @@ public class AuthController {
 
             return ResponseEntity.ok(Map.of(
                     "token", "fake-token-de-prueba-12345",
-                    "usuario", usuarioResponse
-            ));
+                    "usuario", usuarioResponse));
 
         } catch (Exception e) {
             return ResponseEntity.status(401).body(Map.of(
                     "error", Map.of(
                             "code", "CREDENCIALES_INVALIDAS",
-                            "message", "DNI o contraseña incorrectos"
-                    )
-            ));
+                            "message", "DNI o contraseña incorrectos")));
         }
     }
 }

@@ -9,8 +9,9 @@ public class Monoboya {
     protected int id;
     protected Sensor[] sensores; // Arreglo de sensores con tam fijo
     protected Operacion operacion;
-    protected int contadorSensores; // Para llevar el control de cuantos se han agregado 
+    protected int contadorSensores; // Para llevar el control de cuantos se han agregado
     protected Publisher publisher; // La Monoboya tiene un Publisher para enviar datos a la CentralDatos
+
     public enum EstadoMonoboya {
         OCUPADA,
         DISPONIBLE,
@@ -18,33 +19,30 @@ public class Monoboya {
     }
 
     protected EstadoMonoboya estado;
-    
+
     public Monoboya(int id, int capacidadMaxima, Operacion operacion, Publisher publisher) {
         this.id = id;
-        this.sensores = new Sensor[capacidadMaxima]; 
+        this.sensores = new Sensor[capacidadMaxima];
         this.contadorSensores = 0;
-        this.operacion = operacion; 
+        this.operacion = operacion;
         this.publisher = publisher;
         estado = EstadoMonoboya.DISPONIBLE;
     }
 
-    public void asignarOperacion(Operacion operacion){
-        this.operacion = operacion; 
+    public void asignarOperacion(Operacion operacion) {
+        this.operacion = operacion;
     }
 
     public void recolectarYTransmitirDatos() {
-    // Agregamos "Sensor" (con mayúscula si es tu clase) antes de la variable
-        for (Sensor sensor : sensores) { 
+        for (Sensor sensor : sensores) {
             if (sensor != null) {
                 sensor.actualizarDato();
-                Medicion nuevaMedicion = new Medicion(sensor.getId(), sensor.getValor(), sensor.getUnidad(), sensor.getTipo(),OrigenMedicion.MONOBOYA,operacion.getId());
+                Medicion nuevaMedicion = new Medicion(sensor.getId(), sensor.getValor(), sensor.getUnidad(),
+                        sensor.getTipo(), OrigenMedicion.MONOBOYA, operacion.getId());
                 if (sensor.getTipo() == Sensor.TipoSensor.CAUDAL) {
                     double litrosEnEsteCiclo = sensor.getValor();
-                    System.out.println("");
-                    System.out.println("MONOVOYA VOY A RESTAR "+(int) Math.round(litrosEnEsteCiclo));
-                    System.out.println("");
-                    operacion.getBuque().descontarCapacidad((int) Math.round(litrosEnEsteCiclo)    );
-            }
+                    operacion.getBuque().descontarCapacidad((int) Math.round(litrosEnEsteCiclo));
+                }
                 publisher.publicar(nuevaMedicion);
             }
         }
@@ -59,7 +57,6 @@ public class Monoboya {
         }
     }
 
-
     // Getters
     public int getId() {
         return id;
@@ -69,15 +66,14 @@ public class Monoboya {
         return estado;
     }
 
-
     public Sensor[] getSensores() {
         return sensores;
     }
-    
+
     public int getCantidadSensores() {
         return contadorSensores;
     }
-    
+
     public Operacion getOperacion() {
         return operacion;
     }

@@ -20,13 +20,5 @@ public class TelemetriaScheduler {
     /* */
     public void generarLecturas() {
 
-        /* 
-        for (Operacion operacion : centralDatos.obtenerOperacionesActivas()) {
-            Monoboya monoboya = operacion.getMonoboya();
-            if (monoboya != null) {
-                monoboya.recolectarYTransmitirDatos();
-            }
-        }
-            */
     }
 }

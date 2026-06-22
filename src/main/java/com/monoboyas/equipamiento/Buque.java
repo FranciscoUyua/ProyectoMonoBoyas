@@ -19,7 +19,8 @@ public class Buque {
     protected CentralDatos centralDatos;
     protected Operacion operacion;
 
-    public Buque(int nroIMO, int capacidad, Sensor sensorPresion,  String nombre, Publisher publisher, Operacion operacion) {
+    public Buque(int nroIMO, int capacidad, Sensor sensorPresion, String nombre, Publisher publisher,
+            Operacion operacion) {
         this.nroIMO = nroIMO;
         this.capacidad = capacidad;
         this.transmisorPresion = sensorPresion;
@@ -30,19 +31,19 @@ public class Buque {
         this.centralDatos = centralDatos;
     }
 
-    public Buque(int nroIMO, int capacidad, Sensor sensorPresion,String nombre, Publisher publisher) {
-        this(nroIMO, capacidad,sensorPresion, nombre, publisher, null);
+    public Buque(int nroIMO, int capacidad, Sensor sensorPresion, String nombre, Publisher publisher) {
+        this(nroIMO, capacidad, sensorPresion, nombre, publisher, null);
     }
 
     public void recolectarYTransmitirDatos() {
         Medicion nuevaMedicion = new Medicion(transmisorPresion.getId(), transmisorPresion.getValor(),
-        transmisorPresion.getUnidad(), transmisorPresion.getTipo(), OrigenMedicion.BUQUE, operacion.getId());
+                transmisorPresion.getUnidad(), transmisorPresion.getTipo(), OrigenMedicion.BUQUE, operacion.getId());
         publisher.publicar(nuevaMedicion);
     }
 
     public void solitudTransferencia(UsuarioDAO usuarioDAO) {
         System.out.println("\n[BUQUE " + nombre + "] >>> SOLICITANDO TRANSFERENCIA DE CARGA...");
-        operacion.getPlanta().recibirSolicitudTransferencia(operacion, usuarioDAO);     
+        operacion.getPlanta().recibirSolicitudTransferencia(operacion, usuarioDAO);
     }
 
     public int getNroIMO() {
@@ -50,15 +51,15 @@ public class Buque {
     }
 
     public void descontarCapacidad(double litrosTransferidos) {
-            System.out.println("");
-            System.out.print("soy el buque llamada a restar");
-            System.out.println("");
+        System.out.println("");
+        System.out.print("soy el buque llamada a restar");
+        System.out.println("");
         int litrosEnteros = (int) Math.round(litrosTransferidos); // trunca el decimal, ej: 142.7 -> 142
         capacidadRestante = capacidadRestante - litrosEnteros;
 
         System.out.println("");
-            System.out.print("mi capacidad es "+capacidadRestante);
-            System.out.println("");
+        System.out.print("mi capacidad es " + capacidadRestante);
+        System.out.println("");
         if (capacidadRestante < 0) {
             ;
         }
@@ -100,19 +101,10 @@ public class Buque {
         this.operacion = operacion;
     }
 
-    public void IniciarTransferencia() {
-
-    }
-
-    public void DetenerTransferencia() {
-
-    }
-
     public boolean finalizoDescarga() {
         if (capacidadRestante <= 0) {
             return true;
-        }
-        else
+        } else
             return false;
     }
 

@@ -34,7 +34,7 @@ public class Operacion {
 
     public void finalizarOperacion() {
         this.estaActiva = false;
-        this.tipoOperacion= TipoOperacion.DETENIDA;
+        this.tipoOperacion = TipoOperacion.DETENIDA;
         System.out.println("\n[SISTEMA] >>> OPERACIÓN " + this.id + " FINALIZADA. Deteniendo recolección de datos.");
     }
 
@@ -58,11 +58,10 @@ public class Operacion {
             monoboya.recolectarYTransmitirDatos();
             buque.recolectarYTransmitirDatos();
             System.out.println("");
-            if (buque.getCapacidadRestante() <= 0){
+            if (buque.getCapacidadRestante() <= 0) {
                 finalizarOperacion();
-                System.out.println("//////////////FINALISEWACHO OA///////////");
             }
-            
+
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
@@ -173,8 +172,8 @@ public class Operacion {
         return estaActiva;
     }
 
-    public void setId(int i){
-        id=i;
+    public void setId(int i) {
+        id = i;
     }
 
 }

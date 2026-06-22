@@ -31,7 +31,6 @@ public class ArchivoDataProvider implements ISensorDataProvider {
 
         String linea = lineas.get(indiceActual).trim();
         double valor = Double.parseDouble(linea);
-        //System.out.println("[PROVEEDOR ARCHIVO] " + rutaArchivo + " -> línea " + (indiceActual + 1) + " = " + valor);
 
         // Avanzar al siguiente, y si llegamos al final, volver a cero (Loop infinito)
         indiceActual++;

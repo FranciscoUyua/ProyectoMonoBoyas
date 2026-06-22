@@ -20,8 +20,7 @@ import com.monoboyas.persistencia.UsuarioDAO;
 public class UsuarioController {
 
     private static final Set<String> ROLES_VALIDOS = Set.of(
-        "ADMIN", "OPERADOR_LANCHA", "OPERADOR_BUQUE", "OPERADOR_PLANTA"
-    );
+            "ADMIN", "OPERADOR_LANCHA", "OPERADOR_BUQUE", "OPERADOR_PLANTA");
 
     private final UsuarioDAO usuarioDAO;
 
@@ -38,14 +37,14 @@ public class UsuarioController {
             return error(403, "SIN_PERMISO", "Solo un ADMIN puede crear usuarios");
         }
 
-        Object nombreObj     = body.get("nombre");
+        Object nombreObj = body.get("nombre");
         Object contrasenaObj = body.get("contrasena");
-        Object dniObj        = body.get("dni");
-        Object rolObj        = body.get("rol");
+        Object dniObj = body.get("dni");
+        Object rolObj = body.get("rol");
 
         if (nombreObj == null || nombreObj.toString().isBlank()
-            || contrasenaObj == null || contrasenaObj.toString().isBlank()
-            || dniObj == null || rolObj == null) {
+                || contrasenaObj == null || contrasenaObj.toString().isBlank()
+                || dniObj == null || rolObj == null) {
             return error(400, "DATOS_INVALIDOS", "nombre, contrasena, dni y rol son requeridos");
         }
 
@@ -80,12 +79,11 @@ public class UsuarioController {
     }
 
     private boolean esAdmin(String authHeader) {
-        return true; // PROVISORIO: sin JWT real todavía
+        return true; // retorno true pues esta implementado sin JWT
     }
 
     private ResponseEntity<Map<String, Object>> error(int status, String code, String message) {
         return ResponseEntity.status(status).body(Map.of(
-            "error", Map.of("code", code, "message", message)
-        ));
+                "error", Map.of("code", code, "message", message)));
     }
 }

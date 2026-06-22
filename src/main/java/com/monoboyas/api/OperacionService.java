@@ -25,8 +25,8 @@ public class OperacionService implements CommandLineRunner {
 
     private static final String PLANIFICADA = "PLANIFICADA";
     private static final String PREPARADA = "PREPARADA";
-    private static final String ACTIVA = "ACTIVA"; // antes EN_CURSO
-    private static final String PAUSADA = "PAUSADA"; // antes DETENIDA
+    private static final String ACTIVA = "ACTIVA";
+    private static final String PAUSADA = "PAUSADA";
     private static final String FINALIZADA = "FINALIZADA";
 
     private final OperacionDAO operacionDAO;
