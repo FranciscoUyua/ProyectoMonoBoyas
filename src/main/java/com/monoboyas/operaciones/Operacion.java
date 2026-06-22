@@ -166,4 +166,8 @@ public class Operacion {
         return estaActiva;
     }
 
+    public void setId(int i){
+        id=i;
+    }
+
 }

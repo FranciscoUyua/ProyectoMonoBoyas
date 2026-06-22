@@ -111,7 +111,14 @@ public class TestTelemetria implements CommandLineRunner {
         monoboya.agregarSensor(giroscopio);
         monoboya.agregarSensor(amarre);
         monoboyaDAO.guardar(monoboya);
-        // sensorDAO.guardar(amarre, monoboyaId);
+        sensorDAO.guardar(presion, monoboyaId);
+        sensorDAO.guardar(oleaje, monoboyaId);
+        sensorDAO.guardar(tension, monoboyaId);
+        sensorDAO.guardar(anemometro, monoboyaId);
+        sensorDAO.guardar(correntometro, monoboyaId);
+        sensorDAO.guardar(caudalimetro, monoboyaId);
+        sensorDAO.guardar(giroscopio, monoboyaId);
+        sensorDAO.guardar(amarre, monoboyaId);
 
         OperadorBuque opBuque = new OperadorBuque(operadorBuqueId, "Capitán Test", "1234", 111222111);
         admin.PlanificarOperacion(buque, planta, usuarioDAO);

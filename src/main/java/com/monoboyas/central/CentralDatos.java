@@ -117,15 +117,42 @@ public class CentralDatos {
 
         return new TelemetriaResultado(medicionId, infos);
     }
-
+/* 
     public void iniciarOperacion(Operacion operacion) {
         operacionesActivas.put(operacion.getId(), operacion);
+        //(int buqueNroIMO, int plantaId, String tipo, int operadorBuqueId)
+        //crearPlanificada(operacion.getBuque().getNroIMO(),operacion.getPlanta().getId(),"ENCURSO",operacion.getOperadorBuque().getId());
     }
-
+*/
+    public void iniciarOperacion(Operacion operacion) {
+    // 1. Guardas en la base de datos y capturas el ID REAL generado por Postgres
+    int idGeneradoBD = operacionDAO.crearPlanificada(
+        operacion.getBuque().getNroIMO(),
+        operacion.getPlanta().getId(),
+        "ENCURSO",
+        operacion.getOperadorBuque().getId()
+    );
+    
+    // 2. Le asignas ese ID real al objeto de Java para que todos se enteren
+    operacion.setId(idGeneradoBD);
+    
+    // 3. Ahora sí lo guardas en el mapa con el ID correcto que la BD sí va a reconocer
+    operacionesActivas.put(idGeneradoBD, operacion);
+}
+/* 
     public void finalizarOperacion(int idOperacion) {
         operacionesActivas.remove(idOperacion);
         ultimaPresionMonoboyaPorOperacion.remove(idOperacion);
         ultimaPresionBuquePorOperacion.remove(idOperacion);
+}
+*/
+
+public void finalizarOperacion(int idOperacion) {
+    operacionesActivas.remove(idOperacion);
+    ultimaPresionMonoboyaPorOperacion.remove(idOperacion);
+    ultimaPresionBuquePorOperacion.remove(idOperacion);
+    
+    operacionDAO.actualizarEstado(idOperacion, "FINALIZADA");
 }
 
     private Map<String, Alerta> verificarUmbralAmarre(double valor, int idoperacion) {

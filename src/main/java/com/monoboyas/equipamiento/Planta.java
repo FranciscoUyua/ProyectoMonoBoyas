@@ -46,7 +46,7 @@ public class Planta {
 
     }
 
-    public void recibirSolicitudTransferencia(Operacion operacion, UsuarioDAO usuarioDAO) {
+    public void recibirSolicitudTransferencia(Operacion operacion,UsuarioDAO usuarioDAO) {
         System.out.println("\n[PLANTA " + nombre + "] >>> RECIBIENDO SOLICITUD DE TRANSFERENCIA ");
         Monoboya m = obtenerMonoboyaDisponible();
         // Aca habria una logica para que espere en caso de que no haya monoboyas
@@ -122,6 +122,10 @@ public class Planta {
         List<Usuario> usuarios = usuarioDAO.listarPorRol("OPERADOR_PLANTA");
         Usuario disponible = primerOperadorPlantaDisponible(usuarios);
         return (OperadorPlanta) disponible;
+    }
+
+    public int getId(){
+        return idPlanta;
     }
 
 }
